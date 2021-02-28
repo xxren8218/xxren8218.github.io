@@ -9208,3 +9208,8 @@ body.okayNav-loaded {
     max-height: 200px;
   }
 }
+
+/* 隐藏valine版权信息 */
+.txt-right{
+    display: none;
+}
