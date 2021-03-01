@@ -3,11 +3,11 @@
   <title>X.X.Ren</title>
   
   <subtitle>个人博客</subtitle>
-  <link href="https://xxren8218.github.io/atom.xml" rel="self"/>
+  <link href="https://xxren888.gitee.io/atom.xml" rel="self"/>
   
-  <link href="https://xxren8218.github.io/"/>
+  <link href="https://xxren888.gitee.io/"/>
   <updated>2021-02-28T17:07:56.037Z</updated>
-  <id>https://xxren8218.github.io/</id>
+  <id>https://xxren888.gitee.io/</id>
   
   <author>
     <name>任晓雄</name>
@@ -18,25 +18,25 @@
   
   <entry>
     <title>个人博客搭建教程</title>
-    <link href="https://xxren8218.github.io/2021/03/01/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%BC%98%E7%94%B1/"/>
-    <id>https://xxren8218.github.io/2021/03/01/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%BC%98%E7%94%B1/</id>
+    <link href="https://xxren888.gitee.io/2021/03/01/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%BC%98%E7%94%B1/"/>
+    <id>https://xxren888.gitee.io/2021/03/01/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%BC%98%E7%94%B1/</id>
     <published>2021-02-28T17:07:56.037Z</published>
     <updated>2021-02-28T17:07:56.037Z</updated>
     
     
     
     
-    <category term="杂谈" scheme="https://xxren8218.github.io/categories/%E6%9D%82%E8%B0%88/"/>
+    <category term="杂谈" scheme="https://xxren888.gitee.io/categories/%E6%9D%82%E8%B0%88/"/>
     
     
-    <category term="生活" scheme="https://xxren8218.github.io/tags/%E7%94%9F%E6%B4%BB/"/>
+    <category term="生活" scheme="https://xxren888.gitee.io/tags/%E7%94%9F%E6%B4%BB/"/>
     
   </entry>
   
   <entry>
     <title>Hello World</title>
-    <link href="https://xxren8218.github.io/2021/02/28/hello-world/"/>
-    <id>https://xxren8218.github.io/2021/02/28/hello-world/</id>
+    <link href="https://xxren888.gitee.io/2021/02/28/hello-world/"/>
+    <id>https://xxren888.gitee.io/2021/02/28/hello-world/</id>
     <published>2021-02-28T10:32:40.317Z</published>
     <updated>2021-02-28T10:32:40.318Z</updated>
     
