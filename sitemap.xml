@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://xxren8218.github.io/about/index.html</loc>
+    
+    <lastmod>2021-03-01</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://xxren8218.github.io/2021/03/01/hello-world/</loc>
     
     <lastmod>2021-03-01</lastmod>
@@ -30,13 +37,6 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/tags/index.html</loc>
-    
-    <lastmod>2021-02-28</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://xxren8218.github.io/repository/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
@@ -44,14 +44,14 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/books/index.html</loc>
+    <loc>https://xxren8218.github.io/tags/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/about/index.html</loc>
+    <loc>https://xxren8218.github.io/books/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     
@@ -75,6 +75,13 @@
     <loc>https://xxren8218.github.io/2020/05/22/configuration-of-nginx-and-uwsgi/</loc>
     
     <lastmod>2020-07-02</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://xxren8218.github.io/about/502.html</loc>
+    
+    <lastmod>2019-07-29</lastmod>
     
   </url>
   
