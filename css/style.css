@@ -4751,6 +4751,8 @@ a.label:focus {
 
 .panel-body {
   padding: 15px;
+  background: #f7dbf0;
+  border-radius: 10px 10px 10px 10px;
 }
 
 .panel-body:before,
@@ -4791,8 +4793,8 @@ a.label:focus {
 .panel-footer {
   padding: 10px 15px;
   border-top: 1px solid #f2f2f2;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
+  border-radius: 10px 10px 10px 10px;
+  background: #bde5e0;
 }
 
 /**
