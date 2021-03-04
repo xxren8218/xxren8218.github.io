@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://xxren8218.github.io/2021/03/02/01_%E8%AE%A4%E8%AF%86Python/</loc>
+    <loc>https://xxren8218.github.io/2021/03/02/03_Pycharm%20%E5%88%9D%E5%A7%8B%E8%AE%BE%E7%BD%AE%EF%BC%88%E7%9F%A5%E9%81%93%EF%BC%89/</loc>
     
-    <lastmod>2021-03-02</lastmod>
+    <lastmod>2021-03-04</lastmod>
     
   </url>
   
   <url>
     <loc>https://xxren8218.github.io/2021/03/02/02_%E7%AC%AC%E4%B8%80%E4%B8%AAPython%E7%A8%8B%E5%BA%8F/</loc>
     
-    <lastmod>2021-03-02</lastmod>
+    <lastmod>2021-03-04</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://xxren8218.github.io/2021/03/02/01_%E8%AE%A4%E8%AF%86Python/</loc>
+    
+    <lastmod>2021-03-04</lastmod>
     
   </url>
   
@@ -30,13 +37,6 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/categories/index.html</loc>
-    
-    <lastmod>2021-02-28</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://xxren8218.github.io/links/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
@@ -44,7 +44,7 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/tags/index.html</loc>
+    <loc>https://xxren8218.github.io/categories/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     
@@ -52,6 +52,13 @@
   
   <url>
     <loc>https://xxren8218.github.io/repository/index.html</loc>
+    
+    <lastmod>2021-02-28</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://xxren8218.github.io/tags/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     
@@ -81,7 +88,7 @@
 
   <url>
     <loc>https://xxren8218.github.io/</loc>
-    <lastmod>2021-03-02</lastmod>
+    <lastmod>2021-03-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -89,14 +96,14 @@
   
   <url>
     <loc>https://xxren8218.github.io/tags/python%E5%9F%BA%E7%A1%80/</loc>
-    <lastmod>2021-03-02</lastmod>
+    <lastmod>2021-03-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://xxren8218.github.io/tags/vim/</loc>
-    <lastmod>2021-03-02</lastmod>
+    <lastmod>2021-03-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -105,14 +112,14 @@
   
   <url>
     <loc>https://xxren8218.github.io/categories/python/</loc>
-    <lastmod>2021-03-02</lastmod>
+    <lastmod>2021-03-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://xxren8218.github.io/categories/Linux/</loc>
-    <lastmod>2021-03-02</lastmod>
+    <lastmod>2021-03-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
