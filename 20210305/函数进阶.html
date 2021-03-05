@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>函数进阶 | X.X.Ren的个人博客</title>
+  <meta name="description" content="函数进阶目标 函数参数和返回值的作用 函数的返回值 进阶 函数的参数 进阶 递归函数  01. 函数参数和返回值的作用函数根据 有没有参数 以及 有没有返回值，可以 相互组合，一共有 4 种 组合形式  无参数，无返回值 无参数，有返回值 有参数，无返回值 有参数，有返回值    定义函数时，是否接收参数，或者是否返回结果，是根据 实际的功能需求 来决定的！   如果函数 内部处理的数据不确定，就">
+<meta property="og:type" content="article">
+<meta property="og:title" content="函数进阶">
+<meta property="og:url" content="https://xxren8218.github.io/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="函数进阶目标 函数参数和返回值的作用 函数的返回值 进阶 函数的参数 进阶 递归函数  01. 函数参数和返回值的作用函数根据 有没有参数 以及 有没有返回值，可以 相互组合，一共有 4 种 组合形式  无参数，无返回值 无参数，有返回值 有参数，无返回值 有参数，有返回值    定义函数时，是否接收参数，或者是否返回结果，是根据 实际的功能需求 来决定的！   如果函数 内部处理的数据不确定，就">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/001_%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E5%92%8C%E8%BF%94%E5%9B%9E%E5%80%BC.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/002_%E9%80%92%E5%BD%92%E8%B0%83%E7%94%A8%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/002_%E9%80%92%E5%BD%92%E8%B0%83%E7%94%A8%E7%A4%BA%E6%84%8F%E5%9B%BEI.png">
+<meta property="article:published_time" content="2021-03-05T12:29:09.000Z">
+<meta property="article:modified_time" content="2021-03-05T12:30:03.128Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="python基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/001_%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E5%92%8C%E8%BF%94%E5%9B%9E%E5%80%BC.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工资能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="函数进阶" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/python/">python</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html" class="title">函数进阶</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-03-05T12:29:09.000Z" itemprop="datePublished">2021-03-05 20:29:09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210305/%E5%8F%98%E9%87%8F%E8%BF%9B%E9%98%B6.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="变量进阶" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/python/">python</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210305/%E5%8F%98%E9%87%8F%E8%BF%9B%E9%98%B6.html" class="title">变量进阶</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-03-05T12:26:02.000Z" itemprop="datePublished">2021-03-05 20:26:02</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210305/%E7%BB%BC%E5%90%88%E5%BA%94%E7%94%A8-%E5%90%8D%E7%89%87%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="综合应用--名片管理系统" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/python/">python</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210305/%E7%BB%BC%E5%90%88%E5%BA%94%E7%94%A8-%E5%90%8D%E7%89%87%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F.html" class="title">综合应用--名片管理系统</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-03-05T12:20:08.000Z" itemprop="datePublished">2021-03-05 20:20:08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210305/%E9%AB%98%E7%BA%A7%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="高级变量类型" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/python/">python</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210305/%E9%AB%98%E7%BA%A7%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B.html" class="title">高级变量类型</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-03-05T12:17:20.000Z" itemprop="datePublished">2021-03-05 20:17:20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210305/%E5%87%BD%E6%95%B0%E5%9F%BA%E7%A1%80.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="函数基础" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/python/">python</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210305/%E5%87%BD%E6%95%B0%E5%9F%BA%E7%A1%80.html" class="title">函数基础</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-03-05T12:10:58.000Z" itemprop="datePublished">2021-03-05 20:10:58</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6"><span class="toc-text">函数进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#01-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E5%92%8C%E8%BF%94%E5%9B%9E%E5%80%BC%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">01. 函数参数和返回值的作用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E6%97%A0%E5%8F%82%E6%95%B0%EF%BC%8C%E6%97%A0%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">1.1 无参数，无返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%97%A0%E5%8F%82%E6%95%B0%EF%BC%8C%E6%9C%89%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">1.2 无参数，有返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E6%9C%89%E5%8F%82%E6%95%B0%EF%BC%8C%E6%97%A0%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">1.3 有参数，无返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E6%9C%89%E5%8F%82%E6%95%B0%EF%BC%8C%E6%9C%89%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">1.4 有参数，有返回值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#02-%E5%87%BD%E6%95%B0%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC-%E8%BF%9B%E9%98%B6"><span class="toc-text">02. 函数的返回值 进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-%E2%80%94%E2%80%94-%E6%B8%A9%E5%BA%A6%E5%92%8C%E6%B9%BF%E5%BA%A6%E6%B5%8B%E9%87%8F"><span class="toc-text">示例 —— 温度和湿度测量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%A2%E8%AF%95%E9%A2%98-%E2%80%94%E2%80%94-%E4%BA%A4%E6%8D%A2%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97"><span class="toc-text">面试题 —— 交换两个数字</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95-1-%E2%80%94%E2%80%94-%E4%BD%BF%E7%94%A8%E5%85%B6%E4%BB%96%E5%8F%98%E9%87%8F"><span class="toc-text">解法 1 —— 使用其他变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95-2-%E2%80%94%E2%80%94-%E4%B8%8D%E4%BD%BF%E7%94%A8%E4%B8%B4%E6%97%B6%E5%8F%98%E9%87%8F"><span class="toc-text">解法 2 —— 不使用临时变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95-3-%E2%80%94%E2%80%94-Python-%E4%B8%93%E6%9C%89%EF%BC%8C%E5%88%A9%E7%94%A8%E5%85%83%E7%BB%84"><span class="toc-text">解法 3 —— Python 专有，利用元组</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-%E5%87%BD%E6%95%B0%E7%9A%84%E5%8F%82%E6%95%B0-%E8%BF%9B%E9%98%B6"><span class="toc-text">03. 函数的参数 进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%92%8C%E5%8F%AF%E5%8F%98%E7%9A%84%E5%8F%82%E6%95%B0"><span class="toc-text">3.1. 不可变和可变的参数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%A2%E8%AF%95%E9%A2%98-%E2%80%94%E2%80%94"><span class="toc-text">面试题 —— +&#x3D;</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E7%BC%BA%E7%9C%81%E5%8F%82%E6%95%B0"><span class="toc-text">3.2 缺省参数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E5%AE%9A%E5%87%BD%E6%95%B0%E7%9A%84%E7%BC%BA%E7%9C%81%E5%8F%82%E6%95%B0"><span class="toc-text">指定函数的缺省参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%BA%E7%9C%81%E5%8F%82%E6%95%B0%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-text">缺省参数的注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E7%BC%BA%E7%9C%81%E5%8F%82%E6%95%B0%E7%9A%84%E5%AE%9A%E4%B9%89%E4%BD%8D%E7%BD%AE"><span class="toc-text">1) 缺省参数的定义位置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E8%B0%83%E7%94%A8%E5%B8%A6%E6%9C%89%E5%A4%9A%E4%B8%AA%E7%BC%BA%E7%9C%81%E5%8F%82%E6%95%B0%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">2) 调用带有多个缺省参数的函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%A4%9A%E5%80%BC%E5%8F%82%E6%95%B0%EF%BC%88%E7%9F%A5%E9%81%93%EF%BC%89"><span class="toc-text">3.3 多值参数（知道）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%94%AF%E6%8C%81%E5%A4%9A%E5%80%BC%E5%8F%82%E6%95%B0%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">定义支持多值参数的函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E5%80%BC%E5%8F%82%E6%95%B0%E6%A1%88%E4%BE%8B-%E2%80%94%E2%80%94-%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E5%A4%9A%E4%B8%AA%E6%95%B0%E5%AD%97%E7%9A%84%E5%92%8C"><span class="toc-text">多值参数案例 —— 计算任意多个数字的和</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E7%BB%84%E5%92%8C%E5%AD%97%E5%85%B8%E7%9A%84%E6%8B%86%E5%8C%85%EF%BC%88%E7%9F%A5%E9%81%93%EF%BC%89"><span class="toc-text">元组和字典的拆包（知道）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#04-%E5%87%BD%E6%95%B0%E7%9A%84%E9%80%92%E5%BD%92"><span class="toc-text">04. 函数的递归</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E9%80%92%E5%BD%92%E5%87%BD%E6%95%B0%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-text">4.1 递归函数的特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E9%80%92%E5%BD%92%E6%A1%88%E4%BE%8B-%E2%80%94%E2%80%94-%E8%AE%A1%E7%AE%97%E6%95%B0%E5%AD%97%E7%B4%AF%E5%8A%A0"><span class="toc-text">4.2 递归案例 —— 计算数字累加</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-函数进阶" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      函数进阶
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html" class="article-date">
+        发布于<time datetime="2021-03-05T12:29:09.000Z" itemprop="datePublished">
+            2021-03-05 20:29:09
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html" class="article-date">
+        更新于<time datetime="2021-03-05T12:30:03.128Z" itemprop="dateUpdated">
+            2021-03-05 20:30:03
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/python/">python</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/python%E5%9F%BA%E7%A1%80/" rel="tag">python基础</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html" class="leancloud_visitors"  data-flag-title="函数进阶">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="函数进阶"><a href="#函数进阶" class="headerlink" title="函数进阶"></a>函数进阶</h1><h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<li>函数参数和返回值的作用</li>
+<li>函数的返回值 进阶</li>
+<li>函数的参数 进阶</li>
+<li>递归函数</li>
+</ul>
+<h2 id="01-函数参数和返回值的作用"><a href="#01-函数参数和返回值的作用" class="headerlink" title="01. 函数参数和返回值的作用"></a>01. 函数参数和返回值的作用</h2><p>函数根据 <strong>有没有参数</strong> 以及 <strong>有没有返回值</strong>，可以 <strong>相互组合</strong>，一共有 <strong>4 种</strong> 组合形式</p>
+<ol>
+<li>无参数，无返回值</li>
+<li>无参数，有返回值</li>
+<li>有参数，无返回值</li>
+<li>有参数，有返回值</li>
+</ol>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/001_%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E5%92%8C%E8%BF%94%E5%9B%9E%E5%80%BC.png" alt=""></p>
+<blockquote>
+<p>定义函数时，<strong>是否接收参数，或者是否返回结果</strong>，是根据 <strong>实际的功能需求</strong> 来决定的！</p>
+</blockquote>
+<ol>
+<li>如果函数 <strong>内部处理的数据不确定</strong>，就可以将外界的数据以参数传递到函数内部</li>
+<li>如果希望一个函数 <strong>执行完成后，向外界汇报执行结果</strong>，就可以增加函数的返回值</li>
+</ol>
+<h3 id="1-1-无参数，无返回值"><a href="#1-1-无参数，无返回值" class="headerlink" title="1.1 无参数，无返回值"></a>1.1 无参数，无返回值</h3><p>此类函数，不接收参数，也没有返回值，应用场景如下：</p>
+<ol>
+<li><strong>只是单纯地做一件事情</strong>，例如 <strong>显示菜单</strong></li>
+<li>在函数内部 <strong>针对全局变量进行操作</strong>，例如：<strong>新建名片</strong>，最终结果 <strong>记录在全局变量</strong> 中</li>
+</ol>
+<blockquote>
+<p>注意：</p>
+</blockquote>
+<ul>
+<li>如果全局变量的数据类型是一个 <strong>可变类型</strong>，在函数内部可以使用 <strong>方法</strong> 修改全局变量的内容 —— <strong>变量的引用不会改变</strong></li>
+<li>在函数内部，<strong>使用赋值语句</strong> 才会 <strong>修改变量的引用</strong></li>
+</ul>
+<h3 id="1-2-无参数，有返回值"><a href="#1-2-无参数，有返回值" class="headerlink" title="1.2 无参数，有返回值"></a>1.2 无参数，有返回值</h3><p>此类函数，不接收参数，但是有返回值，应用场景如下：</p>
+<ul>
+<li>采集数据，例如 <strong>温度计</strong>，返回结果就是当前的温度，而不需要传递任何的参数</li>
+</ul>
+<h3 id="1-3-有参数，无返回值"><a href="#1-3-有参数，无返回值" class="headerlink" title="1.3 有参数，无返回值"></a>1.3 有参数，无返回值</h3><p>此类函数，接收参数，没有返回值，应用场景如下：</p>
+<ul>
+<li>函数内部的代码保持不变，针对 <strong>不同的参数 处理 不同的数据</strong></li>
+<li>例如 <strong>名片管理系统</strong> 针对 <strong>找到的名片</strong> 做 <strong>修改</strong>、<strong>删除</strong> 操作</li>
+</ul>
+<h3 id="1-4-有参数，有返回值"><a href="#1-4-有参数，有返回值" class="headerlink" title="1.4 有参数，有返回值"></a>1.4 有参数，有返回值</h3><p>此类函数，接收参数，同时有返回值，应用场景如下：</p>
+<ul>
+<li>函数内部的代码保持不变，针对 <strong>不同的参数 处理 不同的数据</strong>，并且 <strong>返回期望的处理结果</strong></li>
+<li>例如 <strong>名片管理系统</strong> 使用 <strong>字典默认值</strong> 和 <strong>提示信息</strong> 提示用户输入内容<ul>
+<li>如果输入，返回输入内容</li>
+<li>如果没有输入，返回字典默认值</li>
+</ul>
+</li>
+</ul>
+<h2 id="02-函数的返回值-进阶"><a href="#02-函数的返回值-进阶" class="headerlink" title="02. 函数的返回值 进阶"></a>02. 函数的返回值 进阶</h2><ul>
+<li>在程序开发中，有时候，会希望 <strong>一个函数执行结束后，告诉调用者一个结果</strong>，以便调用者针对具体的结果做后续的处理</li>
+<li><strong>返回值</strong> 是函数 <strong>完成工作</strong>后，<strong>最后</strong> 给调用者的 <strong>一个结果</strong></li>
+<li>在函数中使用 <code>return</code> 关键字可以返回结果</li>
+<li>调用函数一方，可以 <strong>使用变量</strong> 来 <strong>接收</strong> 函数的返回结果</li>
+</ul>
+<blockquote>
+<p>问题：一个函数执行后能否返回多个结果？</p>
+</blockquote>
+<h3 id="示例-——-温度和湿度测量"><a href="#示例-——-温度和湿度测量" class="headerlink" title="示例 —— 温度和湿度测量"></a>示例 —— 温度和湿度测量</h3><ul>
+<li>假设要开发一个函数能够同时返回当前的温度和湿度</li>
+<li><strong>先完成返回温度</strong>的功能如下：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">measure</span>():</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;返回当前的温度&quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line">    print(<span class="string">&quot;开始测量...&quot;</span>)</span><br><span class="line">    temp = <span class="number">39</span></span><br><span class="line">    print(<span class="string">&quot;测量结束...&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> temp</span><br><span class="line"></span><br><span class="line">result = measure()</span><br><span class="line">print(result)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在利用 <strong>元组</strong> 在返回温度的同时，也能够返回 <strong>湿度</strong></li>
+<li>改造如下：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">measure</span>():</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;返回当前的温度&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">&quot;开始测量...&quot;</span>)</span><br><span class="line">    temp = <span class="number">39</span></span><br><span class="line">    wetness = <span class="number">10</span></span><br><span class="line">    print(<span class="string">&quot;测量结束...&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (temp, wetness)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>提示：如果一个函数返回的是元组，括号可以省略</p>
+</blockquote>
+<p><strong>技巧</strong> </p>
+<ul>
+<li>在 <code>Python</code> 中，可以 <strong>将一个元组</strong> 使用 <strong>赋值语句</strong> 同时赋值给 <strong>多个变量</strong></li>
+<li>注意：变量的数量需要和元组中的元素数量保持一致</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = temp, wetness = measure()</span><br></pre></td></tr></table></figure>
+<h3 id="面试题-——-交换两个数字"><a href="#面试题-——-交换两个数字" class="headerlink" title="面试题 —— 交换两个数字"></a>面试题 —— 交换两个数字</h3><p><strong>题目要求</strong></p>
+<ol>
+<li>有两个整数变量 <code>a = 6</code>, <code>b = 100</code></li>
+<li>不使用其他变量，<strong>交换两个变量的值</strong></li>
+</ol>
+<h4 id="解法-1-——-使用其他变量"><a href="#解法-1-——-使用其他变量" class="headerlink" title="解法 1 —— 使用其他变量"></a>解法 1 —— 使用其他变量</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解法 1 - 使用临时变量</span></span><br><span class="line">c = b</span><br><span class="line">b = a</span><br><span class="line">a = c</span><br></pre></td></tr></table></figure>
+<h4 id="解法-2-——-不使用临时变量"><a href="#解法-2-——-不使用临时变量" class="headerlink" title="解法 2 —— 不使用临时变量"></a>解法 2 —— 不使用临时变量</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解法 2 - 不使用临时变量</span></span><br><span class="line">a = a + b</span><br><span class="line">b = a - b</span><br><span class="line">a = a - b</span><br></pre></td></tr></table></figure>
+<h4 id="解法-3-——-Python-专有，利用元组"><a href="#解法-3-——-Python-专有，利用元组" class="headerlink" title="解法 3 —— Python 专有，利用元组"></a>解法 3 —— Python 专有，利用元组</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a, b = b, a</span><br></pre></td></tr></table></figure>
+<h2 id="03-函数的参数-进阶"><a href="#03-函数的参数-进阶" class="headerlink" title="03. 函数的参数 进阶"></a>03. 函数的参数 进阶</h2><h3 id="3-1-不可变和可变的参数"><a href="#3-1-不可变和可变的参数" class="headerlink" title="3.1. 不可变和可变的参数"></a>3.1. 不可变和可变的参数</h3><blockquote>
+<p>问题 1：在函数内部，针对参数使用 <strong>赋值语句</strong>，会不会影响调用函数时传递的 <strong>实参变量</strong>？ —— 不会！</p>
+</blockquote>
+<ul>
+<li>无论传递的参数是 <strong>可变</strong> 还是 <strong>不可变</strong> <ul>
+<li>只要 <strong>针对参数</strong> 使用 <strong>赋值语句</strong>，会在 <strong>函数内部</strong> 修改 <strong>局部变量的引用</strong>，<strong>不会影响到 外部变量的引用</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">demo</span>(<span class="params">num, num_list</span>):</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">&quot;函数内部&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 赋值语句</span></span><br><span class="line">    num = <span class="number">200</span></span><br><span class="line">    num_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">    print(num)</span><br><span class="line">    print(num_list)</span><br><span class="line"></span><br><span class="line">    print(<span class="string">&quot;函数代码完成&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">gl_num = <span class="number">99</span></span><br><span class="line">gl_list = [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">demo(gl_num, gl_list)</span><br><span class="line">print(gl_num)</span><br><span class="line">print(gl_list)</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>问题 2：如果传递的参数是 <strong>可变类型</strong>，在函数内部，使用 <strong>方法</strong> 修改了数据的内容，<strong>同样会影响到外部的数据</strong></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mutable</span>(<span class="params">num_list</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># num_list = [1, 2, 3]</span></span><br><span class="line">    num_list.extend([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">    </span><br><span class="line">    print(num_list)</span><br><span class="line"></span><br><span class="line">gl_list = [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]</span><br><span class="line">mutable(gl_list)</span><br><span class="line">print(gl_list)</span><br></pre></td></tr></table></figure>
+<h4 id="面试题-——"><a href="#面试题-——" class="headerlink" title="面试题 —— +="></a>面试题 —— <code>+=</code></h4><ul>
+<li>在 <code>python</code> 中，列表变量调用 <code>+=</code> 本质上是在执行列表变量的 <code>extend</code> 方法，不会修改变量的引用</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">demo</span>(<span class="params">num, num_list</span>):</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">&quot;函数内部代码&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># num = num + num</span></span><br><span class="line">    num += num</span><br><span class="line">    <span class="comment"># num_list.extend(num_list) 由于是调用方法，所以不会修改变量的引用</span></span><br><span class="line">    <span class="comment"># 函数执行结束后，外部数据同样会发生变化</span></span><br><span class="line">    num_list += num_list</span><br><span class="line"></span><br><span class="line">    print(num)</span><br><span class="line">    print(num_list)</span><br><span class="line">    print(<span class="string">&quot;函数代码完成&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">gl_num = <span class="number">9</span></span><br><span class="line">gl_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">demo(gl_num, gl_list)</span><br><span class="line">print(gl_num)</span><br><span class="line">print(gl_list)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="3-2-缺省参数"><a href="#3-2-缺省参数" class="headerlink" title="3.2 缺省参数"></a>3.2 缺省参数</h3><ul>
+<li>定义函数时，可以给 <strong>某个参数</strong> 指定一个<strong>默认值</strong>，具有默认值的参数就叫做 <strong>缺省参数</strong></li>
+<li>调用函数时，如果没有传入 <strong>缺省参数</strong> 的值，则在函数内部使用定义函数时指定的 <strong>参数默认值</strong></li>
+<li>函数的缺省参数，<strong>将常见的值设置为参数的缺省值</strong>，从而 <strong>简化函数的调用</strong></li>
+<li>例如：对列表排序的方法</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gl_num_list = [<span class="number">6</span>, <span class="number">3</span>, <span class="number">9</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认就是升序排序，因为这种应用需求更多</span></span><br><span class="line">gl_num_list.sort()</span><br><span class="line">print(gl_num_list)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 只有当需要降序排序时，才需要传递 `reverse` 参数</span></span><br><span class="line">gl_num_list.sort(reverse=<span class="literal">True</span>)</span><br><span class="line">print(gl_num_list)</span><br></pre></td></tr></table></figure>
+<h4 id="指定函数的缺省参数"><a href="#指定函数的缺省参数" class="headerlink" title="指定函数的缺省参数"></a>指定函数的缺省参数</h4><ul>
+<li>在参数后使用赋值语句，可以指定参数的缺省值</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_info</span>(<span class="params">name, gender=<span class="literal">True</span></span>):</span></span><br><span class="line"></span><br><span class="line">    gender_text = <span class="string">&quot;男生&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> gender:</span><br><span class="line">        gender_text = <span class="string">&quot;女生&quot;</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">&quot;%s 是 %s&quot;</span> % (name, gender_text))</span><br></pre></td></tr></table></figure>
+<p><strong>提示</strong></p>
+<ol>
+<li>缺省参数，需要使用 <strong>最常见的值</strong> 作为默认值！</li>
+<li>如果一个参数的值 <strong>不能确定</strong>，则不应该设置默认值，具体的数值在调用函数时，由外界传递！</li>
+</ol>
+<h4 id="缺省参数的注意事项"><a href="#缺省参数的注意事项" class="headerlink" title="缺省参数的注意事项"></a>缺省参数的注意事项</h4><h5 id="1-缺省参数的定义位置"><a href="#1-缺省参数的定义位置" class="headerlink" title="1) 缺省参数的定义位置"></a>1) 缺省参数的定义位置</h5><ul>
+<li><strong>必须保证</strong> <strong>带有默认值的缺省参数</strong> <strong>在参数列表末尾</strong></li>
+<li>所以，以下定义是错误的！</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_info</span>(<span class="params">name, gender=<span class="literal">True</span>, title</span>):</span></span><br></pre></td></tr></table></figure>
+<h5 id="2-调用带有多个缺省参数的函数"><a href="#2-调用带有多个缺省参数的函数" class="headerlink" title="2) 调用带有多个缺省参数的函数"></a>2) 调用带有多个缺省参数的函数</h5><ul>
+<li>在 <strong>调用函数时</strong>，如果有 <strong>多个缺省参数</strong>，<strong>需要指定参数名</strong>，这样解释器才能够知道参数的对应关系！</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_info</span>(<span class="params">name, title=<span class="string">&quot;&quot;</span>, gender=<span class="literal">True</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    :param title: 职位</span></span><br><span class="line"><span class="string">    :param name: 班上同学的姓名</span></span><br><span class="line"><span class="string">    :param gender: True 男生 False 女生</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    gender_text = <span class="string">&quot;男生&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> gender:</span><br><span class="line">        gender_text = <span class="string">&quot;女生&quot;</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">&quot;%s%s 是 %s&quot;</span> % (title, name, gender_text))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 提示：在指定缺省参数的默认值时，应该使用最常见的值作为默认值！</span></span><br><span class="line">print_info(<span class="string">&quot;小明&quot;</span>)</span><br><span class="line">print_info(<span class="string">&quot;老王&quot;</span>, title=<span class="string">&quot;班长&quot;</span>)</span><br><span class="line">print_info(<span class="string">&quot;小美&quot;</span>, gender=<span class="literal">False</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="3-3-多值参数（知道）"><a href="#3-3-多值参数（知道）" class="headerlink" title="3.3 多值参数（知道）"></a>3.3 多值参数（知道）</h3><h4 id="定义支持多值参数的函数"><a href="#定义支持多值参数的函数" class="headerlink" title="定义支持多值参数的函数"></a>定义支持多值参数的函数</h4><ul>
+<li>有时可能需要 <strong>一个函数</strong> 能够处理的参数 <strong>个数</strong> 是不确定的，这个时候，就可以使用 <strong>多值参数</strong></li>
+<li><code>python</code> 中有 <strong>两种</strong> 多值参数：<ul>
+<li>参数名前增加 <strong>一个</strong> <code>*</code> 可以接收 <strong>元组</strong></li>
+<li>参数名前增加 <strong>两个</strong> <code>*</code> 可以接收 <strong>字典</strong></li>
+</ul>
+</li>
+<li><p>一般在给多值参数命名时，<strong>习惯</strong>使用以下两个名字</p>
+<ul>
+<li><code>*args</code> —— 存放 <strong>元组</strong> 参数，前面有一个 <code>*</code></li>
+<li><code>**kwargs</code> —— 存放 <strong>字典</strong> 参数，前面有两个 <code>*</code></li>
+</ul>
+</li>
+<li><p><code>args</code> 是 <code>arguments</code> 的缩写，有变量的含义</p>
+</li>
+<li><code>kw</code> 是 <code>keyword</code> 的缩写，<code>kwargs</code> 可以记忆 <strong>键值对参数</strong></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">demo</span>(<span class="params">num, *args, **kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">    print(num)</span><br><span class="line">    print(args)</span><br><span class="line">    print(kwargs)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">demo(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, name=<span class="string">&quot;小明&quot;</span>, age=<span class="number">18</span>, gender=<span class="literal">True</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>提示：<strong>多值参数</strong> 的应用会经常出现在网络上一些大牛开发的框架中，知道多值参数，<strong>有利于我们能够读懂大牛的代码</strong></p>
+</blockquote>
+<h4 id="多值参数案例-——-计算任意多个数字的和"><a href="#多值参数案例-——-计算任意多个数字的和" class="headerlink" title="多值参数案例 —— 计算任意多个数字的和"></a>多值参数案例 —— 计算任意多个数字的和</h4><p><strong>需求</strong></p>
+<ol>
+<li>定义一个函数 <code>sum_numbers</code>，可以接收的 <strong>任意多个整数</strong></li>
+<li>功能要求：将传递的 <strong>所有数字累加</strong> 并且返回累加结果</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum_numbers</span>(<span class="params">*args</span>):</span></span><br><span class="line"></span><br><span class="line">    num = <span class="number">0</span></span><br><span class="line">    <span class="comment"># 遍历 args 元组顺序求和</span></span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> args:</span><br><span class="line">        num += n</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> num</span><br><span class="line"></span><br><span class="line">print(sum_numbers(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<h4 id="元组和字典的拆包（知道）"><a href="#元组和字典的拆包（知道）" class="headerlink" title="元组和字典的拆包（知道）"></a>元组和字典的拆包（知道）</h4><ul>
+<li>在调用带有多值参数的函数时，如果希望：<ul>
+<li>将一个 <strong>元组变量</strong>，直接传递给 <code>args</code></li>
+<li>将一个 <strong>字典变量</strong>，直接传递给 <code>kwargs</code></li>
+</ul>
+</li>
+<li>就可以使用 <strong>拆包</strong>，简化参数的传递，<strong>拆包</strong> 的方式是：<ul>
+<li>在 <strong>元组变量前</strong>，增加 <strong>一个</strong> <code>*</code></li>
+<li>在 <strong>字典变量前</strong>，增加 <strong>两个</strong> <code>*</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">demo</span>(<span class="params">*args, **kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">    print(args)</span><br><span class="line">    print(kwargs)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 需要将一个元组变量/字典变量传递给函数对应的参数</span></span><br><span class="line">gl_nums = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">gl_xiaoming = &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;小明&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 会把 num_tuple 和 xiaoming 作为元组传递个 args</span></span><br><span class="line"><span class="comment"># demo(gl_nums, gl_xiaoming)</span></span><br><span class="line">demo(*gl_nums, **gl_xiaoming)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="04-函数的递归"><a href="#04-函数的递归" class="headerlink" title="04. 函数的递归"></a>04. 函数的递归</h2><blockquote>
+<p>函数调用自身的 <strong>编程技巧</strong> 称为递归</p>
+</blockquote>
+<h3 id="4-1-递归函数的特点"><a href="#4-1-递归函数的特点" class="headerlink" title="4.1 递归函数的特点"></a>4.1 递归函数的特点</h3><p><strong>特点</strong></p>
+<ul>
+<li><strong>一个函数</strong> <strong>内部</strong> <strong>调用自己</strong><ul>
+<li>函数内部可以调用其他函数，当然在函数内部也可以调用自己</li>
+</ul>
+</li>
+</ul>
+<p><strong>代码特点</strong></p>
+<ol>
+<li>函数内部的 <strong>代码</strong> 是相同的，只是针对 <strong>参数</strong> 不同，<strong>处理的结果不同</strong></li>
+<li>当 <strong>参数满足一个条件</strong> 时，函数不再执行<ul>
+<li><strong>这个非常重要</strong>，通常被称为递归的出口，否则 <strong>会出现死循环</strong>！</li>
+</ul>
+</li>
+</ol>
+<p>示例代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum_numbers</span>(<span class="params">num</span>):</span></span><br><span class="line"></span><br><span class="line">    print(num)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 递归的出口很重要，否则会出现死循环</span></span><br><span class="line">    <span class="keyword">if</span> num == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    sum_numbers(num - <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">sum_numbers(<span class="number">3</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/002_%E9%80%92%E5%BD%92%E8%B0%83%E7%94%A8%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt=""></p>
+<h3 id="4-2-递归案例-——-计算数字累加"><a href="#4-2-递归案例-——-计算数字累加" class="headerlink" title="4.2 递归案例 —— 计算数字累加"></a>4.2 递归案例 —— 计算数字累加</h3><p><strong>需求</strong></p>
+<ol>
+<li>定义一个函数 <code>sum_numbers</code></li>
+<li>能够接收一个 <code>num</code> 的整数参数</li>
+<li>计算 1 + 2 + … num 的结果</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum_numbers</span>(<span class="params">num</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> num == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 假设 sum_numbers 能够完成 num - 1 的累加</span></span><br><span class="line">    temp = sum_numbers(num - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 函数内部的核心算法就是 两个数字的相加</span></span><br><span class="line">    <span class="keyword">return</span> num + temp</span><br><span class="line"></span><br><span class="line">print(sum_numbers(<span class="number">2</span>))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/002_%E9%80%92%E5%BD%92%E8%B0%83%E7%94%A8%E7%A4%BA%E6%84%8F%E5%9B%BEI.png" alt=""></p>
+<blockquote>
+<p>提示：递归是一个 <strong>编程技巧</strong>，初次接触递归会感觉有些吃力！在处理 <strong>不确定的循环条件时</strong>，格外的有用，例如：<strong>遍历整个文件目录的结构</strong></p>
+</blockquote>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html" title="函数进阶" target="_blank" rel="external">https://xxren8218.github.io/20210305/%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工资能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/20210305/%E5%8F%98%E9%87%8F%E8%BF%9B%E9%98%B6.html" title="变量进阶"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+</body>
+</html>
