@@ -17,19 +17,29 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>404 Not Found：该页无法显示 | X.X.Ren的个人博客</title>
-  <meta property="og:type" content="website">
-<meta property="og:title" content="404 Not Found：该页无法显示">
-<meta property="og:url" content="https://xxren8218.github.io/404.html">
+  <title>程序执行原理 | X.X.Ren的个人博客</title>
+  <meta name="description" content="程序执行原理（科普）目标 计算机中的 三大件 程序执行的原理 程序的作用  01. 计算机中的三大件计算机中包含有较多的硬件，但是一个程序要运行，有 三个 核心的硬件，分别是：  CPU  中央处理器，是一块超大规模的集成电路 负责 处理数据／计算   内存 临时 存储数据（断电之后，数据会消失） 速度快 空间小（单位价格高）   硬盘  永久 存储数据 速度慢 空间大（单位价格低）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="程序执行原理">
+<meta property="og:url" content="https://xxren8218.github.io/20210304/%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86.html">
 <meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="程序执行原理（科普）目标 计算机中的 三大件 程序执行的原理 程序的作用  01. 计算机中的三大件计算机中包含有较多的硬件，但是一个程序要运行，有 三个 核心的硬件，分别是：  CPU  中央处理器，是一块超大规模的集成电路 负责 处理数据／计算   内存 临时 存储数据（断电之后，数据会消失） 速度快 空间小（单位价格高）   硬盘  永久 存储数据 速度慢 空间大（单位价格低）">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-02-28T16:13:27.840Z">
-<meta property="article:modified_time" content="2021-02-28T10:34:55.359Z">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/CPU.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/%E5%86%85%E5%AD%98%E6%9D%A1.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/%E7%A1%AC%E7%9B%98.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/001_%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/003_Python%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/003_QQ%E7%99%BB%E9%99%86%E7%95%8C%E9%9D%A2.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/004_QQ%E5%8F%B7%E7%A0%81%E5%92%8C%E5%AF%86%E7%A0%81%E5%86%85%E5%AD%98%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="article:published_time" content="2021-03-04T11:24:04.000Z">
+<meta property="article:modified_time" content="2021-03-04T11:24:30.660Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="python">
+<meta property="article:tag" content="python基础">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/CPU.jpg">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/404.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210304/%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -39,6 +49,8 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
   
   
   
@@ -384,16 +396,25 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86%EF%BC%88%E7%A7%91%E6%99%AE%EF%BC%89"><span class="toc-text">程序执行原理（科普）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#01-%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%AD%E7%9A%84%E4%B8%89%E5%A4%A7%E4%BB%B6"><span class="toc-text">01. 计算机中的三大件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-text">思考题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#02-%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-text">02. 程序执行的原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Python-%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86"><span class="toc-text">2.1 Python 程序执行原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Python-%E7%9A%84%E8%A7%A3%E9%87%8A%E5%99%A8%E6%9C%89%E5%A4%9A%E5%A4%A7%EF%BC%9F"><span class="toc-text">Python 的解释器有多大？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-%E7%A8%8B%E5%BA%8F%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">03. 程序的作用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%80%9D%E8%80%83-QQ-%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B"><span class="toc-text">3.1 思考 QQ 程序的启动过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%80%9D%E8%80%83-QQ-%E7%A8%8B%E5%BA%8F%E7%9A%84-%E7%99%BB%E5%BD%95-%E8%BF%87%E7%A8%8B"><span class="toc-text">3.2 思考 QQ 程序的 登录 过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%83-1"><span class="toc-text">思考 1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%83-2"><span class="toc-text">思考 2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%83-3"><span class="toc-text">思考 3</span></a></li></ol></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
   <div class="content">
-  <article id="page-" class="article article-type-page" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-程序执行原理" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      404 Not Found：该页无法显示
+      程序执行原理
     </h1>
   
 
@@ -402,34 +423,44 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar"></i>
-    <a href="/404.html" class="article-date">
-        发布于<time datetime="2021-02-28T16:13:27.840Z" itemprop="datePublished">
-            2021-03-01 00:13:27
+    <a href="/20210304/%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86.html" class="article-date">
+        发布于<time datetime="2021-03-04T11:24:04.000Z" itemprop="datePublished">
+            2021-03-04 19:24:04
         </time>
     </a>
 </span>
 
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-    <a href="/404.html" class="article-date">
-        更新于<time datetime="2021-02-28T10:34:55.359Z" itemprop="dateUpdated">
-            2021-02-28 18:34:55
+    <a href="/20210304/%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86.html" class="article-date">
+        更新于<time datetime="2021-03-04T11:24:30.660Z" itemprop="dateUpdated">
+            2021-03-04 19:24:30
         </time>
     </a>
 </span>
 
 
         
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/python/">python</a>
+  </span>
+
         
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/python%E5%9F%BA%E7%A1%80/" rel="tag">python基础</a>
+  </span>
+
 
         
 
 	<span class="article-read hidden-xs">
     	<i class="icon icon-eye-fill" aria-hidden="true"></i>
-    	<span id="/404.html" class="leancloud_visitors"  data-flag-title="404 Not Found：该页无法显示">0</span>
+    	<span id="/20210304/%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86.html" class="leancloud_visitors"  data-flag-title="程序执行原理">0</span>
     </span>
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/404.html#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210304/%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86.html#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -438,7 +469,146 @@
 	</div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <script type="text/javascript" src="//www.qq.com/404/search_children.js" charset="utf-8" homePageUrl="<%- config.url %>" homePageName="回到我的主页"></script>
+        <h1 id="程序执行原理（科普）"><a href="#程序执行原理（科普）" class="headerlink" title="程序执行原理（科普）"></a>程序执行原理（科普）</h1><h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<li>计算机中的 <strong>三大件</strong></li>
+<li>程序执行的原理</li>
+<li>程序的作用</li>
+</ul>
+<h2 id="01-计算机中的三大件"><a href="#01-计算机中的三大件" class="headerlink" title="01. 计算机中的三大件"></a>01. 计算机中的三大件</h2><p>计算机中包含有较多的硬件，但是一个程序要运行，有 <strong>三个</strong> 核心的硬件，分别是：</p>
+<ol>
+<li><strong>CPU</strong> <ul>
+<li>中央处理器，是一块超大规模的集成电路</li>
+<li>负责 <strong>处理数据</strong>／<strong>计算</strong></li>
+</ul>
+</li>
+<li><strong>内存</strong><ul>
+<li><strong>临时</strong> 存储数据（断电之后，数据会消失）</li>
+<li>速度快</li>
+<li>空间小（单位价格高）</li>
+</ul>
+</li>
+<li><strong>硬盘</strong> <ul>
+<li><strong>永久</strong> 存储数据</li>
+<li>速度慢</li>
+<li>空间大（单位价格低）</li>
+</ul>
+</li>
+</ol>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">CPU</th>
+<th style="text-align:center">内存</th>
+<th style="text-align:center">硬盘</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/CPU.jpg" alt=""></td>
+<td style="text-align:center"><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/%E5%86%85%E5%AD%98%E6%9D%A1.png" alt=""></td>
+<td style="text-align:center"><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/%E7%A1%AC%E7%9B%98.jpg" alt=""></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h3><ol>
+<li>计算机中哪一个硬件设备负责执行程序？<ul>
+<li><strong>CPU</strong></li>
+</ul>
+</li>
+<li><strong>内存</strong> 的速度快还是 <strong>硬盘</strong> 的速度快？<ul>
+<li><strong>内存</strong></li>
+</ul>
+</li>
+<li>我们的程序是安装在内存中的，还是安装在硬盘中的？<ul>
+<li>硬盘</li>
+</ul>
+</li>
+<li><strong>我买了一个内存条，有 500G 的空间！！！</strong>，这句话对吗？<ul>
+<li>不对，内存条通常只有 <code>4G</code> / <code>8G</code> / <code>16G</code> / <code>32G</code></li>
+</ul>
+</li>
+<li><strong>计算机关机之后，内存中的数据都会消失</strong>，这句话对吗？<ul>
+<li>正确 </li>
+</ul>
+</li>
+</ol>
+<h2 id="02-程序执行的原理"><a href="#02-程序执行的原理" class="headerlink" title="02. 程序执行的原理"></a>02. 程序执行的原理</h2><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/001_%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt=""></p>
+<ol>
+<li>程序 <strong>运行之前</strong>，程序是 <strong>保存在硬盘</strong> 中的</li>
+<li>当要运行一个程序时<ul>
+<li>操作系统会首先让 <strong>CPU</strong> 把程序复制到 <strong>内存</strong> 中</li>
+<li><strong>CPU</strong> 执行 <strong>内存</strong> 中的 <strong>程序代码</strong></li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p><strong>程序要执行，首先要被加载到内存</strong></p>
+</blockquote>
+<h3 id="2-1-Python-程序执行原理"><a href="#2-1-Python-程序执行原理" class="headerlink" title="2.1 Python 程序执行原理"></a>2.1 Python 程序执行原理</h3><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/003_Python%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt=""></p>
+<ol>
+<li>操作系统会首先让 <strong>CPU</strong> 把 <strong>Python 解释器</strong> 的程序复制到 <strong>内存</strong> 中</li>
+<li><strong>Python 解释器</strong> 根据语法规则，<strong>从上向下</strong> 让 <strong>CPU</strong> 翻译 <strong>Python 程序中的代码</strong></li>
+<li><strong>CPU</strong> 负责执行翻译完成的代码</li>
+</ol>
+<h4 id="Python-的解释器有多大？"><a href="#Python-的解释器有多大？" class="headerlink" title="Python 的解释器有多大？"></a>Python 的解释器有多大？</h4><ul>
+<li>执行以下终端命令可以查看 Python 解释器的大小</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 确认解释器所在位置</span></span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 查看 python 文件大小(只是一个软链接)</span></span><br><span class="line">$ ls -lh /usr/bin/python</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 查看具体文件大小</span></span><br><span class="line">$ ls -lh /usr/bin/python2.7</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>提示：建立 <strong>软链接</strong> 的目的，是为了方便使用者不用记住使用的解释器是 <strong>哪一个具体版本</strong></p>
+</blockquote>
+<h2 id="03-程序的作用"><a href="#03-程序的作用" class="headerlink" title="03. 程序的作用"></a>03. 程序的作用</h2><blockquote>
+<p>程序就是 <strong>用来处理数据</strong> 的！</p>
+</blockquote>
+<ul>
+<li><strong>新闻软件</strong> 提供的 <strong>新闻内容、评论……</strong> 是数据</li>
+<li><strong>电商软件</strong> 提供的 <strong>商品信息、配送信息……</strong> 是数据</li>
+<li><strong>运动类软件</strong> 提供的 <strong>运动数据……</strong> 是数据</li>
+<li><strong>地图类软件</strong> 提供的 <strong>地图信息、定位信息、车辆信息……</strong> 是数据</li>
+<li><strong>即时通讯软件</strong> 提供的 <strong>聊天信息、好友信息……</strong> 是数据</li>
+<li>……</li>
+</ul>
+<h3 id="3-1-思考-QQ-程序的启动过程"><a href="#3-1-思考-QQ-程序的启动过程" class="headerlink" title="3.1 思考 QQ 程序的启动过程"></a>3.1 思考 QQ 程序的启动过程</h3><ol>
+<li>QQ 在<strong>运行之前</strong>，是保存在 <strong>硬盘</strong> 中的</li>
+<li><strong>运行之后</strong>，QQ 程序就会被加载到 <strong>内存</strong> 中了</li>
+</ol>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/003_QQ%E7%99%BB%E9%99%86%E7%95%8C%E9%9D%A2.png" alt=""></p>
+<h3 id="3-2-思考-QQ-程序的-登录-过程"><a href="#3-2-思考-QQ-程序的-登录-过程" class="headerlink" title="3.2 思考 QQ 程序的 登录 过程"></a>3.2 思考 QQ 程序的 <strong>登录</strong> 过程</h3><ol>
+<li>读取用户输入的 <strong>QQ 号码</strong></li>
+<li>读取用户输入的 <strong>QQ 密码</strong></li>
+<li>将 <strong>QQ 号码</strong> 和 <strong>QQ 密码</strong> 发送给腾讯的服务器，等待服务器确认用户信息</li>
+</ol>
+<h4 id="思考-1"><a href="#思考-1" class="headerlink" title="思考 1"></a>思考 1</h4><blockquote>
+<p>在 QQ 这个程序将 <strong>QQ 号码</strong> 和 <strong>QQ 密码</strong> 发送给服务器之前，<strong>是否需要先存储一下 QQ 号码 和 密码?</strong></p>
+</blockquote>
+<p><strong>答案</strong></p>
+<p>肯定需要！—— 否则 QQ 这个程序就不知道把什么内容发送给服务器了！</p>
+<h4 id="思考-2"><a href="#思考-2" class="headerlink" title="思考 2"></a>思考 2</h4><blockquote>
+<p>QQ 这个程序把 <strong>QQ 号码</strong> 和 <strong>QQ 密码</strong> 保存在哪里？</p>
+</blockquote>
+<p><strong>答案</strong></p>
+<p>保存在 <strong>内存</strong> 中，因为 QQ 程序自己就在内存中</p>
+<h4 id="思考-3"><a href="#思考-3" class="headerlink" title="思考 3"></a>思考 3</h4><blockquote>
+<p>QQ 这个程序是怎么保存用户的 <strong>QQ 号码</strong> 和 <strong>QQ 密码</strong> 的？</p>
+</blockquote>
+<p><strong>答案</strong></p>
+<ol>
+<li>在内存中为 <strong>QQ 号码</strong> 和 <strong>QQ 密码</strong> 各自分配一块空间<ul>
+<li>在 QQ 程序结束之前，这两块空间是由 QQ 程序负责管理的，其他任何程序都不允许使用</li>
+<li>在 QQ 自己使用完成之前，这两块空间始终都只负责保存 <strong>QQ 号码</strong> 和 <strong>QQ 密码</strong></li>
+</ul>
+</li>
+<li>使用一个 <strong>别名</strong> 标记 <strong>QQ 号码</strong> 和 <strong>QQ 密码</strong> 在内存中的位置</li>
+</ol>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/004_QQ%E5%8F%B7%E7%A0%81%E5%92%8C%E5%AF%86%E7%A0%81%E5%86%85%E5%AD%98%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt=""></p>
+<blockquote>
+<ul>
+<li>在程序内部，为 <strong>QQ 号码</strong> 和 <strong>QQ 密码</strong> 在内存中分配的空间就叫做 <strong>变量</strong></li>
+<li><strong>程序就是用来处理数据的，而变量就是用来存储数据的</strong></li>
+</ul>
+</blockquote>
 
       
     </div>
@@ -448,7 +618,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://xxren8218.github.io/404.html" title="404 Not Found：该页无法显示" target="_blank" rel="external">https://xxren8218.github.io/404.html</a>
+      <a href="https://xxren8218.github.io/20210304/%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86.html" title="程序执行原理" target="_blank" rel="external">https://xxren8218.github.io/20210304/%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -479,12 +649,41 @@
   </article>
   
     
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
 
   
 </div>
 
   <nav class="bar bar-footer clearfix" data-stick-bottom>
   <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/20210304/%E5%8F%98%E9%87%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8.html" title="变量的基本使用"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/20210304/%E7%AE%97%E6%95%B0%E8%BF%90%E7%AE%97%E7%AC%A6.html" title="算数运算符"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
   
   
   <!-- Button trigger modal -->
@@ -608,6 +807,37 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
 
 
 
