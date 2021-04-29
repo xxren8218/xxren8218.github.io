@@ -17,23 +17,23 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>多文件项目的演练 | X.X.Ren的个人博客</title>
-  <meta name="description" content="多文件项目的演练 开发 项目 就是开发一个 专门解决一个复杂业务功能的软件 通常每 一个项目 就具有一个 独立专属的目录，用于保存 所有和项目相关的文件 一个项目通常会包含 很多源文件    目标 在项目中添加多个文件，并且设置文件的执行  多文件项目演练 在 01_Python基础 项目中新建一个 hm_02_第2个Python程序.py  在 hm_02_第2个Python程序.py 文件中添">
+  <title>决策树基础 | X.X.Ren的个人博客</title>
+  <meta name="description" content="决策树12345%matplotlib inlineimport matplotlib.pyplot as pltimport pandas as pd 123from sklearn.datasets.california_housing import fetch_california_housing  # 内置的数据集housing &#x3D; fetch_california_housing()pr">
 <meta property="og:type" content="article">
-<meta property="og:title" content="多文件项目的演练">
-<meta property="og:url" content="https://xxren8218.github.io/20210305/%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%BC%94%E7%BB%83.html">
+<meta property="og:title" content="决策树基础">
+<meta property="og:url" content="https://xxren8218.github.io/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="多文件项目的演练 开发 项目 就是开发一个 专门解决一个复杂业务功能的软件 通常每 一个项目 就具有一个 独立专属的目录，用于保存 所有和项目相关的文件 一个项目通常会包含 很多源文件    目标 在项目中添加多个文件，并且设置文件的执行  多文件项目演练 在 01_Python基础 项目中新建一个 hm_02_第2个Python程序.py  在 hm_02_第2个Python程序.py 文件中添">
+<meta property="og:description" content="决策树12345%matplotlib inlineimport matplotlib.pyplot as pltimport pandas as pd 123from sklearn.datasets.california_housing import fetch_california_housing  # 内置的数据集housing &#x3D; fetch_california_housing()pr">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/001_%E8%AE%A9%E9%80%89%E4%B8%AD%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%8F%AF%E4%BB%A5%E6%89%A7%E8%A1%8C.png">
-<meta property="article:published_time" content="2021-03-05T05:49:51.000Z">
-<meta property="article:modified_time" content="2021-03-05T05:50:25.330Z">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/10_0.png">
+<meta property="article:published_time" content="2021-04-29T15:45:59.000Z">
+<meta property="article:modified_time" content="2021-04-29T15:50:48.301Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="python基础">
+<meta property="article:tag" content="机器学习基础">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/001_%E8%AE%A9%E9%80%89%E4%B8%AD%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%8F%AF%E4%BB%A5%E6%89%A7%E8%A1%8C.png">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/10_0.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/20210305/%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%BC%94%E7%BB%83.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -384,21 +384,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%BC%94%E7%BB%83"><span class="toc-text">多文件项目的演练</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E6%BC%94%E7%BB%83"><span class="toc-text">多文件项目演练</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E7%A4%BA"><span class="toc-text">提示</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%B3%E7%AD%96%E6%A0%91"><span class="toc-text">决策树</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#sklearn%E8%BF%90%E8%A1%8C%E5%86%B3%E7%AD%96%E6%A0%91%E5%8F%AA%E9%9C%80%E8%A6%81%E4%B8%A4%E6%AD%A5"><span class="toc-text">sklearn运行决策树只需要两步</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%9A%E8%87%AA%E5%8A%A8%E8%BE%93%E5%87%BA%E4%B8%80%E4%BA%9B%E9%BB%98%E8%AE%A4%E7%9A%84%E5%8F%82%E6%95%B0%E3%80%82"><span class="toc-text">会自动输出一些默认的参数。</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%91%E6%A8%A1%E5%9E%8B%E5%8F%82%E6%95%B0-%EF%BC%88%E4%B8%BA%E4%BA%86%E9%98%B2%E6%AD%A2%E8%BF%87%E6%8B%9F%E5%90%88%EF%BC%89"><span class="toc-text">树模型参数:（为了防止过拟合）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GridSearchCV-%E6%A8%A1%E5%9D%97%E7%9B%B8%E5%BD%93%E4%BA%8E%E5%BE%AA%E7%8E%AF%E9%81%8D%E5%8E%86%EF%BC%8C%E6%96%B9%E4%BE%BF%E5%AF%B9%E5%8F%82%E6%95%B0%E8%BF%9B%E8%A1%8C%E9%80%89%E6%8B%A9%E3%80%82"><span class="toc-text">GridSearchCV 模块相当于循环遍历，方便对参数进行选择。</span></a></li></ol></li></ol></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-多文件项目的演练" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-决策树" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      多文件项目的演练
+      决策树基础
     </h1>
   
 
@@ -407,18 +407,18 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar"></i>
-    <a href="/20210305/%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%BC%94%E7%BB%83.html" class="article-date">
-        发布于<time datetime="2021-03-05T05:49:51.000Z" itemprop="datePublished">
-            2021-03-05 13:49:51
+    <a href="/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html" class="article-date">
+        发布于<time datetime="2021-04-29T15:45:59.000Z" itemprop="datePublished">
+            2021-04-29 23:45:59
         </time>
     </a>
 </span>
 
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-    <a href="/20210305/%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%BC%94%E7%BB%83.html" class="article-date">
-        更新于<time datetime="2021-03-05T05:50:25.330Z" itemprop="dateUpdated">
-            2021-03-05 13:50:25
+    <a href="/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html" class="article-date">
+        更新于<time datetime="2021-04-29T15:50:48.301Z" itemprop="dateUpdated">
+            2021-04-29 23:50:48
         </time>
     </a>
 </span>
@@ -427,13 +427,13 @@
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/python/">python</a>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
   </span>
 
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/python%E5%9F%BA%E7%A1%80/" rel="tag">python基础</a>
+	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag">机器学习基础</a>
   </span>
 
 
@@ -441,10 +441,10 @@
 
 	<span class="article-read hidden-xs">
     	<i class="icon icon-eye-fill" aria-hidden="true"></i>
-    	<span id="/20210305/%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%BC%94%E7%BB%83.html" class="leancloud_visitors"  data-flag-title="多文件项目的演练">0</span>
+    	<span id="/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html" class="leancloud_visitors"  data-flag-title="决策树基础">0</span>
     </span>
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210305/%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%BC%94%E7%BB%83.html#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -453,28 +453,106 @@
 	</div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="多文件项目的演练"><a href="#多文件项目的演练" class="headerlink" title="多文件项目的演练"></a>多文件项目的演练</h1><ul>
-<li>开发 <strong>项目</strong> 就是开发一个 <strong>专门解决一个复杂业务功能的软件</strong></li>
-<li>通常每 <strong>一个项目</strong> 就具有一个 <strong>独立专属的目录</strong>，用于保存 <strong>所有和项目相关的文件</strong><ul>
-<li>一个项目通常会包含 <strong>很多源文件</strong></li>
-</ul>
-</li>
-</ul>
-<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
-<li>在项目中添加多个文件，并且设置文件的执行</li>
-</ul>
-<h2 id="多文件项目演练"><a href="#多文件项目演练" class="headerlink" title="多文件项目演练"></a>多文件项目演练</h2><ol>
-<li>在 <code>01_Python基础</code> 项目中新建一个 <code>hm_02_第2个Python程序.py</code> </li>
-<li>在 <code>hm_02_第2个Python程序.py</code> 文件中添加一句 <code>print(&quot;hello&quot;)</code></li>
-<li><strong>点击右键执行</strong> <code>hm_02_第2个Python程序.py</code></li>
-</ol>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/001_%E8%AE%A9%E9%80%89%E4%B8%AD%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%8F%AF%E4%BB%A5%E6%89%A7%E8%A1%8C.png" alt=""></p>
-<h3 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h3><ul>
-<li>在 <code>PyCharm</code> 中，要想让哪一个 <code>Python</code> 程序能够执行，必须首先通过 <strong>鼠标右键的方式执行</strong> 一下</li>
-<li>对于初学者而言，在一个项目中设置多个程序可以执行，是非常方便的，可以方便对不同知识点的练习和测试</li>
-<li>对于商业项目而言，通常在一个项目中，只有一个 <strong>可以直接执行的 Python 源程序</strong></li>
-</ul>
+        <h1 id="决策树"><a href="#决策树" class="headerlink" title="决策树"></a>决策树</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.datasets.california_housing <span class="keyword">import</span> fetch_california_housing  <span class="comment"># 内置的数据集</span></span><br><span class="line">housing = fetch_california_housing()</span><br><span class="line">print(housing.DESCR)</span><br></pre></td></tr></table></figure>
+<pre><code>downloading Cal. housing from http://www.dcc.fc.up.pt/~ltorgo/Regression/cal_housing.tgz to C:\Users\user\scikit_learn_data
+California housing dataset.
 
+The original database is available from StatLib
+
+    http://lib.stat.cmu.edu/
+
+The data contains 20,640 observations on 9 variables.
+
+This dataset contains the average house value as target variable
+and the following input variables (features): average income,
+housing average age, average rooms, average bedrooms, population,
+average occupation, latitude, and longitude in that order.
+
+References
+----------
+
+Pace, R. Kelley and Ronald Barry, Sparse Spatial Autoregressions,
+Statistics and Probability Letters, 33 (1997) 291-297.
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">housing.data.shape  <span class="comment"># 有两万多个数据，每个数据有8个特征</span></span><br></pre></td></tr></table></figure>
+<pre><code>(20640, 8)
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">housing.data[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<pre><code>array([   8.3252    ,   41.        ,    6.98412698,    1.02380952,
+        322.        ,    2.55555556,   37.88      , -122.23      ])
+</code></pre><h2 id="sklearn运行决策树只需要两步"><a href="#sklearn运行决策树只需要两步" class="headerlink" title="sklearn运行决策树只需要两步"></a>sklearn运行决策树只需要两步</h2><ul>
+<li><strong>1.实例化树模型，传参数(下面有部分API文档说明)——此处最大深度为2</strong></li>
+<li><strong>2.用实例化的对象.fit（数据的X，数据的y）就可以了</strong></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> tree  <span class="comment"># 导入需要指定的树模块</span></span><br><span class="line">dtr = tree.DecisionTreeRegressor(max_depth = <span class="number">2</span>)</span><br><span class="line">dtr.fit(housing.data[:, [<span class="number">6</span>, <span class="number">7</span>]], housing.target)   <span class="comment"># 只选择两个数据来用（试验而已）。——经度和纬度</span></span><br></pre></td></tr></table></figure>
+<pre><code>DecisionTreeRegressor(criterion=&#39;mse&#39;, max_depth=2, max_features=None,
+           max_leaf_nodes=None, min_impurity_split=1e-07,
+           min_samples_leaf=1, min_samples_split=2,
+           min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+           splitter=&#39;best&#39;)
+</code></pre><h3 id="会自动输出一些默认的参数。"><a href="#会自动输出一些默认的参数。" class="headerlink" title="会自动输出一些默认的参数。"></a>会自动输出一些默认的参数。</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 要可视化显示 首先需要安装 graphviz   http://www.graphviz.org/Download..php</span></span><br><span class="line">dot_data = \</span><br><span class="line">    tree.export_graphviz(</span><br><span class="line">        dtr,  <span class="comment"># 构造出来的决策树对象传入第一个参数</span></span><br><span class="line">        out_file = <span class="literal">None</span>,</span><br><span class="line">        feature_names = housing.feature_names[<span class="number">6</span>:<span class="number">8</span>], <span class="comment"># 用哪个特征，传哪个特征（含左不含右），其余不需要改了。</span></span><br><span class="line">        filled = <span class="literal">True</span>,</span><br><span class="line">        impurity = <span class="literal">False</span>,</span><br><span class="line">        rounded = <span class="literal">True</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<p><strong>执行完以后会生成一个.dat的文件</strong></p>
+<p><strong>需要一个库来对其进行显示</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pip install pydotplus</span></span><br><span class="line"><span class="keyword">import</span> pydotplus</span><br><span class="line">graph = pydotplus.graph_from_dot_data(dot_data)</span><br><span class="line">graph.get_nodes()[<span class="number">7</span>].set_fillcolor(<span class="string">&quot;#FFF2DD&quot;</span>)</span><br><span class="line"><span class="keyword">from</span> IPython.display <span class="keyword">import</span> Image</span><br><span class="line">Image(graph.create_png())</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/10_0.png" alt=""></p>
+<p><strong>可以用下列的命令将构造好的图保存起来</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">graph.write_png(<span class="string">&quot;dtr_white_background.png&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>True
+</code></pre><p><strong>数据的切分</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line">data_train, data_test, target_train, target_test = \</span><br><span class="line">    train_test_split(housing.data, housing.target, test_size = <span class="number">0.1</span>, random_state = <span class="number">42</span>)</span><br><span class="line">dtr = tree.DecisionTreeRegressor(random_state = <span class="number">42</span>)  <span class="comment"># （切分时的随机性）为了方面复现，使得每一次随机的结果都是一致的。</span></span><br><span class="line">dtr.fit(data_train, target_train)</span><br><span class="line"></span><br><span class="line">dtr.score(data_test, target_test)</span><br></pre></td></tr></table></figure>
+<pre><code>0.637318351331017
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor</span><br><span class="line">rfr = RandomForestRegressor( random_state = <span class="number">42</span>)</span><br><span class="line">rfr.fit(data_train, target_train)</span><br><span class="line">rfr.score(data_test, target_test)</span><br></pre></td></tr></table></figure>
+<pre><code>0.79086492280964926
+</code></pre><h2 id="树模型参数-（为了防止过拟合）"><a href="#树模型参数-（为了防止过拟合）" class="headerlink" title="树模型参数:（为了防止过拟合）"></a>树模型参数:（为了防止过拟合）</h2><ul>
+<li><p>1.衡量标准  gini系数  or  entropy（熵）</p>
+</li>
+<li><p>2.splitter  best or random 前者是在所有特征中找最好的切分点 后者是在部分特征中（数据量大的时候）——特征多的时候，从头到尾遍历特征比较耗时（best默认），随机选择几个特征（random）,很少去改，因为很少遇到几百个特征。</p>
+</li>
+<li><p>3.max_features  None（所有），log2，sqrt，N  特征小于50的时候一般使用所有的</p>
+</li>
+<li><p><strong>4.max_depth</strong>  数据少或者特征少的时候可以不管这个值，如果模型样本量多，特征也多的情况下，可以尝试限制下（没有定值，可以交叉验证得到最优值）</p>
+</li>
+<li><p><strong>5.min_samples_split</strong>  如果某节点的样本数少于min_samples_split，则不会继续再尝试选择最优特征来进行划分如果样本量不大，不需要管这个值。如果样本量数量级非常大，则推荐增大这个值。</p>
+</li>
+<li><p>6.min_samples_leaf  这个值限制了叶子节点最少的样本数，如果某叶子节点数目小于样本数，则会和兄弟节点一起被剪枝，如果样本量不大，不需要管这个值，大些如10W可是尝试下5</p>
+</li>
+<li><p>7.min_weight_fraction_leaf 这个值限制了叶子节点所有样本权重和的最小值，如果小于这个值，则会和兄弟节点一起被剪枝默认是0，就是不考虑权重问题。一般来说，如果我们有较多样本有缺失值，或者分类树样本的分布类别偏差很大，就会引入样本权重，这时我们就要注意这个值了。</p>
+</li>
+<li><p>8.max_leaf_nodes 通过限制最大叶子节点数，可以防止过拟合，默认是”None”，即不限制最大的叶子节点数。如果加了限制，算法会建立在最大叶子节点数内最优的决策树。如果特征不多，可以不考虑这个值，但是如果特征分成多的话，可以加以限制具体的值可以通过交叉验证得到。</p>
+</li>
+<li><p>9.class_weight 指定样本各类别的的权重，主要是为了防止训练集某些类别的样本过多导致训练的决策树过于偏向这些类别。这里可以自己指定各个样本的权重如果使用“balanced”，则算法会自己计算权重，样本量少的类别所对应的样本权重会高。</p>
+</li>
+<li><p>10.min_impurity_split 这个值限制了决策树的增长，如果某节点的不纯度(基尼系数，信息增益，均方差，绝对差)小于这个阈值则该节点不再生成子节点。即为叶子节点 。</p>
+</li>
+<li>n_estimators:要建立树的个数</li>
+</ul>
+<h3 id="GridSearchCV-模块相当于循环遍历，方便对参数进行选择。"><a href="#GridSearchCV-模块相当于循环遍历，方便对参数进行选择。" class="headerlink" title="GridSearchCV 模块相当于循环遍历，方便对参数进行选择。"></a>GridSearchCV 模块相当于循环遍历，方便对参数进行选择。</h3><ul>
+<li>实例化GridSearchCV后需要传的参数(算法，参数的候选值，VC交叉验证的次数)，一般候选的值写成字典的形式</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.grid_search <span class="keyword">import</span> GridSearchCV</span><br><span class="line">tree_param_grid = &#123; <span class="string">&#x27;min_samples_split&#x27;</span>: <span class="built_in">list</span>((<span class="number">3</span>,<span class="number">6</span>,<span class="number">9</span>)),<span class="string">&#x27;n_estimators&#x27;</span>:<span class="built_in">list</span>((<span class="number">10</span>,<span class="number">50</span>,<span class="number">100</span>))&#125;</span><br><span class="line">grid = GridSearchCV(RandomForestRegressor(),param_grid=tree_param_grid, cv=<span class="number">5</span>)</span><br><span class="line">grid.fit(data_train, target_train)</span><br><span class="line">grid.grid_scores_, grid.best_params_, grid.best_score_</span><br></pre></td></tr></table></figure>
+<pre><code>([mean: 0.78405, std: 0.00505, params: &#123;&#39;min_samples_split&#39;: 3, &#39;n_estimators&#39;: 10&#125;,
+  mean: 0.80529, std: 0.00448, params: &#123;&#39;min_samples_split&#39;: 3, &#39;n_estimators&#39;: 50&#125;,
+  mean: 0.80673, std: 0.00433, params: &#123;&#39;min_samples_split&#39;: 3, &#39;n_estimators&#39;: 100&#125;,
+  mean: 0.79016, std: 0.00124, params: &#123;&#39;min_samples_split&#39;: 6, &#39;n_estimators&#39;: 10&#125;,
+  mean: 0.80496, std: 0.00491, params: &#123;&#39;min_samples_split&#39;: 6, &#39;n_estimators&#39;: 50&#125;,
+  mean: 0.80671, std: 0.00408, params: &#123;&#39;min_samples_split&#39;: 6, &#39;n_estimators&#39;: 100&#125;,
+  mean: 0.78747, std: 0.00341, params: &#123;&#39;min_samples_split&#39;: 9, &#39;n_estimators&#39;: 10&#125;,
+  mean: 0.80481, std: 0.00322, params: &#123;&#39;min_samples_split&#39;: 9, &#39;n_estimators&#39;: 50&#125;,
+  mean: 0.80603, std: 0.00437, params: &#123;&#39;min_samples_split&#39;: 9, &#39;n_estimators&#39;: 100&#125;],
+ &#123;&#39;min_samples_split&#39;: 3, &#39;n_estimators&#39;: 100&#125;,
+ 0.8067250881273065)
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rfr = RandomForestRegressor( min_samples_split=<span class="number">3</span>,n_estimators = <span class="number">100</span>,random_state = <span class="number">42</span>)</span><br><span class="line">rfr.fit(data_train, target_train)</span><br><span class="line">rfr.score(data_test, target_test)</span><br></pre></td></tr></table></figure>
+<pre><code>0.80908290496531576
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pd.Series(rfr.feature_importances_, index = housing.feature_names).sort_values(ascending = <span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>MedInc        0.524257
+AveOccup      0.137947
+Latitude      0.090622
+Longitude     0.089414
+HouseAge      0.053970
+AveRooms      0.044443
+Population    0.030263
+AveBedrms     0.029084
+dtype: float64
+</code></pre>
       
     </div>
     <div class="article-footer">
@@ -483,7 +561,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://xxren8218.github.io/20210305/%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%BC%94%E7%BB%83.html" title="多文件项目的演练" target="_blank" rel="external">https://xxren8218.github.io/20210305/%E5%A4%9A%E6%96%87%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%BC%94%E7%BB%83.html</a>
+      <a href="https://xxren8218.github.io/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html" title="决策树基础" target="_blank" rel="external">https://xxren8218.github.io/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -530,12 +608,12 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/20210305/%E6%B3%A8%E9%87%8A.html" title="注释"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="/20210429/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%9F%BA%E7%A1%80.html" title="贝叶斯基础"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/20210305/python%E7%9A%84%E5%88%9D%E5%A7%8B%E8%AE%BE%E7%BD%AE.html" title="python的初始设置"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/20210418/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98.html" title="逻辑回归实战--信用卡诈骗检测"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
