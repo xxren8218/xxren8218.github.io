@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>贝叶斯实战-新闻分类 | X.X.Ren的个人博客</title>
+  <meta name="description" content="文本分析——新闻分类123import pandas as pdimport jieba# pip install jieba 数据来源：http:&#x2F;&#x2F;www.sogou.com&#x2F;labs&#x2F;resource&#x2F;ca.php123df_news &#x3D; pd.read_table(&amp;#x27;.&#x2F;data&#x2F;val.txt&amp;#x27;,names&#x3D;[&amp;#x27;category&amp;#x27;,&amp;#x27;th">
+<meta property="og:type" content="article">
+<meta property="og:title" content="贝叶斯实战-新闻分类">
+<meta property="og:url" content="https://xxren8218.github.io/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="文本分析——新闻分类123import pandas as pdimport jieba# pip install jieba 数据来源：http:&#x2F;&#x2F;www.sogou.com&#x2F;labs&#x2F;resource&#x2F;ca.php123df_news &#x3D; pd.read_table(&amp;#x27;.&#x2F;data&#x2F;val.txt&amp;#x27;,names&#x3D;[&amp;#x27;category&amp;#x27;,&amp;#x27;th">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210511142559.png">
+<meta property="article:published_time" content="2021-05-11T06:25:35.000Z">
+<meta property="article:modified_time" content="2021-05-11T06:43:23.610Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="机器学习基础实战">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210511142559.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.75px; color: #fff">其他</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.5px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.25px; color: #fff">机器学习基础实战</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px; color: #fff">递归</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="贝叶斯实战-新闻分类" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html" class="title">贝叶斯实战-新闻分类</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-11T06:25:35.000Z" itemprop="datePublished">2021-05-11 14:25:35</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210511/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E5%9B%9B%EF%BC%89%EF%BC%9A%E5%AD%97%E7%AC%A6%E6%B5%81%E4%B8%AD%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%B8%8D%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%97%E7%AC%A6.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="剑指Offer（五十四）：字符流中第一个不重复的字符" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210511/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E5%9B%9B%EF%BC%89%EF%BC%9A%E5%AD%97%E7%AC%A6%E6%B5%81%E4%B8%AD%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%B8%8D%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%97%E7%AC%A6.html" class="title">剑指Offer（五十四）：字符流中第一个不重复的字符</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-11T06:17:23.000Z" itemprop="datePublished">2021-05-11 14:17:23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210511/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E5%85%AB%EF%BC%89%EF%BC%9A%E4%B8%8D%E7%94%A8%E5%8A%A0%E5%87%8F%E4%B9%98%E9%99%A4%E7%9A%84%E5%8A%A0%E6%B3%95.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="剑指Offer（四十八）：不用加减乘除的加法" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210511/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E5%85%AB%EF%BC%89%EF%BC%9A%E4%B8%8D%E7%94%A8%E5%8A%A0%E5%87%8F%E4%B9%98%E9%99%A4%E7%9A%84%E5%8A%A0%E6%B3%95.html" class="title">剑指Offer（四十八）：不用加减乘除的加法</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-11T06:12:44.000Z" itemprop="datePublished">2021-05-11 14:12:44</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210511/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%B8%83%EF%BC%89%EF%BC%9A%E6%B1%821-2-3-%E2%80%A6-n.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="剑指Offer（四十七）：求1+2+3+…+n" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210511/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%B8%83%EF%BC%89%EF%BC%9A%E6%B1%821-2-3-%E2%80%A6-n.html" class="title">剑指Offer（四十七）：求1+2+3+…+n</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-11T06:08:14.000Z" itemprop="datePublished">2021-05-11 14:08:14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%AD%A9%E5%AD%90%E4%BB%AC%E7%9A%84%E6%B8%B8%E6%88%8F%EF%BC%88%E5%9C%86%E5%9C%88%E4%B8%AD%E6%9C%80%E5%90%8E%E5%89%A9%E4%B8%8B%E7%9A%84%E6%95%B0%EF%BC%89.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="剑指Offer（四十六）：孩子们的游戏（圆圈中最后剩下的数）" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%AD%A9%E5%AD%90%E4%BB%AC%E7%9A%84%E6%B8%B8%E6%88%8F%EF%BC%88%E5%9C%86%E5%9C%88%E4%B8%AD%E6%9C%80%E5%90%8E%E5%89%A9%E4%B8%8B%E7%9A%84%E6%95%B0%EF%BC%89.html" class="title">剑指Offer（四十六）：孩子们的游戏（圆圈中最后剩下的数）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-10T12:16:29.000Z" itemprop="datePublished">2021-05-10 20:16:29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E6%9C%AC%E5%88%86%E6%9E%90%E2%80%94%E2%80%94%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB"><span class="toc-text">文本分析——新闻分类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%9D%A5%E6%BA%90%EF%BC%9Ahttp-www-sogou-com-labs-resource-ca-php"><span class="toc-text">数据来源：http:&#x2F;&#x2F;www.sogou.com&#x2F;labs&#x2F;resource&#x2F;ca.php</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E8%AF%8D%EF%BC%9A%E4%BD%BF%E7%94%A8%E7%BB%93%E5%90%A7%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-text">分词：使用结吧分词器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E7%9A%84%E6%B8%85%E6%B4%97%EF%BC%8C%E5%8E%BB%E6%8E%89%E5%81%9C%E7%94%A8%E8%AF%8D%E3%80%82%E2%80%94%E5%81%9C%E7%94%A8%E8%AF%8D%E8%A1%A8%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%BD%91%E4%B8%8A%E4%B8%8B%E8%BD%BD%E3%80%82"><span class="toc-text">进行数据的清洗，去掉停用词。—停用词表，可以网上下载。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TF-IDF-%EF%BC%9A%E6%8F%90%E5%8F%96%E5%85%B3%E9%94%AE%E8%AF%8D"><span class="toc-text">TF-IDF ：提取关键词</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LDA-%EF%BC%9A%E4%B8%BB%E9%A2%98%E6%A8%A1%E5%9E%8B"><span class="toc-text">LDA ：主题模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E6%96%B0%E9%97%BB%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">贝叶斯算法进行新闻的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TF-IDF%E7%9A%84%E5%88%B0%E5%AF%BC%E5%85%A5%E8%AE%A1%E7%AE%97"><span class="toc-text">TF-IDF的到导入计算</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-贝叶斯实战-新闻分类" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      贝叶斯实战-新闻分类
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html" class="article-date">
+        发布于<time datetime="2021-05-11T06:25:35.000Z" itemprop="datePublished">
+            2021-05-11 14:25:35
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html" class="article-date">
+        更新于<time datetime="2021-05-11T06:43:23.610Z" itemprop="dateUpdated">
+            2021-05-11 14:43:23
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" rel="tag">机器学习基础实战</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html" class="leancloud_visitors"  data-flag-title="贝叶斯实战-新闻分类">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="文本分析——新闻分类"><a href="#文本分析——新闻分类" class="headerlink" title="文本分析——新闻分类"></a>文本分析——新闻分类</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> jieba</span><br><span class="line"><span class="comment"># pip install jieba</span></span><br></pre></td></tr></table></figure>
+<h3 id="数据来源：http-www-sogou-com-labs-resource-ca-php"><a href="#数据来源：http-www-sogou-com-labs-resource-ca-php" class="headerlink" title="数据来源：http://www.sogou.com/labs/resource/ca.php"></a>数据来源：<a target="_blank" rel="noopener" href="http://www.sogou.com/labs/resource/ca.php">http://www.sogou.com/labs/resource/ca.php</a></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df_news = pd.read_table(<span class="string">&#x27;./data/val.txt&#x27;</span>,names=[<span class="string">&#x27;category&#x27;</span>,<span class="string">&#x27;theme&#x27;</span>,<span class="string">&#x27;URL&#x27;</span>,<span class="string">&#x27;content&#x27;</span>],encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="comment"># 涉及中文，用encoding</span></span><br><span class="line">df_news = df_news.dropna() <span class="comment"># 缺失值直接drop掉</span></span><br><span class="line">df_news.head()</span><br></pre></td></tr></table></figure>
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>category</th>
+      <th>theme</th>
+      <th>URL</th>
+      <th>content</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>汽车</td>
+      <td>新辉腾　４．２　Ｖ８　４座加长Ｉｎｄｉｖｉｄｕａｌ版２０１１款　最新报价</td>
+      <td>http://auto.data.people.com.cn/model_15782/</td>
+      <td>经销商　电话　试驾／订车Ｕ憬杭州滨江区江陵路１７８０号４００８－１１２２３３转５８６４＃保常...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>汽车</td>
+      <td>９１８　Ｓｐｙｄｅｒ概念车</td>
+      <td>http://auto.data.people.com.cn/prdview_165423....</td>
+      <td>呼叫热线　４００８－１００－３００　服务邮箱　ｋｆ＠ｐｅｏｐｌｅｄａｉｌｙ．ｃｏｍ．ｃｎ</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>汽车</td>
+      <td>日内瓦亮相　ＭＩＮＩ性能版／概念车－１．６Ｔ引擎</td>
+      <td>http://auto.data.people.com.cn/news/story_5249...</td>
+      <td>ＭＩＮＩ品牌在二月曾经公布了最新的ＭＩＮＩ新概念车Ｃｌｕｂｖａｎ效果图，不过现在在日内瓦车展...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>汽车</td>
+      <td>清仓大甩卖一汽夏利Ｎ５威志Ｖ２低至３．３９万</td>
+      <td>http://auto.data.people.com.cn/news/story_6144...</td>
+      <td>清仓大甩卖！一汽夏利Ｎ５、威志Ｖ２低至３．３９万＝日，启新中国一汽强势推出一汽夏利Ｎ５、威志...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>汽车</td>
+      <td>大众敞篷家族新成员　高尔夫敞篷版实拍</td>
+      <td>http://auto.data.people.com.cn/news/story_5686...</td>
+      <td>在今年３月的日内瓦车展上，我们见到了高尔夫家族的新成员，高尔夫敞篷版，这款全新敞篷车受到了众...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df_news.shape</span><br></pre></td></tr></table></figure>
+<pre><code>(5000, 4)
+</code></pre><h3 id="分词：使用结吧分词器"><a href="#分词：使用结吧分词器" class="headerlink" title="分词：使用结吧分词器"></a>分词：使用结吧分词器</h3><p><strong> 结巴分词器需要转换成list的格式 </strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">content = df_news.content.values.tolist()</span><br><span class="line"><span class="built_in">print</span> (content[<span class="number">1000</span>])</span><br></pre></td></tr></table></figure>
+<div style="overflow: scroll;">    
+  阿里巴巴集团昨日宣布，将在集团管理层面设立首席数据官岗位（Ｃｈｉｅｆ　Ｄａｔａ　Ｏｆｆｉｃｅｒ），阿里巴巴Ｂ２Ｂ公司ＣＥＯ陆兆禧将会出任上述职务，向集团ＣＥＯ马云直接汇报。＞菹ぃ和６月初的首席风险官职务任命相同，首席数据官亦为阿里巴巴集团在完成与雅虎股权谈判，推进“ｏｎｅ　ｃｏｍｐａｎｙ”目标后，在集团决策层面新增的管理岗位。０⒗锛团昨日表示，“变成一家真正意义上的数据公司”已是战略共识。记者刘夏
+</div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">content_S = []</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> content:</span><br><span class="line">    current_segment = jieba.lcut(line)  <span class="comment"># lcut可以进行分词</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(current_segment) &gt; <span class="number">1</span> <span class="keyword">and</span> current_segment != <span class="string">&#x27;\r\n&#x27;</span>: <span class="comment"># \n换行符,\r回车符号</span></span><br><span class="line">        content_S.append(current_segment)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">content_S[<span class="number">1000</span>]</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;阿里巴巴&#39;,
+ &#39;集团&#39;,
+ &#39;昨日&#39;,
+ &#39;宣布&#39;,
+ &#39;，&#39;,
+ &#39;将&#39;,
+ &#39;在&#39;,
+ &#39;集团&#39;,
+ &#39;管理&#39;,
+ &#39;层面&#39;,
+ &#39;设立&#39;,
+ &#39;首席&#39;,
+ &#39;数据&#39;,
+ &#39;官&#39;,
+ &#39;岗位&#39;,
+ &#39;（&#39;,
+ &#39;Ｃ&#39;,
+ &#39;ｈ&#39;,
+ &#39;ｉ&#39;,
+ &#39;ｅ&#39;,
+ &#39;ｆ&#39;,
+ &#39;\u3000&#39;,
+ &#39;Ｄ&#39;,
+ &#39;ａ&#39;,
+ &#39;ｔ&#39;,
+ &#39;ａ&#39;,
+ &#39;\u3000&#39;,
+ &#39;Ｏ&#39;,
+ &#39;ｆ&#39;,
+ &#39;ｆ&#39;,
+ &#39;ｉ&#39;,
+ &#39;ｃ&#39;,
+ &#39;ｅ&#39;,
+ &#39;ｒ&#39;,
+ &#39;）&#39;,
+ &#39;，&#39;,
+ &#39;阿里巴巴&#39;,
+ &#39;Ｂ&#39;,
+ &#39;２&#39;,
+ &#39;Ｂ&#39;,
+ &#39;公司&#39;,
+ &#39;Ｃ&#39;,
+ &#39;Ｅ&#39;,
+ &#39;Ｏ&#39;,
+ &#39;陆兆禧&#39;,
+ &#39;将&#39;,
+ &#39;会&#39;,
+ &#39;出任&#39;,
+ &#39;上述&#39;,
+ &#39;职务&#39;,
+ &#39;，&#39;,
+ &#39;向&#39;,
+ &#39;集团&#39;,
+ &#39;Ｃ&#39;,
+ &#39;Ｅ&#39;,
+ &#39;Ｏ&#39;,
+ &#39;马云&#39;,
+ &#39;直接&#39;,
+ &#39;汇报&#39;,
+ &#39;。&#39;,
+ &#39;＞&#39;,
+ &#39;菹&#39;,
+ &#39;ぃ&#39;,
+ &#39;和&#39;,
+ &#39;６&#39;,
+ &#39;月初&#39;,
+ &#39;的&#39;,
+ &#39;首席&#39;,
+ &#39;风险&#39;,
+ &#39;官&#39;,
+ &#39;职务&#39;,
+ &#39;任命&#39;,
+ &#39;相同&#39;,
+ &#39;，&#39;,
+ &#39;首席&#39;,
+ &#39;数据&#39;,
+ &#39;官亦为&#39;,
+ &#39;阿里巴巴&#39;,
+ &#39;集团&#39;,
+ &#39;在&#39;,
+ &#39;完成&#39;,
+ &#39;与&#39;,
+ &#39;雅虎&#39;,
+ &#39;股权&#39;,
+ &#39;谈判&#39;,
+ &#39;，&#39;,
+ &#39;推进&#39;,
+ &#39;“&#39;,
+ &#39;ｏ&#39;,
+ &#39;ｎ&#39;,
+ &#39;ｅ&#39;,
+ &#39;\u3000&#39;,
+ &#39;ｃ&#39;,
+ &#39;ｏ&#39;,
+ &#39;ｍ&#39;,
+ &#39;ｐ&#39;,
+ &#39;ａ&#39;,
+ &#39;ｎ&#39;,
+ &#39;ｙ&#39;,
+ &#39;”&#39;,
+ &#39;目标&#39;,
+ &#39;后&#39;,
+ &#39;，&#39;,
+ &#39;在&#39;,
+ &#39;集团&#39;,
+ &#39;决策&#39;,
+ &#39;层面&#39;,
+ &#39;新增&#39;,
+ &#39;的&#39;,
+ &#39;管理&#39;,
+ &#39;岗位&#39;,
+ &#39;。&#39;,
+ &#39;０&#39;,
+ &#39;⒗&#39;,
+ &#39;锛&#39;,
+ &#39;团&#39;,
+ &#39;昨日&#39;,
+ &#39;表示&#39;,
+ &#39;，&#39;,
+ &#39;“&#39;,
+ &#39;变成&#39;,
+ &#39;一家&#39;,
+ &#39;真正&#39;,
+ &#39;意义&#39;,
+ &#39;上&#39;,
+ &#39;的&#39;,
+ &#39;数据&#39;,
+ &#39;公司&#39;,
+ &#39;”&#39;,
+ &#39;已&#39;,
+ &#39;是&#39;,
+ &#39;战略&#39;,
+ &#39;共识&#39;,
+ &#39;。&#39;,
+ &#39;记者&#39;,
+ &#39;刘夏&#39;]
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df_content=pd.DataFrame(&#123;<span class="string">&#x27;content_S&#x27;</span>:content_S&#125;) <span class="comment"># DataFrame可以使用键值对的方式来获得下面的数据形式。</span></span><br><span class="line">df_content.head()</span><br></pre></td></tr></table></figure>
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>content_S</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>[经销商, 　, 电话, 　, 试驾, ／, 订车, Ｕ, 憬, 杭州, 滨江区, 江陵, ...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>[呼叫, 热线, 　, ４, ０, ０, ８, －, １, ０, ０, －, ３, ０, ０...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>[Ｍ, Ｉ, Ｎ, Ｉ, 品牌, 在, 二月, 曾经, 公布, 了, 最新, 的, Ｍ, Ｉ...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>[清仓, 大, 甩卖, ！, 一汽, 夏利, Ｎ, ５, 、, 威志, Ｖ, ２, 低至, ...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>[在, 今年, ３, 月, 的, 日内瓦, 车展, 上, ，, 我们, 见到, 了, 高尔夫...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+<h3 id="进行数据的清洗，去掉停用词。—停用词表，可以网上下载。"><a href="#进行数据的清洗，去掉停用词。—停用词表，可以网上下载。" class="headerlink" title="进行数据的清洗，去掉停用词。—停用词表，可以网上下载。"></a>进行数据的清洗，去掉停用词。—停用词表，可以网上下载。</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">stopwords=pd.read_csv(<span class="string">&quot;stopwords.txt&quot;</span>,index_col=<span class="literal">False</span>,sep=<span class="string">&quot;\t&quot;</span>,quoting=<span class="number">3</span>,names=[<span class="string">&#x27;stopword&#x27;</span>], encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">stopwords.head(<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>stopword</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>!</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>"</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>#</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>$</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>%</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>&amp;</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>'</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>(</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>)</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>*</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>,</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>--</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>.</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>..</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>......</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>...................</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>./</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">drop_stopwords</span>(<span class="params">contents,stopwords</span>):</span></span><br><span class="line">    contents_clean = []</span><br><span class="line">    all_words = []</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> contents:</span><br><span class="line">        line_clean = []</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> line:</span><br><span class="line">            <span class="keyword">if</span> word <span class="keyword">in</span> stopwords:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            line_clean.append(word)</span><br><span class="line">            all_words.append(<span class="built_in">str</span>(word)) <span class="comment"># 一会做一个词云。有现成的库，可以轻松实现出来。</span></span><br><span class="line">        contents_clean.append(line_clean)</span><br><span class="line">    <span class="keyword">return</span> contents_clean,all_words</span><br><span class="line">    <span class="comment"># print (contents_clean)</span></span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">contents = df_content.content_S.values.tolist()    </span><br><span class="line">stopwords = stopwords.stopword.values.tolist()</span><br><span class="line">contents_clean,all_words = drop_stopwords(contents,stopwords)</span><br><span class="line"></span><br><span class="line"><span class="comment"># df_content.content_S.isin(stopwords.stopword)</span></span><br><span class="line"><span class="comment"># df_content=df_content[~df_content.content_S.isin(stopwords.stopword)]</span></span><br><span class="line"><span class="comment"># df_content.head()</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df_content=pd.DataFrame(&#123;<span class="string">&#x27;contents_clean&#x27;</span>:contents_clean&#125;)</span><br><span class="line">df_content.head() <span class="comment"># 也可以在停用词里面增加字母，将字母去掉。</span></span><br></pre></td></tr></table></figure>
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>contents_clean</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>[经销商, 电话, 试驾, 订车, Ｕ, 憬, 杭州, 滨江区, 江陵, 路, 号, 转, ...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>[呼叫, 热线, 服务, 邮箱, ｋ, ｆ, ｐ, ｅ, ｏ, ｐ, ｌ, ｅ, ｄ, ａ,...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>[Ｍ, Ｉ, Ｎ, Ｉ, 品牌, 二月, 公布, 最新, Ｍ, Ｉ, Ｎ, Ｉ, 新, 概念...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>[清仓, 甩卖, 一汽, 夏利, Ｎ, 威志, Ｖ, 低至, 万, 启新, 中国, 一汽, ...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>[日内瓦, 车展, 见到, 高尔夫, 家族, 新, 成员, 高尔夫, 敞篷版, 款, 全新,...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df_all_words=pd.DataFrame(&#123;<span class="string">&#x27;all_words&#x27;</span>:all_words&#125;)</span><br><span class="line">df_all_words.head()</span><br></pre></td></tr></table></figure>
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>all_words</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>经销商</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>电话</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>试驾</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>订车</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Ｕ</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">words_count=df_all_words.groupby(by=[<span class="string">&#x27;all_words&#x27;</span>])[<span class="string">&#x27;all_words&#x27;</span>].agg(&#123;<span class="string">&quot;count&quot;</span>:numpy.size&#125;) <span class="comment"># 先分组再agg求和。</span></span><br><span class="line">words_count=words_count.reset_index().sort_values(by=[<span class="string">&quot;count&quot;</span>],ascending=<span class="literal">False</span>) <span class="comment"># 按值进行排序</span></span><br><span class="line">words_count.head()</span><br></pre></td></tr></table></figure>
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>all_words</th>
+      <th>count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4077</th>
+      <td>中</td>
+      <td>5199</td>
+    </tr>
+    <tr>
+      <th>4209</th>
+      <td>中国</td>
+      <td>3115</td>
+    </tr>
+    <tr>
+      <th>88255</th>
+      <td>说</td>
+      <td>3055</td>
+    </tr>
+    <tr>
+      <th>104747</th>
+      <td>Ｓ</td>
+      <td>2646</td>
+    </tr>
+    <tr>
+      <th>1373</th>
+      <td>万</td>
+      <td>2390</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+<p><strong> 词云的展示 </strong> ——在github上面直接搜wordcloud就行！</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> wordcloud <span class="keyword">import</span> WordCloud <span class="comment"># 导入词云</span></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line">matplotlib.rcParams[<span class="string">&#x27;figure.figsize&#x27;</span>] = (<span class="number">10.0</span>, <span class="number">5.0</span>)</span><br><span class="line"></span><br><span class="line">wordcloud=WordCloud(font_path=<span class="string">&quot;./data/simhei.ttf&quot;</span>,background_color=<span class="string">&quot;white&quot;</span>,max_font_size=<span class="number">80</span>)</span><br><span class="line">word_frequence = &#123;x[<span class="number">0</span>]:x[<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> words_count.head(<span class="number">100</span>).values&#125; <span class="comment"># 画前100个词</span></span><br><span class="line">wordcloud=wordcloud.fit_words(word_frequence)</span><br><span class="line">plt.imshow(wordcloud)</span><br></pre></td></tr></table></figure>
+<pre><code>&lt;matplotlib.image.AxesImage at 0x186064c64e0&gt;
+</code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210511142559.png" alt=""></p>
+<h3 id="TF-IDF-：提取关键词"><a href="#TF-IDF-：提取关键词" class="headerlink" title="TF-IDF ：提取关键词"></a>TF-IDF ：提取关键词</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jieba.analyse <span class="comment"># jieba和sklearn都可以进行词频的提取</span></span><br><span class="line">index = <span class="number">2400</span></span><br><span class="line"><span class="built_in">print</span> (df_news[<span class="string">&#x27;content&#x27;</span>][index])</span><br><span class="line">content_S_str = <span class="string">&quot;&quot;</span>.join(content_S[index])  <span class="comment"># 将分词完的数据拿出来！</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&quot;  &quot;</span>.join(jieba.analyse.extract_tags(content_S_str, topK=<span class="number">5</span>, withWeight=<span class="literal">False</span>))) <span class="comment"># jieba里面有提取关键词的模块</span></span><br></pre></td></tr></table></figure>
+<div style="overflow: scroll;">
+    法国ＶＳ西班牙、里贝里ＶＳ哈维，北京时间６月２４日凌晨一场的大战举世瞩目，而这场胜利不仅仅关乎两支顶级强队的命运，同时也是他们背后的球衣赞助商耐克和阿迪达斯之间的一次角逐。Ｔ谌胙”窘炫分薇的１６支球队之中，阿迪达斯和耐克的势力范围也是几乎旗鼓相当：其中有５家球衣由耐克提供，而阿迪达斯则赞助了６家，此外茵宝有３家，而剩下的两家则由彪马赞助。而当比赛进行到现在，率先挺进四强的两支球队分别被耐克支持的葡萄牙和阿迪达斯支持的德国占据，而由于最后一场１／４决赛是茵宝（英格兰）和彪马（意大利）的对决，这也意味着明天凌晨西班牙同法国这场阿迪达斯和耐克在１／４决赛的唯一一次直接交手将直接决定两家体育巨头在此次欧洲杯上的胜负。８据评估，在２０１２年足球商品的销售额能总共超过４０亿欧元，而单单是不足一个月的欧洲杯就有高达５亿的销售额，也就是说在欧洲杯期间将有７００万件球衣被抢购一空。根据市场评估，两大巨头阿迪达斯和耐克的市场占有率也是并驾齐驱，其中前者占据３８％，而后者占据３６％。体育权利顾问奥利弗－米歇尔在接受《队报》采访时说：“欧洲杯是耐克通过法国翻身的一个绝佳机会！”Ｃ仔尔接着谈到两大赞助商的经营策略：“竞技体育的成功会燃起球衣购买的热情，不过即便是水平相当，不同国家之间的欧洲杯效应却存在不同。在德国就很出色，大约１／４的德国人通过电视观看了比赛，而在西班牙效果则差很多，由于民族主义高涨的加泰罗尼亚地区只关注巴萨和巴萨的球衣，他们对西班牙国家队根本没什么兴趣。”因此尽管西班牙接连拿下欧洲杯和世界杯，但是阿迪达斯只为西班牙足协支付每年２６００万的赞助费＃相比之下尽管最近两届大赛表现糟糕法国足协将从耐克手中每年可以得到４０００万欧元。米歇尔解释道：“法国创纪录的４０００万欧元赞助费得益于阿迪达斯和耐克竞逐未来１５年欧洲市场的竞争。耐克需要笼络一个大国来打赢这场欧洲大陆的战争，而尽管德国拿到的赞助费并不太高，但是他们却显然牢牢掌握在民族品牌阿迪达斯手中。从长期投资来看，耐克给法国的赞助并不算过高。”
+    耐克  阿迪达斯  欧洲杯  球衣  西班牙
+</div>
+
+<h3 id="LDA-：主题模型"><a href="#LDA-：主题模型" class="headerlink" title="LDA ：主题模型"></a>LDA ：主题模型</h3><p>格式要求（很重要）：list（分好词的语料） of list（不同的文章）形式，分词好的的整个语料</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> gensim <span class="keyword">import</span> corpora, models, similarities</span><br><span class="line"><span class="keyword">import</span> gensim</span><br><span class="line"><span class="comment"># http://radimrehurek.com/gensim/</span></span><br></pre></td></tr></table></figure>
+<pre><code>C:\Anaconda3\lib\site-packages\gensim\utils.py:860: UserWarning: detected Windows; aliasing chunkize to chunkize_serial
+  warnings.warn(&quot;detected Windows; aliasing chunkize to chunkize_serial&quot;)
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 做映射，相当于词袋</span></span><br><span class="line">dictionary = corpora.Dictionary(contents_clean)</span><br><span class="line">corpus = [dictionary.doc2bow(sentence) <span class="keyword">for</span> sentence <span class="keyword">in</span> contents_clean]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lda = gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=<span class="number">20</span>) <span class="comment"># 类似Kmeans自己指定K值。无监督</span></span><br><span class="line">                                                                                        <span class="comment">#    自定义主题数目</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 一号分类结果</span></span><br><span class="line"><span class="built_in">print</span> (lda.print_topic(<span class="number">1</span>, topn=<span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>0.007*&quot;中&quot; + 0.006*&quot;说&quot; + 0.004*&quot;观众&quot; + 0.002*&quot;赛区&quot; + 0.002*&quot;岁&quot;
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> topic <span class="keyword">in</span> lda.print_topics(num_topics=<span class="number">20</span>, num_words=<span class="number">5</span>):</span><br><span class="line">    <span class="built_in">print</span> (topic[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<pre><code>0.007*&quot;女人&quot; + 0.006*&quot;男人&quot; + 0.006*&quot;Ｍ&quot; + 0.004*&quot;Ｓ&quot; + 0.004*&quot;说&quot;
+0.004*&quot;中&quot; + 0.004*&quot;训练&quot; + 0.003*&quot;说&quot; + 0.003*&quot;学校&quot; + 0.002*&quot;研究生&quot;
+0.006*&quot;戏&quot; + 0.006*&quot;导演&quot; + 0.005*&quot;该剧&quot; + 0.004*&quot;中&quot; + 0.004*&quot;演员&quot;
+0.007*&quot;中&quot; + 0.006*&quot;说&quot; + 0.004*&quot;观众&quot; + 0.002*&quot;赛区&quot; + 0.002*&quot;岁&quot;
+0.004*&quot;万&quot; + 0.003*&quot;号&quot; + 0.003*&quot;中&quot; + 0.002*&quot;Ｓ&quot; + 0.002*&quot;Ｒ&quot;
+0.014*&quot;电影&quot; + 0.009*&quot;导演&quot; + 0.007*&quot;影片&quot; + 0.006*&quot;中国&quot; + 0.005*&quot;中&quot;
+0.006*&quot;中&quot; + 0.005*&quot;比赛&quot; + 0.004*&quot;说&quot; + 0.003*&quot;撒&quot; + 0.002*&quot;时间&quot;
+0.006*&quot;赛季&quot; + 0.005*&quot;中&quot; + 0.003*&quot;联赛&quot; + 0.003*&quot;中国&quot; + 0.002*&quot;航母&quot;
+0.005*&quot;李小璐&quot; + 0.004*&quot;中&quot; + 0.002*&quot;贾乃亮&quot; + 0.002*&quot;Ｗ&quot; + 0.002*&quot;皮肤&quot;
+0.004*&quot;万&quot; + 0.003*&quot;号&quot; + 0.003*&quot;Ｖ&quot; + 0.003*&quot;Ｔ&quot; + 0.003*&quot;刘涛&quot;
+0.021*&quot;男人&quot; + 0.008*&quot;女人&quot; + 0.007*&quot;考生&quot; + 0.004*&quot;说&quot; + 0.003*&quot;中&quot;
+0.005*&quot;中&quot; + 0.005*&quot;食物&quot; + 0.004*&quot;ｉ&quot; + 0.004*&quot;ａ&quot; + 0.004*&quot;吃&quot;
+0.006*&quot;中&quot; + 0.004*&quot;电影&quot; + 0.004*&quot;说&quot; + 0.002*&quot;中国&quot; + 0.002*&quot;高考&quot;
+0.007*&quot;中&quot; + 0.006*&quot;孩子&quot; + 0.004*&quot;说&quot; + 0.003*&quot;教育&quot; + 0.003*&quot;中国&quot;
+0.005*&quot;中&quot; + 0.005*&quot;节目&quot; + 0.004*&quot;说&quot; + 0.004*&quot;表演&quot; + 0.003*&quot;岁&quot;
+0.007*&quot;电视剧&quot; + 0.004*&quot;中&quot; + 0.003*&quot;说&quot; + 0.003*&quot;飞行&quot; + 0.002*&quot;飞机&quot;
+0.007*&quot;中&quot; + 0.006*&quot;球队&quot; + 0.005*&quot;选手&quot; + 0.004*&quot;观众&quot; + 0.004*&quot;ｉ&quot;
+0.005*&quot;中&quot; + 0.005*&quot;天籁&quot; + 0.004*&quot;产品&quot; + 0.004*&quot;肌肤&quot; + 0.003*&quot;职场&quot;
+0.008*&quot;中国&quot; + 0.008*&quot;饰演&quot; + 0.007*&quot;中&quot; + 0.004*&quot;说&quot; + 0.004*&quot;节目&quot;
+0.021*&quot;ｅ&quot; + 0.021*&quot;ａ&quot; + 0.016*&quot;ｏ&quot; + 0.013*&quot;ｉ&quot; + 0.013*&quot;ｎ&quot;
+</code></pre><h3 id="贝叶斯算法进行新闻的分类"><a href="#贝叶斯算法进行新闻的分类" class="headerlink" title="贝叶斯算法进行新闻的分类"></a>贝叶斯算法进行新闻的分类</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df_train=pd.DataFrame(&#123;<span class="string">&#x27;contents_clean&#x27;</span>:contents_clean,<span class="string">&#x27;label&#x27;</span>:df_news[<span class="string">&#x27;category&#x27;</span>]&#125;)</span><br><span class="line">df_train.tail()</span><br></pre></td></tr></table></figure>
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>contents_clean</th>
+      <th>label</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4995</th>
+      <td>[天气, 炎热, 补水, 变得, 美国, 跑步, 世界, 杂志, 报道, 喝水, 身体, 补...</td>
+      <td>时尚</td>
+    </tr>
+    <tr>
+      <th>4996</th>
+      <td>[不想, 说, 话, 刺激, 说, 做, 只能, 走, 离开, 伤心地, 想起, 一句, 话...</td>
+      <td>时尚</td>
+    </tr>
+    <tr>
+      <th>4997</th>
+      <td>[岁, 刘晓庆, 最新, 嫩照, Ｏ, 衷, 诘, 牧跸, 庆, 看不出, 岁, 秒杀, 刘...</td>
+      <td>时尚</td>
+    </tr>
+    <tr>
+      <th>4998</th>
+      <td>[导语, 做, 爸爸, 一种, 幸福, 无论是, 领养, 亲生, 更何况, 影视剧, 中, ...</td>
+      <td>时尚</td>
+    </tr>
+    <tr>
+      <th>4999</th>
+      <td>[全球, 最美, 女人, 合成图, 国, 整形外科, 教授, 李承哲, 国际, 学术, 杂志...</td>
+      <td>时尚</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df_train.label.unique()</span><br></pre></td></tr></table></figure>
+<pre><code>array([&#39;汽车&#39;, &#39;财经&#39;, &#39;科技&#39;, &#39;健康&#39;, &#39;体育&#39;, &#39;教育&#39;, &#39;文化&#39;, &#39;军事&#39;, &#39;娱乐&#39;, &#39;时尚&#39;], dtype=object)
+</code></pre><p><strong> pandas 容易可以很容易进行打标签 </strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">label_mapping = &#123;<span class="string">&quot;汽车&quot;</span>: <span class="number">1</span>, <span class="string">&quot;财经&quot;</span>: <span class="number">2</span>, <span class="string">&quot;科技&quot;</span>: <span class="number">3</span>, <span class="string">&quot;健康&quot;</span>: <span class="number">4</span>, <span class="string">&quot;体育&quot;</span>:<span class="number">5</span>, <span class="string">&quot;教育&quot;</span>: <span class="number">6</span>,<span class="string">&quot;文化&quot;</span>: <span class="number">7</span>,<span class="string">&quot;军事&quot;</span>: <span class="number">8</span>,<span class="string">&quot;娱乐&quot;</span>: <span class="number">9</span>,<span class="string">&quot;时尚&quot;</span>: <span class="number">0</span>&#125;</span><br><span class="line">df_train[<span class="string">&#x27;label&#x27;</span>] = df_train[<span class="string">&#x27;label&#x27;</span>].<span class="built_in">map</span>(label_mapping) <span class="comment"># label的替换</span></span><br><span class="line">df_train.head()</span><br></pre></td></tr></table></figure>
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>contents_clean</th>
+      <th>label</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>[经销商, 电话, 试驾, 订车, Ｕ, 憬, 杭州, 滨江区, 江陵, 路, 号, 转, ...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>[呼叫, 热线, 服务, 邮箱, ｋ, ｆ, ｐ, ｅ, ｏ, ｐ, ｌ, ｅ, ｄ, ａ,...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>[Ｍ, Ｉ, Ｎ, Ｉ, 品牌, 二月, 公布, 最新, Ｍ, Ｉ, Ｎ, Ｉ, 新, 概念...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>[清仓, 甩卖, 一汽, 夏利, Ｎ, 威志, Ｖ, 低至, 万, 启新, 中国, 一汽, ...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>[日内瓦, 车展, 见到, 高尔夫, 家族, 新, 成员, 高尔夫, 敞篷版, 款, 全新,...</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"></span><br><span class="line">x_train, x_test, y_train, y_test = train_test_split(df_train[<span class="string">&#x27;contents_clean&#x27;</span>].values, df_train[<span class="string">&#x27;label&#x27;</span>].values, random_state=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># x_train = x_train.flatten()</span></span><br><span class="line">x_train[<span class="number">0</span>][<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+<pre><code>&#39;上海&#39;
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">words = []  </span><br><span class="line"><span class="keyword">for</span> line_index <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(x_train)):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># x_train[line_index][word_index] = str(x_train[line_index][word_index])</span></span><br><span class="line">        words.append(<span class="string">&#x27; &#x27;</span>.join(x_train[line_index])) <span class="comment"># python的list往字符串转化</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="built_in">print</span> (line_index,word_index)</span><br><span class="line">words[<span class="number">0</span>]  <span class="comment"># 格式转换，不是list of list格式（下文的CoountVector的格式）      </span></span><br></pre></td></tr></table></figure>
+<div style="overflow: scroll;">
+    '中新网 上海 日电 于俊 父亲节 网络 吃 一顿 电影 快餐 微 电影 爸 对不起 我爱你 定于 本月 父亲节 当天 各大 视频 网站 首映 葜 谱 鞣 剑 保慈 障蚣 钦 呓 樯 埽 ⒌ 缬 埃 ǎ 停 椋 悖 颍 铩 妫 椋 恚 称 微型 电影 新 媒体 平台 播放 状态 短时 休闲 状态 观看 完整 策划 系统 制作 体系 支持 显示 较完整 故事情节 电影 微 超短 放映 微 周期 制作 天 数周 微 规模 投资 人民币 几千 数万元 每部 内容 融合 幽默 搞怪 时尚 潮流 人文 言情 公益 教育 商业 定制 主题 单独 成篇 系列 成剧 唇 开播 微 电影 爸 对不起 我爱你 讲述 一对 父子 观念 缺少 沟通 导致 关系 父亲 传统 固执 钟情 传统 生活 方式 儿子 新派 音乐 达 习惯 晚出 早 生活 性格 张扬 叛逆 两种 截然不同 生活 方式 理念 差异 一场 父子 间 拉开序幕 子 失手 打破 父亲 心爱 物品 父亲 赶出 家门 剧情 演绎 父亲节 妹妹 哥哥 化解 父亲 这场 矛盾 映逋坏 嚼 斫 狻 ⒍ 粤 ⒌ 桨容 争执 退让 传统 尴尬 父子 尴尬 情 男人 表达 心中 那份 感恩 一杯 滤挂 咖啡 父亲节 变得 温馨 镁 缬 缮 虾 Ｎ 逄 煳 幕 传播 迪欧 咖啡 联合 出品 出品人 希望 观摩 扪心自问 父亲节 父亲 记得 父亲 生日 哪一天 父亲 爱喝 跨出 家门 那一刻 感觉 一颗 颤动 心 操劳 天下 儿女 父亲节 大声 喊出 父亲 家人 爱 完'
+</div>
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span> (<span class="built_in">len</span>(words))</span><br></pre></td></tr></table></figure>
+<pre><code>3750
+</code></pre><p><strong>CountVectorizer的简要介绍</strong>↓——将词转换成向量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer</span><br><span class="line">texts=[<span class="string">&quot;dog cat fish&quot;</span>,<span class="string">&quot;dog cat cat&quot;</span>,<span class="string">&quot;fish bird&quot;</span>, <span class="string">&#x27;bird&#x27;</span>] <span class="comment"># 四篇文章，注意其格式，不是list of list格式</span></span><br><span class="line">cv = CountVectorizer()</span><br><span class="line">cv_fit=cv.fit_transform(texts)</span><br><span class="line"></span><br><span class="line">print(cv.get_feature_names()) <span class="comment"># 获得语料库中不重复的词</span></span><br><span class="line">print(cv_fit.toarray())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(cv_fit.toarray().<span class="built_in">sum</span>(axis=<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;bird&#39;, &#39;cat&#39;, &#39;dog&#39;, &#39;fish&#39;]
+[[0 1 1 1]
+ [0 2 1 0]
+ [1 0 0 1]
+ [1 0 0 0]]
+[2 3 2 2]
+</code></pre><p>ngram_range=(1,4)可以将特征值进行组合，让向量更复杂，一般2就可以</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer</span><br><span class="line">texts=[<span class="string">&quot;dog cat fish&quot;</span>,<span class="string">&quot;dog cat cat&quot;</span>,<span class="string">&quot;fish bird&quot;</span>, <span class="string">&#x27;bird&#x27;</span>]</span><br><span class="line">cv = CountVectorizer(ngram_range=(<span class="number">1</span>,<span class="number">4</span>))  <span class="comment"># 词可以组合。可以让向量更复杂！</span></span><br><span class="line">cv_fit=cv.fit_transform(texts)</span><br><span class="line"></span><br><span class="line">print(cv.get_feature_names())</span><br><span class="line">print(cv_fit.toarray())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(cv_fit.toarray().<span class="built_in">sum</span>(axis=<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;bird&#39;, &#39;cat&#39;, &#39;cat cat&#39;, &#39;cat fish&#39;, &#39;dog&#39;, &#39;dog cat&#39;, &#39;dog cat cat&#39;, &#39;dog cat fish&#39;, &#39;fish&#39;, &#39;fish bird&#39;]
+[[0 1 0 1 1 1 0 1 1 0]
+ [0 2 1 0 1 1 1 0 0 0]
+ [1 0 0 0 0 0 0 0 1 1]
+ [1 0 0 0 0 0 0 0 0 0]]
+[2 3 1 1 2 2 1 1 2 1]
+</code></pre><p><strong> 数据准备好后可以开始进行操作了 </strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer</span><br><span class="line"></span><br><span class="line">vec = CountVectorizer(analyzer=<span class="string">&#x27;word&#x27;</span>, max_features=<span class="number">4000</span>,  lowercase = <span class="literal">False</span>)</span><br><span class="line">vec.fit(words) <span class="comment"># fit,以某种规则传化</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong> 进行贝叶斯的计算 </strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.naive_bayes <span class="keyword">import</span> MultinomialNB</span><br><span class="line">classifier = MultinomialNB()</span><br><span class="line">classifier.fit(vec.transform(words), y_train) <span class="comment"># transform,规则训练好，进行转换为向量。为特征</span></span><br></pre></td></tr></table></figure>
+<pre><code>MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True)
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">test_words = []</span><br><span class="line"><span class="keyword">for</span> line_index <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(x_test)):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment">#x_train[line_index][word_index] = str(x_train[line_index][word_index])</span></span><br><span class="line">        test_words.append(<span class="string">&#x27; &#x27;</span>.join(x_test[line_index]))</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">         <span class="built_in">print</span> (line_index,word_index)</span><br><span class="line">test_words[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<div style="overflow: scroll;"> 
+
+    '国家 公务员 考试 申论 应用文 类 试题 实质 一道 集 概括 分析 提出 解决问题 一体 综合性 试题 说 一道 客观 凝练 申发 论述 文章 题目 分析 历年 国考 申论 真题 公文 类 试题 类型 多样 包括 公文 类 事务性 文书 类 题材 从题 干 作答 材料 内容 整合 分析 无需 太 创造性 发挥 纵观 历年 申论 真题 作答 应用文 类 试题 文种 格式 作出 特别 重在 内容 考查 行文 格式 考生 平常心 面对 应用文 类 试题 准确 把握 作答 领会 内在 含义 把握 题材 主旨 材料 结构 轻松 应对 应用文 类 试题 Ｒ 弧 ⒆ 钒 盐 展文 写作 原则 Ｔ 材料 中来 应用文 类 试题 材料 总体 把握 客观 考生 材料 中来 材料 中 把握 材料 准确 理解 题材 主旨 Ｔ 政府 角度 作答 应用文 类 试题 更应 注重 政府 角度 观点 政府 角度 出发 原则 表述 观点 提出 解决 之策 考生 作答 站 政府 人员 角度 看待 提出 解决问题 Ｔ 文体 结构 形式 考查 重点 文体 结构 大部分 评分 关键点 解答 方法 薄 ⒆ ス 丶 词 明 方向 作答 题目 题干 作答 作答 方向 作答 角度 关键 向导 考生 仔细阅读 题干 作答 抓住 关键词 作答 方向 相关 要点 整理 作答 思路 年国考 地市级 真 题为 例 潦惺姓 府 宣传 推进 近海 水域 污染 整治 工作 请 给定 资料 市政府 工作人员 身份 草拟 一份 宣传 纲要 Ｒ 求 保对 宣传 内容 要点 提纲挈领 陈述 玻 体现 政府 精神 全市 各界 关心 支持 污染 整治 工作 通俗易懂 超过 字 肮 丶 词 近海 水域 污染 整治 工作 市政府 工作人员 身份 宣传 纲要 提纲挈领 陈述 体现 政府 精神 全市 各界 关心 支持 污染 整治 工作 通俗易懂 提示 归结 作答 要点 包括 污染 情况 原因 解决 对策 作答 思路 情况 原因 对策 意义 逻辑 顺序 安排 文章 结构 病 ⒋ 缶殖 龇 ⅲ 明 结构 解答 应用文 类 试题 考生 材料 整体 出发 大局 出发 高屋建瓴 把握 材料 主题 思想 事件 起因 解决 对策 阅读文章 构建 文章 结构 直至 快速 解答 场 ⒗ 硭 乘悸 罚明 逻辑 应用文 类 试题 严密 逻辑思维 情况 原因 对策 意义 考生 作答 先 弄清楚 解答 思路 统筹安排 脉络 清晰 逻辑 表达 内容 表述 础 把握 明 详略 考生 仔细阅读 分析 揣摩 应用文 类 试题 内容 答题 时要 详略 得当 主次 分明 安排 内容 增加 文章 层次感 阅卷 老师 阅卷 时能 明白 清晰 一目了然 玻埃 保蹦旯 考 考试 申论 试卷 分为 省级 地市级 两套 试卷 能力 大有 省级 申论 试题 考生 宏观 角度看 注重 深度 广度 考生 深谋远虑 地市级 试题 考生 微观 视角 观察 侧重 考查 解决 能力 考生 贯彻执行 作答 区别对待'
+
+</div>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">classifier.score(vec.transform(test_words), y_test)</span><br></pre></td></tr></table></figure>
+<pre><code>0.80400000000000005
+</code></pre><h3 id="TF-IDF的到导入计算"><a href="#TF-IDF的到导入计算" class="headerlink" title="TF-IDF的到导入计算"></a>TF-IDF的到导入计算</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> TfidfVectorizer</span><br><span class="line"></span><br><span class="line">vectorizer = TfidfVectorizer(analyzer=<span class="string">&#x27;word&#x27;</span>, max_features=<span class="number">4000</span>,  lowercase = <span class="literal">False</span>)</span><br><span class="line">vectorizer.fit(words)</span><br></pre></td></tr></table></figure>
+<pre><code>TfidfVectorizer(analyzer=&#39;word&#39;, binary=False, decode_error=&#39;strict&#39;,
+        dtype=&lt;class &#39;numpy.int64&#39;&gt;, encoding=&#39;utf-8&#39;, input=&#39;content&#39;,
+        lowercase=False, max_df=1.0, max_features=4000, min_df=1,
+        ngram_range=(1, 1), norm=&#39;l2&#39;, preprocessor=None, smooth_idf=True,
+        stop_words=None, strip_accents=None, sublinear_tf=False,
+        token_pattern=&#39;(?u)\\b\\w\\w+\\b&#39;, tokenizer=None, use_idf=True,
+        vocabulary=None)
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.naive_bayes <span class="keyword">import</span> MultinomialNB</span><br><span class="line">classifier = MultinomialNB()</span><br><span class="line">classifier.fit(vectorizer.transform(words), y_train)</span><br></pre></td></tr></table></figure>
+<pre><code>MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True)
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">classifier.score(vectorizer.transform(test_words), y_test)</span><br></pre></td></tr></table></figure>
+<pre><code>0.81520000000000004
+</code></pre>
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html" title="贝叶斯实战-新闻分类" target="_blank" rel="external">https://xxren8218.github.io/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/20210511/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E5%9B%9B%EF%BC%89%EF%BC%9A%E5%AD%97%E7%AC%A6%E6%B5%81%E4%B8%AD%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%B8%8D%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%97%E7%AC%A6.html" title="剑指Offer（五十四）：字符流中第一个不重复的字符"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+</body>
+</html>
