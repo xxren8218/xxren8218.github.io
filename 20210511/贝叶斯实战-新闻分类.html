@@ -27,7 +27,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210511142559.png">
 <meta property="article:published_time" content="2021-05-11T06:25:35.000Z">
-<meta property="article:modified_time" content="2021-05-11T06:43:23.610Z">
+<meta property="article:modified_time" content="2021-05-11T10:39:40.681Z">
 <meta property="article:author" content="任晓雄">
 <meta property="article:tag" content="机器学习基础实战">
 <meta name="twitter:card" content="summary">
@@ -59,7 +59,7 @@
       
       
       <div class="profile-block text-center">
-        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
+        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
           <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
         </a>
         <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
@@ -417,8 +417,8 @@
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
     <a href="/20210511/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9E%E6%88%98-%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html" class="article-date">
-        更新于<time datetime="2021-05-11T06:43:23.610Z" itemprop="dateUpdated">
-            2021-05-11 14:43:23
+        更新于<time datetime="2021-05-11T10:39:40.681Z" itemprop="dateUpdated">
+            2021-05-11 18:39:40
         </time>
     </a>
 </span>
@@ -455,7 +455,7 @@
       
         <h1 id="文本分析——新闻分类"><a href="#文本分析——新闻分类" class="headerlink" title="文本分析——新闻分类"></a>文本分析——新闻分类</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> jieba</span><br><span class="line"><span class="comment"># pip install jieba</span></span><br></pre></td></tr></table></figure>
 <h3 id="数据来源：http-www-sogou-com-labs-resource-ca-php"><a href="#数据来源：http-www-sogou-com-labs-resource-ca-php" class="headerlink" title="数据来源：http://www.sogou.com/labs/resource/ca.php"></a>数据来源：<a target="_blank" rel="noopener" href="http://www.sogou.com/labs/resource/ca.php">http://www.sogou.com/labs/resource/ca.php</a></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df_news = pd.read_table(<span class="string">&#x27;./data/val.txt&#x27;</span>,names=[<span class="string">&#x27;category&#x27;</span>,<span class="string">&#x27;theme&#x27;</span>,<span class="string">&#x27;URL&#x27;</span>,<span class="string">&#x27;content&#x27;</span>],encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="comment"># 涉及中文，用encoding</span></span><br><span class="line">df_news = df_news.dropna() <span class="comment"># 缺失值直接drop掉</span></span><br><span class="line">df_news.head()</span><br></pre></td></tr></table></figure>
-<div>
+<div style="overflow: scroll;">
 <style>
     .dataframe thead tr:only-child th {
         text-align: right;
@@ -672,7 +672,7 @@
  &#39;记者&#39;,
  &#39;刘夏&#39;]
 </code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df_content=pd.DataFrame(&#123;<span class="string">&#x27;content_S&#x27;</span>:content_S&#125;) <span class="comment"># DataFrame可以使用键值对的方式来获得下面的数据形式。</span></span><br><span class="line">df_content.head()</span><br></pre></td></tr></table></figure>
-<div>
+<div style="overflow: scroll;"> 
 <style>
     .dataframe thead tr:only-child th {
         text-align: right;
@@ -721,7 +721,7 @@
 
 
 <h3 id="进行数据的清洗，去掉停用词。—停用词表，可以网上下载。"><a href="#进行数据的清洗，去掉停用词。—停用词表，可以网上下载。" class="headerlink" title="进行数据的清洗，去掉停用词。—停用词表，可以网上下载。"></a>进行数据的清洗，去掉停用词。—停用词表，可以网上下载。</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">stopwords=pd.read_csv(<span class="string">&quot;stopwords.txt&quot;</span>,index_col=<span class="literal">False</span>,sep=<span class="string">&quot;\t&quot;</span>,quoting=<span class="number">3</span>,names=[<span class="string">&#x27;stopword&#x27;</span>], encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">stopwords.head(<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
-<div>
+<div style="overflow: scroll;">
 <style>
     .dataframe thead tr:only-child th {
         text-align: right;
@@ -832,7 +832,7 @@
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">drop_stopwords</span>(<span class="params">contents,stopwords</span>):</span></span><br><span class="line">    contents_clean = []</span><br><span class="line">    all_words = []</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> contents:</span><br><span class="line">        line_clean = []</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> line:</span><br><span class="line">            <span class="keyword">if</span> word <span class="keyword">in</span> stopwords:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            line_clean.append(word)</span><br><span class="line">            all_words.append(<span class="built_in">str</span>(word)) <span class="comment"># 一会做一个词云。有现成的库，可以轻松实现出来。</span></span><br><span class="line">        contents_clean.append(line_clean)</span><br><span class="line">    <span class="keyword">return</span> contents_clean,all_words</span><br><span class="line">    <span class="comment"># print (contents_clean)</span></span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">contents = df_content.content_S.values.tolist()    </span><br><span class="line">stopwords = stopwords.stopword.values.tolist()</span><br><span class="line">contents_clean,all_words = drop_stopwords(contents,stopwords)</span><br><span class="line"></span><br><span class="line"><span class="comment"># df_content.content_S.isin(stopwords.stopword)</span></span><br><span class="line"><span class="comment"># df_content=df_content[~df_content.content_S.isin(stopwords.stopword)]</span></span><br><span class="line"><span class="comment"># df_content.head()</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df_content=pd.DataFrame(&#123;<span class="string">&#x27;contents_clean&#x27;</span>:contents_clean&#125;)</span><br><span class="line">df_content.head() <span class="comment"># 也可以在停用词里面增加字母，将字母去掉。</span></span><br></pre></td></tr></table></figure>
-<div>
+<div style="overflow: scroll;">
 <style>
     .dataframe thead tr:only-child th {
         text-align: right;
@@ -882,7 +882,7 @@
 
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df_all_words=pd.DataFrame(&#123;<span class="string">&#x27;all_words&#x27;</span>:all_words&#125;)</span><br><span class="line">df_all_words.head()</span><br></pre></td></tr></table></figure>
-<div>
+<div style="overflow: scroll;">
 <style>
     .dataframe thead tr:only-child th {
         text-align: right;
@@ -932,7 +932,7 @@
 
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">words_count=df_all_words.groupby(by=[<span class="string">&#x27;all_words&#x27;</span>])[<span class="string">&#x27;all_words&#x27;</span>].agg(&#123;<span class="string">&quot;count&quot;</span>:numpy.size&#125;) <span class="comment"># 先分组再agg求和。</span></span><br><span class="line">words_count=words_count.reset_index().sort_values(by=[<span class="string">&quot;count&quot;</span>],ascending=<span class="literal">False</span>) <span class="comment"># 按值进行排序</span></span><br><span class="line">words_count.head()</span><br></pre></td></tr></table></figure>
-<div>
+<div style="overflow: scroll;">
 <style>
     .dataframe thead tr:only-child th {
         text-align: right;
@@ -1026,7 +1026,7 @@
 0.008*&quot;中国&quot; + 0.008*&quot;饰演&quot; + 0.007*&quot;中&quot; + 0.004*&quot;说&quot; + 0.004*&quot;节目&quot;
 0.021*&quot;ｅ&quot; + 0.021*&quot;ａ&quot; + 0.016*&quot;ｏ&quot; + 0.013*&quot;ｉ&quot; + 0.013*&quot;ｎ&quot;
 </code></pre><h3 id="贝叶斯算法进行新闻的分类"><a href="#贝叶斯算法进行新闻的分类" class="headerlink" title="贝叶斯算法进行新闻的分类"></a>贝叶斯算法进行新闻的分类</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df_train=pd.DataFrame(&#123;<span class="string">&#x27;contents_clean&#x27;</span>:contents_clean,<span class="string">&#x27;label&#x27;</span>:df_news[<span class="string">&#x27;category&#x27;</span>]&#125;)</span><br><span class="line">df_train.tail()</span><br></pre></td></tr></table></figure>
-<div>
+<div style="overflow: scroll;">
 <style>
     .dataframe thead tr:only-child th {
         text-align: right;
@@ -1085,7 +1085,7 @@
 <pre><code>array([&#39;汽车&#39;, &#39;财经&#39;, &#39;科技&#39;, &#39;健康&#39;, &#39;体育&#39;, &#39;教育&#39;, &#39;文化&#39;, &#39;军事&#39;, &#39;娱乐&#39;, &#39;时尚&#39;], dtype=object)
 </code></pre><p><strong> pandas 容易可以很容易进行打标签 </strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">label_mapping = &#123;<span class="string">&quot;汽车&quot;</span>: <span class="number">1</span>, <span class="string">&quot;财经&quot;</span>: <span class="number">2</span>, <span class="string">&quot;科技&quot;</span>: <span class="number">3</span>, <span class="string">&quot;健康&quot;</span>: <span class="number">4</span>, <span class="string">&quot;体育&quot;</span>:<span class="number">5</span>, <span class="string">&quot;教育&quot;</span>: <span class="number">6</span>,<span class="string">&quot;文化&quot;</span>: <span class="number">7</span>,<span class="string">&quot;军事&quot;</span>: <span class="number">8</span>,<span class="string">&quot;娱乐&quot;</span>: <span class="number">9</span>,<span class="string">&quot;时尚&quot;</span>: <span class="number">0</span>&#125;</span><br><span class="line">df_train[<span class="string">&#x27;label&#x27;</span>] = df_train[<span class="string">&#x27;label&#x27;</span>].<span class="built_in">map</span>(label_mapping) <span class="comment"># label的替换</span></span><br><span class="line">df_train.head()</span><br></pre></td></tr></table></figure>
-<div>
+<div style="overflow: scroll;">
 <style>
     .dataframe thead tr:only-child th {
         text-align: right;
@@ -1218,12 +1218,12 @@
   <div class="panel-body">
     <figure class="media">
       <div class="media-left">
-        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
+        <a href="https://xxren888.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
           <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
         </a>
       </div>
       <div class="media-body">
-        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <h3 class="media-heading"><a href="https://xxren888.gitee.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
         <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
       </div>
     </figure>
@@ -1535,24 +1535,6 @@ $(function () {
       })
     })
   </script>
-
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-
 
 
 </body>
