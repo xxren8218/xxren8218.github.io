@@ -17,11 +17,11 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>聚类基础——KMEANS &amp; DSSCAN | X.X.Ren的个人博客</title>
+  <title>聚类基础——KMEANS &amp; DBSCAN | X.X.Ren的个人博客</title>
   <meta name="description" content="聚类——啤酒分类1234# beer datasetimport pandas as pdbeer &#x3D; pd.read_csv(&amp;#x27;data.txt&amp;#x27;, sep&#x3D;&amp;#x27; &amp;#x27;)beer       .dataframe thead tr:only-child th {         text-align: right;     }      .dataframe">
 <meta property="og:type" content="article">
-<meta property="og:title" content="聚类基础——KMEANS &amp; DSSCAN">
-<meta property="og:url" content="https://xxren8218.github.io/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html">
+<meta property="og:title" content="聚类基础——KMEANS &amp; DBSCAN">
+<meta property="og:url" content="https://xxren8218.github.io/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html">
 <meta property="og:site_name" content="X.X.Ren">
 <meta property="og:description" content="聚类——啤酒分类1234# beer datasetimport pandas as pdbeer &#x3D; pd.read_csv(&amp;#x27;data.txt&amp;#x27;, sep&#x3D;&amp;#x27; &amp;#x27;)beer       .dataframe thead tr:only-child th {         text-align: right;     }      .dataframe">
 <meta property="og:locale" content="zh_CN">
@@ -29,17 +29,17 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210513181104.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210513181130.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210513181223.png">
-<meta property="og:image" content="https://xxren8218.github.io/20210513/1.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210513183410.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210513181248.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210513181312.png">
 <meta property="article:published_time" content="2021-05-13T10:05:21.000Z">
-<meta property="article:modified_time" content="2021-05-13T10:16:31.689Z">
+<meta property="article:modified_time" content="2021-05-13T10:34:24.724Z">
 <meta property="article:author" content="任晓雄">
 <meta property="article:tag" content="机器学习基础">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210513181033.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -65,7 +65,7 @@
       
       
       <div class="profile-block text-center">
-        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
+        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
           <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
         </a>
         <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
@@ -253,10 +253,10 @@
           <li>
             
             <div class="item-thumb">
-              <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html" class="thumb">
+              <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html" class="thumb">
     
     
-        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="聚类基础——KMEANS &amp; DSSCAN" class="thumb-image"></span>
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="聚类基础——KMEANS &amp; DBSCAN" class="thumb-image"></span>
     
 </a>
 
@@ -267,7 +267,7 @@
                 <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
               </p>
               <p class="item-title">
-                <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html" class="title">聚类基础——KMEANS &amp; DSSCAN</a>
+                <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html" class="title">聚类基础——KMEANS &amp; DBSCAN</a>
               </p>
               <p class="item-date">
                 <time datetime="2021-05-13T10:05:21.000Z" itemprop="datePublished">2021-05-13 18:05:21</time>
@@ -397,14 +397,14 @@
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-聚类基础——KMEANS-DSSCAN" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-聚类基础——KMEANS-DBSCAN" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      聚类基础——KMEANS &amp; DSSCAN
+      聚类基础——KMEANS &amp; DBSCAN
     </h1>
   
 
@@ -413,7 +413,7 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar"></i>
-    <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html" class="article-date">
+    <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html" class="article-date">
         发布于<time datetime="2021-05-13T10:05:21.000Z" itemprop="datePublished">
             2021-05-13 18:05:21
         </time>
@@ -422,9 +422,9 @@
 
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-    <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html" class="article-date">
-        更新于<time datetime="2021-05-13T10:16:31.689Z" itemprop="dateUpdated">
-            2021-05-13 18:16:31
+    <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html" class="article-date">
+        更新于<time datetime="2021-05-13T10:34:24.724Z" itemprop="dateUpdated">
+            2021-05-13 18:34:24
         </time>
     </a>
 </span>
@@ -447,10 +447,10 @@
 
 	<span class="article-read hidden-xs">
     	<i class="icon icon-eye-fill" aria-hidden="true"></i>
-    	<span id="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html" class="leancloud_visitors"  data-flag-title="聚类基础——KMEANS &amp; DSSCAN">0</span>
+    	<span id="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html" class="leancloud_visitors"  data-flag-title="聚类基础——KMEANS &amp; DBSCAN">0</span>
     </span>
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -1431,7 +1431,7 @@
         &lt;matplotlib.axes._subplots.AxesSubplot object at 0x0000018A27E8D588&gt;,
         &lt;matplotlib.axes._subplots.AxesSubplot object at 0x0000018A27ED47B8&gt;]], dtype=object)
 </code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210513181223.png" alt=""></p>
-<h2 id="聚类评估：轮廓系数（Silhouette-Coefficient-）（常用）"><a href="#聚类评估：轮廓系数（Silhouette-Coefficient-）（常用）" class="headerlink" title="聚类评估：轮廓系数（Silhouette Coefficient ）（常用）"></a>聚类评估：轮廓系数（Silhouette Coefficient ）（常用）</h2><p><img src="1.png" alt="FAO" width="490"></p>
+<h2 id="聚类评估：轮廓系数（Silhouette-Coefficient-）（常用）"><a href="#聚类评估：轮廓系数（Silhouette-Coefficient-）（常用）" class="headerlink" title="聚类评估：轮廓系数（Silhouette Coefficient ）（常用）"></a>聚类评估：轮廓系数（Silhouette Coefficient ）（常用）</h2><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210513183410.png" alt=""></p>
 <ul>
 <li>计算样本i到同簇其他样本的平均距离ai。ai 越小，说明样本i越应该被聚类到该簇。将ai 称为样本i的簇内不相似度。越小越好。</li>
 <li>计算样本i到其他某簇Cj 的所有样本的平均距离bij，称为样本i与簇Cj 的不相似度。定义为样本i的簇间不相似度：bi =min{bi1, bi2, …, bik}。越大越好。</li>
@@ -1877,7 +1877,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://xxren8218.github.io/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html" title="聚类基础——KMEANS &amp; DSSCAN" target="_blank" rel="external">https://xxren8218.github.io/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DSSCAN.html</a>
+      <a href="https://xxren8218.github.io/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html" title="聚类基础——KMEANS &amp; DBSCAN" target="_blank" rel="external">https://xxren8218.github.io/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -1891,12 +1891,12 @@
   <div class="panel-body">
     <figure class="media">
       <div class="media-left">
-        <a href="https://xxren888.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
           <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
         </a>
       </div>
       <div class="media-body">
-        <h3 class="media-heading"><a href="https://xxren888.gitee.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
         <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
       </div>
     </figure>
