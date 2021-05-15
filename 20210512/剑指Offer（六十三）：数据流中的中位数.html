@@ -18,18 +18,24 @@
   
   
   <title>剑指Offer（六十三）：数据流中的中位数 | X.X.Ren的个人博客</title>
-  <meta name="description" content="1.题目     如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。   2.思路可以建立一个列表来append所给的数据 然后将列表排序，计算列表的长度。只需要区分奇数和偶数情况即可。 3.代码1234567891011121314151617181920# -">
+  <meta name="description" content="1.题目     如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。   2.思路     可以建立一个列表来append所给的数据     然后将列表排序，计算列表的长度。只需要区分奇数和偶数情况即可。  3.代码123456789101112131415161">
 <meta property="og:type" content="article">
 <meta property="og:title" content="剑指Offer（六十三）：数据流中的中位数">
 <meta property="og:url" content="https://xxren8218.github.io/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E4%B8%89%EF%BC%89%EF%BC%9A%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="1.题目     如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。   2.思路可以建立一个列表来append所给的数据 然后将列表排序，计算列表的长度。只需要区分奇数和偶数情况即可。 3.代码1234567891011121314151617181920# -">
+<meta property="og:description" content="1.题目     如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。   2.思路     可以建立一个列表来append所给的数据     然后将列表排序，计算列表的长度。只需要区分奇数和偶数情况即可。  3.代码123456789101112131415161">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515205757.JPG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515211539.JPG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515211558.JPG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515211618.JPG">
 <meta property="article:published_time" content="2021-05-12T08:38:58.000Z">
-<meta property="article:modified_time" content="2021-05-12T08:45:00.618Z">
+<meta property="article:modified_time" content="2021-05-15T13:52:18.331Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="其他">
+<meta property="article:tag" content="排序">
+<meta property="article:tag" content="最小堆">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515205757.JPG">
   <!-- Canonical links -->
   <link rel="canonical" href="https://xxren8218.github.io/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E4%B8%89%EF%BC%89%EF%BC%9A%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0.html">
   
@@ -57,7 +63,7 @@
       
       
       <div class="profile-block text-center">
-        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
+        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
           <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
         </a>
         <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
@@ -211,7 +217,7 @@
   <div class="widget">
     <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
     <div class="widget-body tagcloud">
-      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.75px; color: #fff">其他</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.5px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.25px; color: #fff">机器学习基础实战</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px; color: #fff">递归</a>
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.75px; color: #fff">其他</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.25px; color: #fff">排序</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.25px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.5px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.25px; color: #fff">机器学习基础实战</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px; color: #fff">递归</a>
     </div>
   </div>
 
@@ -382,7 +388,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%A2%98%E7%9B%AE"><span class="toc-text">1.题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%80%9D%E8%B7%AF"><span class="toc-text">2.思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81"><span class="toc-text">3.代码</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%A2%98%E7%9B%AE"><span class="toc-text">1.题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%80%9D%E8%B7%AF"><span class="toc-text">2.思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81"><span class="toc-text">3.代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E8%BF%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E8%99%BD%E7%84%B6%E5%8F%AF%E4%BB%A5%EF%BC%8C%E4%BD%86%E6%98%AF%E5%9C%A8%E5%8A%9B%E6%89%A3%E4%B8%8A%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%E9%95%BF%E3%80%82%E6%8F%90%E5%87%BA%E5%8F%A6%E4%B8%80%E7%A7%8D%E6%80%9D%E8%B7%AF%E2%80%94%E2%80%94%E6%9C%80%E5%A4%A7%E5%A0%86%EF%BC%8C%E6%9C%80%E5%B0%8F%E5%A0%86%E3%80%82"><span class="toc-text">上述的代码虽然可以，但是在力扣上执行时间长。提出另一种思路——最大堆，最小堆。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a></li></ol>
     </nav>
   </div>
 </aside>
@@ -415,8 +421,8 @@
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
     <a href="/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E4%B8%89%EF%BC%89%EF%BC%9A%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0.html" class="article-date">
-        更新于<time datetime="2021-05-12T08:45:00.618Z" itemprop="dateUpdated">
-            2021-05-12 16:45:00
+        更新于<time datetime="2021-05-15T13:52:18.331Z" itemprop="dateUpdated">
+            2021-05-15 21:52:18
         </time>
     </a>
 </span>
@@ -431,7 +437,7 @@
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a>
+	<a class="article-tag-link-link" href="/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a>, <a class="article-tag-link-link" href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" rel="tag">最小堆</a>
   </span>
 
 
@@ -455,9 +461,35 @@
     如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
 </div>
 
-<h2 id="2-思路"><a href="#2-思路" class="headerlink" title="2.思路"></a>2.思路</h2><pre><code>可以建立一个列表来append所给的数据
-然后将列表排序，计算列表的长度。只需要区分奇数和偶数情况即可。
-</code></pre><h2 id="3-代码"><a href="#3-代码" class="headerlink" title="3.代码"></a>3.代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.s = []</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Insert</span>(<span class="params">self, num</span>):</span></span><br><span class="line">        <span class="comment"># write code here</span></span><br><span class="line">        self.s.append(num)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">GetMedian</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># write code here</span></span><br><span class="line">        self.s = <span class="built_in">sorted</span>(self.s)</span><br><span class="line">        n = <span class="built_in">len</span>(self.s)</span><br><span class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">if</span> n % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="comment"># 奇数</span></span><br><span class="line">            <span class="keyword">return</span> self.s[n/<span class="number">2</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 偶数</span></span><br><span class="line">            <span class="keyword">return</span> (self.s[n/<span class="number">2</span>]+self.s[n/<span class="number">2</span>-<span class="number">1</span>])/<span class="number">2.0</span> <span class="comment"># 注意如果这里写2的话，得到的是向下取整的整数，所以需要写成浮点型。</span></span><br><span class="line">            </span><br></pre></td></tr></table></figure>
+<h2 id="2-思路"><a href="#2-思路" class="headerlink" title="2.思路"></a>2.思路</h2><p><div style="color: red">
+    可以建立一个列表来append所给的数据
+    然后将列表排序，计算列表的长度。只需要区分奇数和偶数情况即可。
+</div></p>
+<h2 id="3-代码"><a href="#3-代码" class="headerlink" title="3.代码"></a>3.代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.s = []</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Insert</span>(<span class="params">self, num</span>):</span></span><br><span class="line">        <span class="comment"># write code here</span></span><br><span class="line">        self.s.append(num)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">GetMedian</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># write code here</span></span><br><span class="line">        self.s = <span class="built_in">sorted</span>(self.s)</span><br><span class="line">        n = <span class="built_in">len</span>(self.s)</span><br><span class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">if</span> n % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="comment"># 奇数</span></span><br><span class="line">            <span class="keyword">return</span> self.s[n/<span class="number">2</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 偶数</span></span><br><span class="line">            <span class="keyword">return</span> (self.s[n/<span class="number">2</span>]+self.s[n/<span class="number">2</span>-<span class="number">1</span>])/<span class="number">2.0</span> <span class="comment"># 注意如果这里写2的话，得到的是向下取整的整数，所以需要写成浮点型。</span></span><br><span class="line">            </span><br></pre></td></tr></table></figure>
+<h2 id="上述的代码虽然可以，但是在力扣上执行时间长。提出另一种思路——最大堆，最小堆。"><a href="#上述的代码虽然可以，但是在力扣上执行时间长。提出另一种思路——最大堆，最小堆。" class="headerlink" title="上述的代码虽然可以，但是在力扣上执行时间长。提出另一种思路——最大堆，最小堆。"></a>上述的代码虽然可以，但是在力扣上执行时间长。提出另一种思路——最大堆，最小堆。</h2><ol>
+<li><p>如果我们可以对数据进行排序，分成小的一半和大的一半。找小的最大值和大的最小值即可。这个不就是最小、最大堆嘛！</p>
+<ul>
+<li>最大堆（找出最小的k个元素）</li>
+<li>最小堆（找出最大的k个元素）</li>
+</ul>
+</li>
+</ol>
+<p>如图所示过程。用最大堆存最小的k个元素，最小堆存最大k个元素。我们就可以用O（1）的复杂度找到值max和min了<br><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515205757.JPG" alt=""></p>
+<ol>
+<li><p>在数据存放的时候我们可以这样，当最小堆和最大堆的尺寸相等时，存放进入最大堆maxheap，不等时，存放进最小堆minheap。<br><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515211539.JPG" alt=""></p>
+</li>
+<li><p>但是这存在一个问题，若将a1存放进入minheap的时候，若a1的值比maxheap的一些数字还要小，则不满足我们之前的假设——maxheap的数字比minheap的数字小；若将a2的存放到maxheap的时候，若a2比minheap的某些值还要大，那么也不符合我们的假定；那么我们可以这样做；</p>
+<ul>
+<li>将a1先插入到maxheap中，再将maxheap的队顶元素插入到minheap，这样就保证了maxheap始终为最小的元素。</li>
+<li>同理，将a2先放入到minheap中，再将minheap的队顶元素放入maxheap中</li>
+<li>python没有最大堆，只需要把最小堆取反。</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515211558.JPG" alt=""><br><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515211618.JPG" alt=""></p>
+<p><strong> heappushpop()相当于先推后弹出，这意味着堆大小可能会在进程中发生变化. </strong></p>
+<p><strong> heapreplace()相当于先弹出，然后推送，附加的限制是保证堆大小在这个过程中不会改变。</strong></p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> heapq</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MedianFinder</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        initialize your data structure here.</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.maxheap = []</span><br><span class="line">        self.minheap = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">addNum</span>(<span class="params">self, num</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type num: int</span></span><br><span class="line"><span class="string">        :rtype: None</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># 为了使得数据平均分配到两个堆，当两个堆的尺寸一样时，将新增加的元素放到minheap中</span></span><br><span class="line">        <span class="comment"># 具体做法分两步：1.现将新元素放到maxheap中，2.再将maxheap的堆顶元素放入minheap</span></span><br><span class="line">        <span class="comment"># python没有最大堆，可以用最小堆取反实现</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(self.maxheap) == <span class="built_in">len</span>(self.minheap):</span><br><span class="line">            heapq.heappush(self.minheap,-heapq.heappushpop(self.maxheap,-num))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            heapq.heappush(self.maxheap,-heapq.heappushpop(self.minheap,num))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">findMedian</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :rtype: float</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(self.maxheap) == <span class="built_in">len</span>(self.minheap):</span><br><span class="line">            <span class="keyword">return</span> (-self.maxheap[<span class="number">0</span>]+self.minheap[<span class="number">0</span>])/<span class="number">2.0</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> self.minheap[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Your MedianFinder object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"># obj = MedianFinder()</span></span><br><span class="line"><span class="comment"># obj.addNum(num)</span></span><br><span class="line"><span class="comment"># param_2 = obj.findMedian()</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -481,12 +513,12 @@
   <div class="panel-body">
     <figure class="media">
       <div class="media-left">
-        <a href="https://xxren888.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
           <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
         </a>
       </div>
       <div class="media-body">
-        <h3 class="media-heading"><a href="https://xxren888.gitee.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
         <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
       </div>
     </figure>

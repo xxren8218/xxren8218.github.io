@@ -18,17 +18,20 @@
   
   
   <title>剑指Offer（六十四）：滑动窗口的最大值 | X.X.Ren的个人博客</title>
-  <meta name="description" content="1.题目     给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。例如，如果输入数组{2,3,4,2,6,2,5,1}及滑动窗口的大小3，那么一共存在6个滑动窗口，他们的最大值分别为{4,4,6,6,6,5}。   2.思路创建一个列表res来存储最终结果 创建一个临时列表temp来存储目前窗口内的数字 python有内置的max()函数可以找出列表中的最大数字。将其放入结果列表中即">
+  <meta name="description" content="1.题目     给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。例如，如果输入数组{2,3,4,2,6,2,5,1}及滑动窗口的大小3，那么一共存在6个滑动窗口，他们的最大值分别为{4,4,6,6,6,5}。   2.思路—暴力解法     创建一个列表res来存储最终结果     创建一个临时列表temp来存储目前窗口内的数字     python有内置的max()函数可以找出列">
 <meta property="og:type" content="article">
 <meta property="og:title" content="剑指Offer（六十四）：滑动窗口的最大值">
 <meta property="og:url" content="https://xxren8218.github.io/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E5%9B%9B%EF%BC%89%EF%BC%9A%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="1.题目     给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。例如，如果输入数组{2,3,4,2,6,2,5,1}及滑动窗口的大小3，那么一共存在6个滑动窗口，他们的最大值分别为{4,4,6,6,6,5}。   2.思路创建一个列表res来存储最终结果 创建一个临时列表temp来存储目前窗口内的数字 python有内置的max()函数可以找出列表中的最大数字。将其放入结果列表中即">
+<meta property="og:description" content="1.题目     给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。例如，如果输入数组{2,3,4,2,6,2,5,1}及滑动窗口的大小3，那么一共存在6个滑动窗口，他们的最大值分别为{4,4,6,6,6,5}。   2.思路—暴力解法     创建一个列表res来存储最终结果     创建一个临时列表temp来存储目前窗口内的数字     python有内置的max()函数可以找出列">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-05-12T08:25:59.000Z">
-<meta property="article:modified_time" content="2021-05-12T08:37:50.788Z">
+<meta property="article:modified_time" content="2021-05-15T16:08:55.800Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="其他">
+<meta property="article:tag" content="双指针">
+<meta property="article:tag" content="双端队列">
+<meta property="article:tag" content="单调队列">
+<meta property="article:tag" content="辅助队列">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
   <link rel="canonical" href="https://xxren8218.github.io/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E5%9B%9B%EF%BC%89%EF%BC%9A%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC.html">
@@ -57,7 +60,7 @@
       
       
       <div class="profile-block text-center">
-        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
+        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
           <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
         </a>
         <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
@@ -211,7 +214,7 @@
   <div class="widget">
     <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
     <div class="widget-body tagcloud">
-      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.75px; color: #fff">其他</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.5px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.25px; color: #fff">机器学习基础实战</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px; color: #fff">递归</a>
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.75px; color: #fff">其他</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.25px; color: #fff">排序</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.25px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.5px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.25px; color: #fff">机器学习基础实战</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px; color: #fff">递归</a>
     </div>
   </div>
 
@@ -382,7 +385,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%A2%98%E7%9B%AE"><span class="toc-text">1.题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%80%9D%E8%B7%AF"><span class="toc-text">2.思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81"><span class="toc-text">3.代码</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%A2%98%E7%9B%AE"><span class="toc-text">1.题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%80%9D%E8%B7%AF%E2%80%94%E6%9A%B4%E5%8A%9B%E8%A7%A3%E6%B3%95"><span class="toc-text">2.思路—暴力解法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%8A%9B%E6%89%A3%E4%B8%8A%E6%8F%90%E4%BA%A4%E6%97%B6%EF%BC%8C%E8%B6%85%E6%97%B6%EF%BC%8C%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E4%B8%BAO-nk-%E6%83%B3%E5%8A%9E%E6%B3%95%E5%AF%B9%E5%85%B6%E8%BF%9B%E8%A1%8C%E6%94%B9%E8%BF%9B%E3%80%82"><span class="toc-text">在力扣上提交时，超时，时间复杂度为O(nk),想办法对其进行改进。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a></li></ol>
     </nav>
   </div>
 </aside>
@@ -415,8 +418,8 @@
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
     <a href="/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E5%9B%9B%EF%BC%89%EF%BC%9A%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC.html" class="article-date">
-        更新于<time datetime="2021-05-12T08:37:50.788Z" itemprop="dateUpdated">
-            2021-05-12 16:37:50
+        更新于<time datetime="2021-05-15T16:08:55.800Z" itemprop="dateUpdated">
+            2021-05-16 00:08:55
         </time>
     </a>
 </span>
@@ -431,7 +434,7 @@
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a>
+	<a class="article-tag-link-link" href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" rel="tag">单调队列</a>, <a class="article-tag-link-link" href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" rel="tag">双指针</a>, <a class="article-tag-link-link" href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" rel="tag">双端队列</a>, <a class="article-tag-link-link" href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" rel="tag">辅助队列</a>
   </span>
 
 
@@ -455,11 +458,38 @@
     给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。例如，如果输入数组{2,3,4,2,6,2,5,1}及滑动窗口的大小3，那么一共存在6个滑动窗口，他们的最大值分别为{4,4,6,6,6,5}。
 </div>
 
-<h2 id="2-思路"><a href="#2-思路" class="headerlink" title="2.思路"></a>2.思路</h2><pre><code>创建一个列表res来存储最终结果
-创建一个临时列表temp来存储目前窗口内的数字
-python有内置的max()函数可以找出列表中的最大数字。将其放入结果列表中即可。
-while循环，直到窗口的右边界到达给定列表长度时，停止。
-</code></pre><h2 id="3-代码"><a href="#3-代码" class="headerlink" title="3.代码"></a>3.代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxInWindows</span>(<span class="params">self, num, size</span>):</span></span><br><span class="line">        <span class="comment"># write code here</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> num <span class="keyword">or</span> size &lt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> []</span><br><span class="line">        res = []</span><br><span class="line">        start = <span class="number">0</span></span><br><span class="line">        end = start + size</span><br><span class="line">        <span class="keyword">while</span> end &lt;= <span class="built_in">len</span>(num):</span><br><span class="line">            temp_list = num[start:end]</span><br><span class="line">            res.append(<span class="built_in">max</span>(temp_list))</span><br><span class="line">            start += <span class="number">1</span></span><br><span class="line">            end += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+<h2 id="2-思路—暴力解法"><a href="#2-思路—暴力解法" class="headerlink" title="2.思路—暴力解法"></a>2.思路—暴力解法</h2><div style="color: red">
+    创建一个列表res来存储最终结果
+    创建一个临时列表temp来存储目前窗口内的数字
+    python有内置的max()函数可以找出列表中的最大数字。将其放入结果列表中即可。
+    while循环，直到窗口的右边界到达给定列表长度时，停止。
+</div>  
+## 3.代码
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxInWindows</span>(<span class="params">self, num, size</span>):</span></span><br><span class="line">        <span class="comment"># write code here</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> num <span class="keyword">or</span> size &lt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> []</span><br><span class="line">        res = []</span><br><span class="line">        start = <span class="number">0</span></span><br><span class="line">        end = start + size</span><br><span class="line">        <span class="keyword">while</span> end &lt;= <span class="built_in">len</span>(num):</span><br><span class="line">            temp_list = num[start:end]</span><br><span class="line">            res.append(<span class="built_in">max</span>(temp_list)) <span class="comment"># 其实可以和上面一步的合并在一起。</span></span><br><span class="line">            start += <span class="number">1</span></span><br><span class="line">            end += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+- max的时间复杂度为O(n)
+<div style="color: red;">
+对于每个滑动窗口，我们可以使用 O(k)的时间遍历其中的每一个元素，找出其中的最大值。对于长度为 nn 的数组 \textit{nums}nums 而言，窗口的数量为 n-k+1n−k+1，因此该算法的时间复杂度为 O((n-k+1)k)=O(nk)O((n−k+1)k)=O(nk)，会超出时间限制，因此我们需要进行一些优化。——需要将取最大值的操作进行降低时间复杂度。
+</div>
+
+<h2 id="在力扣上提交时，超时，时间复杂度为O-nk-想办法对其进行改进。"><a href="#在力扣上提交时，超时，时间复杂度为O-nk-想办法对其进行改进。" class="headerlink" title="在力扣上提交时，超时，时间复杂度为O(nk),想办法对其进行改进。"></a>在力扣上提交时，超时，时间复杂度为O(nk),想办法对其进行改进。</h2><p>对于实现栈min函数的题目使用 单调栈 实现了随意入栈、出栈情况下的 O(1)时间获取 “栈内最小值” 。本题同理，不同点在于 “出栈操作” 删除的是 “列表尾部元素” ，而 “窗口滑动” 删除的是 “列表首部元素” ——为单调递减队列。</p>
+<p>** 理解了栈的min函数，再理解队的最大函数，再写这道题容易些。</p>
+<p>队的最大函数的理解</p>
+<p>入队顺序为：                 [5]-&gt;[5,-1]-&gt;[5,-1,3]-&gt;[5,-1,3,6]-&gt;[5,-1,3,6,2]<br>队的最大函数时的辅助队列：     [5]-&gt;[5,-1]-&gt;[5,3]   -&gt;[6]       -&gt;[6,2]<br>最大值为：                   [5]-&gt;[5]  -&gt;[5]     -&gt;[6]      -&gt;[6]</p>
+<p>出队顺序为：(先进先出)。        [5,-1,3,6,2]-&gt;[-1,3,6,2]-&gt;[3,6,2]-&gt;[6,2]-&gt;[6]<br>队的最大函数时的辅助队列：       [6,2]      -&gt;[6,2]     -&gt;[6,2]  -&gt;[6,2]-&gt;[2]</p>
+<ul>
+<li>(若出队和辅助队的元素相同-删除)<br>最大值为：                    [6]        -&gt;[6]       -&gt;[6]    -&gt;[6]  -&gt;[2]</li>
+</ul>
+<p>还有一点不同的是：在未形成窗口时是不需要“出队操作”的</p>
+<ol>
+<li>未形成窗口时：相当于一直为进队的操作。并保障其单调.</li>
+<li>形成窗口后：相当于进队和出队操作同时进行。需要用到双端队列。——能使得leftpop为O(1)<ul>
+<li>在向右移动一次后，相当于最右边值入队，使新队列满足单调。</li>
+<li>如果在移动一次后的最左边-1值等于队列的最大的值，则将其删除</li>
+</ul>
+</li>
+</ol>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxSlidingWindow</span>(<span class="params">self, nums, k</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type nums: List[int]</span></span><br><span class="line"><span class="string">        :type k: int</span></span><br><span class="line"><span class="string">        :rtype: List[int]</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        res = []</span><br><span class="line">        <span class="comment"># 当窗口未形成的时候：将nums的元素加入双端队列中，并保证其单调（增减都可，只不过后面处理一个头一个尾而已，我这里取递减）</span></span><br><span class="line">        n = <span class="built_in">len</span>(nums)</span><br><span class="line">        <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">or</span> k &gt; n:</span><br><span class="line">            <span class="keyword">return</span> []</span><br><span class="line">        dq = deque()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(k):</span><br><span class="line">            <span class="keyword">while</span> dq <span class="keyword">and</span> dq[-<span class="number">1</span>] &lt; nums[i]:</span><br><span class="line">                dq.pop()</span><br><span class="line">            dq.append(nums[i])</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 此时窗口形成。因为加了k个数字到dq了</span></span><br><span class="line">        res.append(dq[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 窗口形成以后相当于队列的入队和出队同时进行了。需要进行两步</span></span><br><span class="line">        <span class="comment"># 1.移动以后的窗口的最左边值若等于dp[0]，则dp[0]需删除</span></span><br><span class="line">        <span class="comment"># 2.入队的元素与dp保证递减</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(k,n):</span><br><span class="line">            <span class="keyword">if</span> nums[i-k] == dq[<span class="number">0</span>]:</span><br><span class="line">                dq.popleft()</span><br><span class="line">            <span class="keyword">while</span> dq <span class="keyword">and</span> dq[-<span class="number">1</span>] &lt; nums[i]:</span><br><span class="line">                dq.pop()</span><br><span class="line">            dq.append(nums[i])</span><br><span class="line">            res.append(dq[<span class="number">0</span>])</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">        </span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -483,12 +513,12 @@ while循环，直到窗口的右边界到达给定列表长度时，停止。
   <div class="panel-body">
     <figure class="media">
       <div class="media-left">
-        <a href="https://xxren888.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
           <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
         </a>
       </div>
       <div class="media-body">
-        <h3 class="media-heading"><a href="https://xxren888.gitee.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
         <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
       </div>
     </figure>
