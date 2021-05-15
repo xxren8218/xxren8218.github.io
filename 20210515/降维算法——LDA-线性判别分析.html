@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>降维算法——LDA(线性判别分析) | X.X.Ren的个人博客</title>
+  <meta name="description" content="鸢尾花的数据集进行降维 有四个维度，萼片的长度。萼片的宽度，花瓣的长度，花瓣的宽度——将其降低维度为2维 数据集大概有150条 数据集没有列名，给其进行指定，使用zip()函数，将其进行对应  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253featur">
+<meta property="og:type" content="article">
+<meta property="og:title" content="降维算法——LDA(线性判别分析)">
+<meta property="og:url" content="https://xxren8218.github.io/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="鸢尾花的数据集进行降维 有四个维度，萼片的长度。萼片的宽度，花瓣的长度，花瓣的宽度——将其降低维度为2维 数据集大概有150条 数据集没有列名，给其进行指定，使用zip()函数，将其进行对应  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253featur">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142217.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142251.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142312.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142459.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142528.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142553.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142652.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142828.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142842.png">
+<meta property="article:published_time" content="2021-05-15T06:16:53.000Z">
+<meta property="article:modified_time" content="2021-05-15T06:29:10.304Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="机器学习基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142217.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.75px; color: #fff">其他</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.5px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.25px; color: #fff">机器学习基础实战</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px; color: #fff">递归</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="降维算法——PCA(主成分分析)" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html" class="title">降维算法——PCA(主成分分析)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-15T06:31:02.000Z" itemprop="datePublished">2021-05-15 14:31:02</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="降维算法——LDA(线性判别分析)" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html" class="title">降维算法——LDA(线性判别分析)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-15T06:16:53.000Z" itemprop="datePublished">2021-05-15 14:16:53</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="聚类基础——KMEANS &amp; DBSCAN" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html" class="title">聚类基础——KMEANS &amp; DBSCAN</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-13T10:05:21.000Z" itemprop="datePublished">2021-05-13 18:05:21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E4%B8%83%EF%BC%89%EF%BC%9A%E5%89%AA%E7%BB%B3%E5%AD%90.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="剑指Offer（六十七）：剪绳子" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E4%B8%83%EF%BC%89%EF%BC%9A%E5%89%AA%E7%BB%B3%E5%AD%90.html" class="title">剑指Offer（六十七）：剪绳子</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-12T08:49:55.000Z" itemprop="datePublished">2021-05-12 16:49:55</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E4%B8%89%EF%BC%89%EF%BC%9A%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="剑指Offer（六十三）：数据流中的中位数" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210512/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%85%AD%E5%8D%81%E4%B8%89%EF%BC%89%EF%BC%9A%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0.html" class="title">剑指Offer（六十三）：数据流中的中位数</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-12T08:38:58.000Z" itemprop="datePublished">2021-05-12 16:38:58</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%B8%A2%E5%B0%BE%E8%8A%B1%E7%9A%84%E6%95%B0%E6%8D%AE%E9%9B%86%E8%BF%9B%E8%A1%8C%E9%99%8D%E7%BB%B4"><span class="toc-text">鸢尾花的数据集进行降维</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%88%AB%E6%B1%82%E4%B8%89%E7%A7%8D%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%95%B0%E6%8D%AE%E5%9C%A8%E4%B8%8D%E5%90%8C%E7%89%B9%E5%BE%81%E7%BB%B4%E5%BA%A6%E4%B8%8A%E7%9A%84%E5%9D%87%E5%80%BC%E5%90%91%E9%87%8F-mi"><span class="toc-text">分别求三种鸢尾花数据在不同特征维度上的均值向量 mi</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E4%B8%A4%E4%B8%AA-4%C3%974-%E7%BB%B4%E7%9F%A9%E9%98%B5%EF%BC%9A%E7%B1%BB%E5%86%85%E6%95%A3%E5%B8%83%E7%9F%A9%E9%98%B5%E5%92%8C%E7%B1%BB%E9%97%B4%E6%95%A3%E5%B8%83%E7%9F%A9%E9%98%B5"><span class="toc-text">计算两个 4×4 维矩阵：类内散布矩阵和类间散布矩阵</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E5%80%BC%E4%B8%8E%E7%89%B9%E5%BE%81%E5%90%91%E9%87%8F%EF%BC%9A"><span class="toc-text">特征值与特征向量：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E7%9A%84%E9%99%8D%E7%BB%B4"><span class="toc-text">进行数据的降维</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sklearn-%E6%9C%89LDA%E6%A8%A1%E5%9D%97%E5%8F%AF%E4%BB%A5%E8%B0%83%E7%94%A8%E3%80%82"><span class="toc-text">sklearn 有LDA模块可以调用。</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-降维算法——LDA-线性判别分析" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      降维算法——LDA(线性判别分析)
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html" class="article-date">
+        发布于<time datetime="2021-05-15T06:16:53.000Z" itemprop="datePublished">
+            2021-05-15 14:16:53
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html" class="article-date">
+        更新于<time datetime="2021-05-15T06:29:10.304Z" itemprop="dateUpdated">
+            2021-05-15 14:29:10
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag">机器学习基础</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html" class="leancloud_visitors"  data-flag-title="降维算法——LDA(线性判别分析)">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="鸢尾花的数据集进行降维"><a href="#鸢尾花的数据集进行降维" class="headerlink" title="鸢尾花的数据集进行降维"></a>鸢尾花的数据集进行降维</h1><ul>
+<li>有四个维度，萼片的长度。萼片的宽度，花瓣的长度，花瓣的宽度——将其降低维度为2维</li>
+<li>数据集大概有150条</li>
+<li>数据集没有列名，给其进行指定，使用zip()函数，将其进行对应</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">feature_dict = &#123;i:label <span class="keyword">for</span> i,label <span class="keyword">in</span> <span class="built_in">zip</span>(</span><br><span class="line">                <span class="built_in">range</span>(<span class="number">4</span>),</span><br><span class="line">                  (<span class="string">&#x27;sepal length in cm&#x27;</span>,</span><br><span class="line">                  <span class="string">&#x27;sepal width in cm&#x27;</span>,</span><br><span class="line">                  <span class="string">&#x27;petal length in cm&#x27;</span>,                <span class="comment"># 用到了字典推导式！</span></span><br><span class="line">                  <span class="string">&#x27;petal width in cm&#x27;</span>, ))&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#########################################</span></span><br><span class="line"><span class="comment"># feature_dict = &#123;0: &#x27;sepal length in cm&#x27;, </span></span><br><span class="line"><span class="comment">#                 1: &#x27;sepal width in cm&#x27;, </span></span><br><span class="line"><span class="comment">#                 2: &#x27;petal length in cm&#x27;, </span></span><br><span class="line"><span class="comment">#                 3: &#x27;petal width in cm&#x27;&#125;</span></span><br><span class="line"><span class="comment">#########################################</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">df = pd.io.parsers.read_csv(</span><br><span class="line">    filepath_or_buffer=<span class="string">&#x27;https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data&#x27;</span>,</span><br><span class="line">    header=<span class="literal">None</span>,</span><br><span class="line">    sep=<span class="string">&#x27;,&#x27;</span>,</span><br><span class="line">    )</span><br><span class="line"><span class="comment"># 数据加列名</span></span><br><span class="line">df.columns = [l <span class="keyword">for</span> i,l <span class="keyword">in</span> <span class="built_in">sorted</span>(feature_dict.items())] + [<span class="string">&#x27;class label&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">sorted()得到的是一个列表，需要接收，而list.sort()原地排序。O(nlogn)</span></span><br><span class="line"><span class="string">若排序的是字典，会将字典的键值，放入元祖中，则可以通过 i,j 进行取元祖里的值。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#######################################</span></span><br><span class="line"><span class="string">z = [i for i in sorted(feature_dict.items())]</span></span><br><span class="line"><span class="string"># [(0, &#x27;sepal length in cm&#x27;), (1, &#x27;sepal width in cm&#x27;), (2, &#x27;petal length in cm&#x27;), (3, &#x27;petal width in cm&#x27;)]</span></span><br><span class="line"><span class="string">#######################################</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#######################################</span></span><br><span class="line"><span class="string">x = [l for i,l in sorted(feature_dict.items())]</span></span><br><span class="line"><span class="string"># [&#x27;sepal length in cm&#x27;, &#x27;sepal width in cm&#x27;, &#x27;petal length in cm&#x27;, &#x27;petal width in cm&#x27;]</span></span><br><span class="line"><span class="string">#######################################</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">df.dropna(how=<span class="string">&quot;all&quot;</span>, inplace=<span class="literal">True</span>) <span class="comment"># to drop the empty line at file-end</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">#######################################</span></span><br><span class="line"><span class="string">dropna()方法，能够找到DataFrame类型数据的空值（缺失值），将空值所在的行/列删除后，将新的DataFrame作为返回值返回。</span></span><br><span class="line"><span class="string">#######################################</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">axis：轴。0或&#x27;index&#x27;，表示按行删除；1或&#x27;columns&#x27;，表示按列删除。</span></span><br><span class="line"><span class="string">how：筛选方式。‘any’，表示该行/列只要有一个以上的空值，就删除该行/列；</span></span><br><span class="line"><span class="string">    ‘all’，表示该行/列全部都为空值，就删除该行/列。</span></span><br><span class="line"><span class="string">thresh：非空元素最低数量。int型，默认为None。如果该行/列中，非空元素数量小于这个值，就删除该行/列</span></span><br><span class="line"><span class="string">inplace：是否原地替换。布尔值，默认为False。如果为True，则在原DataFrame上进行操作，返回值为None</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">df.tail()</span><br></pre></td></tr></table></figure>
+<div style="overflow: scroll;">
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal length in cm</th>
+      <th>sepal width in cm</th>
+      <th>petal length in cm</th>
+      <th>petal width in cm</th>
+      <th>class label</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>145</th>
+      <td>6.7</td>
+      <td>3.0</td>
+      <td>5.2</td>
+      <td>2.3</td>
+      <td>Iris-virginica</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>6.3</td>
+      <td>2.5</td>
+      <td>5.0</td>
+      <td>1.9</td>
+      <td>Iris-virginica</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>6.5</td>
+      <td>3.0</td>
+      <td>5.2</td>
+      <td>2.0</td>
+      <td>Iris-virginica</td>
+    </tr>
+    <tr>
+      <th>148</th>
+      <td>6.2</td>
+      <td>3.4</td>
+      <td>5.4</td>
+      <td>2.3</td>
+      <td>Iris-virginica</td>
+    </tr>
+    <tr>
+      <th>149</th>
+      <td>5.9</td>
+      <td>3.0</td>
+      <td>5.1</td>
+      <td>1.8</td>
+      <td>Iris-virginica</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142217.png" alt=""></p>
+<p><strong> 可以看到y数据的（lebal）是字符串，不好。可以将其转化成数字。</strong></p>
+<ul>
+<li>使用sklearn.preprocessing的LabelEncoder模块实现 </li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> LabelEncoder</span><br><span class="line"></span><br><span class="line">X = df[[<span class="string">&#x27;sepal length in cm&#x27;</span>,<span class="string">&#x27;sepal width in cm&#x27;</span>,<span class="string">&#x27;petal length in cm&#x27;</span>,<span class="string">&#x27;petal width in cm&#x27;</span>]].values</span><br><span class="line">y = df[<span class="string">&#x27;class label&#x27;</span>].values</span><br><span class="line"></span><br><span class="line">enc = LabelEncoder()</span><br><span class="line">label_encoder = enc.fit(y)  <span class="comment"># 与之前不同的是，它在y上进行 fit !</span></span><br><span class="line">y = label_encoder.transform(y) + <span class="number">1</span> <span class="comment"># 默认从零开始，可以改为从一开始，</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># label_dict = &#123;1: &#x27;Setosa&#x27;, 2: &#x27;Versicolor&#x27;, 3:&#x27;Virginica&#x27;&#125;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142251.png" alt=""></p>
+<h3 id="分别求三种鸢尾花数据在不同特征维度上的均值向量-mi"><a href="#分别求三种鸢尾花数据在不同特征维度上的均值向量-mi" class="headerlink" title="分别求三种鸢尾花数据在不同特征维度上的均值向量 mi"></a>分别求三种鸢尾花数据在不同特征维度上的均值向量 mi</h3><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142312.png" alt=""></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">np.set_printoptions(precision=<span class="number">4</span>)</span><br><span class="line"><span class="comment"># 输出时，小数点后面四位，若没有四位的话，不输出。（0不输出！）</span></span><br><span class="line"></span><br><span class="line">mean_vectors = []</span><br><span class="line"><span class="keyword">for</span> cl <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">4</span>):</span><br><span class="line">    mean_vectors.append(np.mean(X[y==cl], axis=<span class="number">0</span>))</span><br><span class="line">    print(<span class="string">&#x27;Mean Vector class %s: %s\n&#x27;</span> %(cl, mean_vectors[cl-<span class="number">1</span>]))</span><br></pre></td></tr></table></figure>
+<pre><code>Mean Vector class 1: [ 5.006  3.418  1.464  0.244]
+
+Mean Vector class 2: [ 5.936  2.77   4.26   1.326]
+
+Mean Vector class 3: [ 6.588  2.974  5.552  2.026]
+</code></pre><h3 id="计算两个-4×4-维矩阵：类内散布矩阵和类间散布矩阵"><a href="#计算两个-4×4-维矩阵：类内散布矩阵和类间散布矩阵" class="headerlink" title="计算两个 4×4 维矩阵：类内散布矩阵和类间散布矩阵"></a>计算两个 4×4 维矩阵：类内散布矩阵和类间散布矩阵</h3><ul>
+<li><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142459.png" alt=""></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">S_W = np.zeros((<span class="number">4</span>,<span class="number">4</span>))                               <span class="comment"># 每个类有4个特征值。即协方差矩阵——收藏的！</span></span><br><span class="line"><span class="keyword">for</span> cl,mv <span class="keyword">in</span> <span class="built_in">zip</span>(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">4</span>), mean_vectors):         <span class="comment"># 3个类</span></span><br><span class="line">    class_sc_mat = np.zeros((<span class="number">4</span>,<span class="number">4</span>))                  <span class="comment"># scatter matrix for every class 由协方差决定其是4x4的！</span></span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> X[y == cl]:                          <span class="comment"># 选取第 c1 类的 X</span></span><br><span class="line">        row, mv = row.reshape(<span class="number">4</span>,<span class="number">1</span>), mv.reshape(<span class="number">4</span>,<span class="number">1</span>) <span class="comment"># make column vectors 将矩阵组成 4x4 的形式！</span></span><br><span class="line">        class_sc_mat += (row-mv).dot((row-mv).T)</span><br><span class="line">    S_W += class_sc_mat                             <span class="comment"># sum class scatter matrices</span></span><br><span class="line">print(<span class="string">&#x27;within-class Scatter Matrix:\n&#x27;</span>, S_W)</span><br></pre></td></tr></table></figure>
+<pre><code>within-class Scatter Matrix:
+ [[ 38.9562  13.683   24.614    5.6556]
+ [ 13.683   17.035    8.12     4.9132]
+ [ 24.614    8.12    27.22     6.2536]
+ [  5.6556   4.9132   6.2536   6.1756]]
+</code></pre><ul>
+<li><p>类间的散布矩阵进行简化。不是m1-m2了，而是与全局均值的作比较</p>
+</li>
+<li><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142528.png" alt=""></p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">overall_mean = np.mean(X, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">zip()和enumerate()类似，但是有所不同。</span></span><br><span class="line"><span class="string">zip()可以跟多对象，</span></span><br><span class="line"><span class="string">########################</span></span><br><span class="line"><span class="string">names = [&#x27;张三&#x27;,&#x27;李四&#x27;,&#x27;王五&#x27;]</span></span><br><span class="line"><span class="string">sexs = [&#x27;boy&#x27;,&#x27;girl&#x27;,&#x27;boy&#x27;]</span></span><br><span class="line"><span class="string">scores = [86, 92]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">for name, sex, score in zip(names,sexs,scores):</span></span><br><span class="line"><span class="string">    print(&#x27;&#123;&#125;: &#123;&#125;, &#123;&#125;&#x27;.format(name, sex, score))</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">out[]:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">张三: boy, 86</span></span><br><span class="line"><span class="string">李四: girl, 92</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">########################</span></span><br><span class="line"><span class="string">enumerate()不可以。</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">S_B = np.zeros((<span class="number">4</span>,<span class="number">4</span>))</span><br><span class="line"><span class="keyword">for</span> i,mean_vec <span class="keyword">in</span> <span class="built_in">enumerate</span>(mean_vectors):  </span><br><span class="line">    n = X[y==i+<span class="number">1</span>,:].shape[<span class="number">0</span>]  <span class="comment"># 获得数据的个数</span></span><br><span class="line">    mean_vec = mean_vec.reshape(<span class="number">4</span>,<span class="number">1</span>) <span class="comment"># make column vector</span></span><br><span class="line">    overall_mean = overall_mean.reshape(<span class="number">4</span>,<span class="number">1</span>) <span class="comment"># make column vector</span></span><br><span class="line">    S_B += n * (mean_vec - overall_mean).dot((mean_vec - overall_mean).T)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;between-class Scatter Matrix:\n&#x27;</span>, S_B)</span><br></pre></td></tr></table></figure>
+<pre><code>between-class Scatter Matrix:
+ [[  63.2121  -19.534   165.1647   71.3631]
+ [ -19.534    10.9776  -56.0552  -22.4924]
+ [ 165.1647  -56.0552  436.6437  186.9081]
+ [  71.3631  -22.4924  186.9081   80.6041]]
+</code></pre><ul>
+<li><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142553.png" alt=""></li>
+</ul>
+<p><strong> np.linalg.inv()可以求逆，np.linalg.eig()可以求特征值，特征向量 </strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">eig_vals, eig_vecs = np.linalg.eig(np.linalg.inv(S_W).dot(S_B))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(eig_vals)):</span><br><span class="line">    eigvec_sc = eig_vecs[:,i].reshape(<span class="number">4</span>,<span class="number">1</span>)   </span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    返回的v是归一化后的特征向量（length为1）。特征向量v[:,i]对应特征值w[i]。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    print(<span class="string">&#x27;\nEigenvector &#123;&#125;: \n&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(i+<span class="number">1</span>, eigvec_sc.real))  <span class="comment"># 取实部</span></span><br><span class="line">    print(<span class="string">&#x27;Eigenvalue &#123;:&#125;: &#123;:.2e&#125;&#x27;</span>.<span class="built_in">format</span>(i+<span class="number">1</span>, eig_vals[i].real))</span><br></pre></td></tr></table></figure>
+<pre><code>Eigenvector 1: 
+[[ 0.2049]
+ [ 0.3871]
+ [-0.5465]
+ [-0.7138]]
+Eigenvalue 1: 3.23e+01
+
+Eigenvector 2: 
+[[-0.009 ]
+ [-0.589 ]
+ [ 0.2543]
+ [-0.767 ]]
+Eigenvalue 2: 2.78e-01
+
+Eigenvector 3: 
+[[-0.7113]
+ [ 0.0353]
+ [-0.0267]
+ [ 0.7015]]
+Eigenvalue 3: -5.76e-15
+
+Eigenvector 4: 
+[[ 0.422 ]
+ [-0.4364]
+ [-0.4851]
+ [ 0.6294]]
+Eigenvalue 4: 7.80e-15
+</code></pre><h3 id="特征值与特征向量："><a href="#特征值与特征向量：" class="headerlink" title="特征值与特征向量："></a>特征值与特征向量：</h3><ul>
+<li>特征向量：表示映射方向</li>
+<li>特征值：特征向量的重要程度</li>
+<li>假设我们投影到的低维空间的维度为d，(n-&gt;d维的转换)对应的基向量为：W = (w1,w2,w3…wd)——收藏的！<ul>
+<li>将x = W.T * x ((d,n) x (n,1)=(d,1))</li>
+<li>这里是先求整体的四个映射方向，再进行筛选，选择两个，特征值大的。(具体看收藏的多分类LDA),然后进行降维。</li>
+</ul>
+</li>
+</ul>
+<p><strong>对本征值进行排序</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Make a list of (eigenvalue, eigenvector) tuples</span></span><br><span class="line">eig_pairs = [(np.<span class="built_in">abs</span>(eig_vals[i]), eig_vecs[:,i]) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(eig_vals))]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sort the (eigenvalue, eigenvector) tuples from high to low</span></span><br><span class="line">eig_pairs = <span class="built_in">sorted</span>(eig_pairs, key=<span class="keyword">lambda</span> k: k[<span class="number">0</span>], reverse=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">key = lambda k:k[0]的意义：</span></span><br><span class="line"><span class="string">若可迭代对象是单个数字等，则可以直接排序。</span></span><br><span class="line"><span class="string">若是元祖，字典等，则需要指定根据什么进行排序了。即k[0]的第零个元素进行排序。</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Visually confirm that the list is correctly sorted by decreasing eigenvalues</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;Eigenvalues in decreasing order:\n&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> eig_pairs:</span><br><span class="line">    print(i[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<pre><code>Eigenvalues in decreasing order:
+
+32.2719577997
+0.27756686384
+7.7995841654e-15
+5.76433252705e-15
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&#x27;Variance explained:\n&#x27;</span>)</span><br><span class="line">eigv_sum = <span class="built_in">sum</span>(eig_vals)</span><br><span class="line"><span class="keyword">for</span> i,j <span class="keyword">in</span> <span class="built_in">enumerate</span>(eig_pairs):</span><br><span class="line">    print(<span class="string">&#x27;eigenvalue &#123;0:&#125;: &#123;1:.2%&#125;&#x27;</span>.<span class="built_in">format</span>(i+<span class="number">1</span>, (j[<span class="number">0</span>]/eigv_sum).real))</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">     ###############################################</span></span><br><span class="line"><span class="string">     print  &#x27;hello &#123;&#125; i am &#123;&#125;&#x27;.format(&#x27;Kevin&#x27;,&#x27;Tom&#x27;)</span></span><br><span class="line"><span class="string">                             </span></span><br><span class="line"><span class="string">     # hello Kevin i am Tom    </span></span><br><span class="line"><span class="string">     ###############################################</span></span><br><span class="line"><span class="string">     </span></span><br><span class="line"><span class="string">     </span></span><br><span class="line"><span class="string">     ###############################################</span></span><br><span class="line"><span class="string">     print  &#x27;&#123;0&#125; i am &#123;1&#125; . my name is &#123;0&#125;&#x27;.format(&#x27;Kevin&#x27;,&#x27;Tom&#x27;)</span></span><br><span class="line"><span class="string">                             </span></span><br><span class="line"><span class="string">     # hello Kevin i am Tom . my name is Kevin</span></span><br><span class="line"><span class="string">     ###############################################</span></span><br><span class="line"><span class="string">     </span></span><br><span class="line"><span class="string">     </span></span><br><span class="line"><span class="string">     ###############################################</span></span><br><span class="line"><span class="string">     &#123;0:&#125;冒号后面可以跟需要的操作，如保留两位小数</span></span><br><span class="line"><span class="string">     ###############################################</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<pre><code>Variance explained:
+
+eigenvalue 1: 99.15%
+eigenvalue 2: 0.85%
+eigenvalue 3: 0.00%
+eigenvalue 4: 0.00%
+</code></pre><p>选择前两维特征</p>
+<p>x ((1,n)-&gt;(1,d))</p>
+<p>x1 = x0 * W ((1,n) x (n,d)) =&gt; 所以W为(n,d)，此题为(4,2) </p>
+<ul>
+<li>理解意思即可，此题x=(1,n)</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">W = np.hstack((eig_pairs[<span class="number">0</span>][<span class="number">1</span>].reshape(<span class="number">4</span>,<span class="number">1</span>), eig_pairs[<span class="number">1</span>][<span class="number">1</span>].reshape(<span class="number">4</span>,<span class="number">1</span>)))</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">np.vstack():在竖直方向上堆叠</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">np.hstack():在水平方向上平铺</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">print(<span class="string">&#x27;Matrix W:\n&#x27;</span>, W.real)</span><br></pre></td></tr></table></figure>
+<pre><code>Matrix W:
+ [[ 0.2049 -0.009 ]
+ [ 0.3871 -0.589 ]
+ [-0.5465  0.2543]
+ [-0.7138 -0.767 ]]
+</code></pre><h3 id="进行数据的降维"><a href="#进行数据的降维" class="headerlink" title="进行数据的降维"></a>进行数据的降维</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X_lda = X.dot(W)</span><br><span class="line"><span class="keyword">assert</span> X_lda.shape == (<span class="number">150</span>,<span class="number">2</span>), <span class="string">&quot;The matrix is not 150x2 dimensional.&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_step_lda</span>():</span></span><br><span class="line"></span><br><span class="line">    ax = plt.subplot(<span class="number">111</span>)</span><br><span class="line">    <span class="keyword">for</span> label,marker,color <span class="keyword">in</span> <span class="built_in">zip</span>(</span><br><span class="line">        <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">4</span>),(<span class="string">&#x27;^&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;o&#x27;</span>),(<span class="string">&#x27;blue&#x27;</span>, <span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>)):</span><br><span class="line"></span><br><span class="line">        plt.scatter(x=X_lda[:,<span class="number">0</span>].real[y == label],</span><br><span class="line">                y=X_lda[:,<span class="number">1</span>].real[y == label],</span><br><span class="line">                marker=marker,</span><br><span class="line">                color=color,</span><br><span class="line">                alpha=<span class="number">0.5</span>,</span><br><span class="line">                label=label_dict[label]</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">    plt.xlabel(<span class="string">&#x27;LD1&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;LD2&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    leg = plt.legend(loc=<span class="string">&#x27;upper right&#x27;</span>, fancybox=<span class="literal">True</span>)</span><br><span class="line">    leg.get_frame().set_alpha(<span class="number">0.5</span>)</span><br><span class="line">    plt.title(<span class="string">&#x27;LDA: Iris projection onto the first 2 linear discriminants&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># hide axis ticks</span></span><br><span class="line">    plt.tick_params(axis=<span class="string">&quot;both&quot;</span>, which=<span class="string">&quot;both&quot;</span>, bottom=<span class="string">&quot;off&quot;</span>, top=<span class="string">&quot;off&quot;</span>,  </span><br><span class="line">            labelbottom=<span class="string">&quot;on&quot;</span>, left=<span class="string">&quot;off&quot;</span>, right=<span class="string">&quot;off&quot;</span>, labelleft=<span class="string">&quot;on&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># remove axis spines</span></span><br><span class="line">    ax.spines[<span class="string">&quot;top&quot;</span>].set_visible(<span class="literal">False</span>)  </span><br><span class="line">    ax.spines[<span class="string">&quot;right&quot;</span>].set_visible(<span class="literal">False</span>)</span><br><span class="line">    ax.spines[<span class="string">&quot;bottom&quot;</span>].set_visible(<span class="literal">False</span>)</span><br><span class="line">    ax.spines[<span class="string">&quot;left&quot;</span>].set_visible(<span class="literal">False</span>)    </span><br><span class="line"></span><br><span class="line">    plt.grid()</span><br><span class="line">    plt.tight_layout</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">plot_step_lda()</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142652.png" alt=""></p>
+<h3 id="sklearn-有LDA模块可以调用。"><a href="#sklearn-有LDA模块可以调用。" class="headerlink" title="sklearn 有LDA模块可以调用。"></a>sklearn 有LDA模块可以调用。</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.discriminant_analysis <span class="keyword">import</span> LinearDiscriminantAnalysis <span class="keyword">as</span> LDA</span><br><span class="line"></span><br><span class="line"><span class="comment"># LDA</span></span><br><span class="line">sklearn_lda = LDA(n_components=<span class="number">2</span>) <span class="comment"># 降低成2D</span></span><br><span class="line">X_lda_sklearn = sklearn_lda.fit_transform(X, y)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.discriminant_analysis <span class="keyword">import</span> LinearDiscriminantAnalysis <span class="keyword">as</span> LDA</span><br><span class="line"></span><br><span class="line"><span class="comment"># LDA</span></span><br><span class="line">sklearn_lda = LDA(n_components=<span class="number">2</span>)</span><br><span class="line">X_lda_sklearn = sklearn_lda.fit_transform(X, y)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_scikit_lda</span>(<span class="params">X, title</span>):</span></span><br><span class="line"></span><br><span class="line">    ax = plt.subplot(<span class="number">111</span>)</span><br><span class="line">    <span class="keyword">for</span> label,marker,color <span class="keyword">in</span> <span class="built_in">zip</span>(</span><br><span class="line">        <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">4</span>),(<span class="string">&#x27;^&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;o&#x27;</span>),(<span class="string">&#x27;blue&#x27;</span>, <span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>)):</span><br><span class="line"></span><br><span class="line">        plt.scatter(x=X[:,<span class="number">0</span>][y == label],</span><br><span class="line">                    y=X[:,<span class="number">1</span>][y == label] * -<span class="number">1</span>, <span class="comment"># flip the figure</span></span><br><span class="line">                    marker=marker,</span><br><span class="line">                    color=color,</span><br><span class="line">                    alpha=<span class="number">0.5</span>,</span><br><span class="line">                    label=label_dict[label])</span><br><span class="line"></span><br><span class="line">    plt.xlabel(<span class="string">&#x27;LD1&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;LD2&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    leg = plt.legend(loc=<span class="string">&#x27;upper right&#x27;</span>, fancybox=<span class="literal">True</span>)</span><br><span class="line">    leg.get_frame().set_alpha(<span class="number">0.5</span>)</span><br><span class="line">    plt.title(title)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># hide axis ticks</span></span><br><span class="line">    plt.tick_params(axis=<span class="string">&quot;both&quot;</span>, which=<span class="string">&quot;both&quot;</span>, bottom=<span class="string">&quot;off&quot;</span>, top=<span class="string">&quot;off&quot;</span>,  </span><br><span class="line">            labelbottom=<span class="string">&quot;on&quot;</span>, left=<span class="string">&quot;off&quot;</span>, right=<span class="string">&quot;off&quot;</span>, labelleft=<span class="string">&quot;on&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># remove axis spines</span></span><br><span class="line">    ax.spines[<span class="string">&quot;top&quot;</span>].set_visible(<span class="literal">False</span>)  </span><br><span class="line">    ax.spines[<span class="string">&quot;right&quot;</span>].set_visible(<span class="literal">False</span>)</span><br><span class="line">    ax.spines[<span class="string">&quot;bottom&quot;</span>].set_visible(<span class="literal">False</span>)</span><br><span class="line">    ax.spines[<span class="string">&quot;left&quot;</span>].set_visible(<span class="literal">False</span>)    </span><br><span class="line"></span><br><span class="line">    plt.grid()</span><br><span class="line">    plt.tight_layout</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plot_step_lda()</span><br><span class="line">plot_scikit_lda(X_lda_sklearn, title=<span class="string">&#x27;Default LDA via scikit-learn&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142828.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515142842.png" alt=""></p>
+<p><strong> 可以看出来sklearn和自己做的效果是差不多的 </strong></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html" title="降维算法——LDA(线性判别分析)" target="_blank" rel="external">https://xxren8218.github.io/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren888.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren888.gitee.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html" title="降维算法——PCA(主成分分析)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/20210513/%E8%81%9A%E7%B1%BB%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94KMEANS-DBSCAN.html" title="聚类基础——KMEANS &amp; DBSCAN"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+</body>
+</html>
