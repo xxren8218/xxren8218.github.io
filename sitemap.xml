@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://xxren8218.github.io/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html</loc>
+    
+    <lastmod>2021-05-18</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://xxren8218.github.io/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%BA%8C%EF%BC%89%EF%BC%9A%E5%92%8C%E4%B8%BAS%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97.html</loc>
     
     <lastmod>2021-05-18</lastmod>
@@ -310,6 +317,13 @@
   </url>
   
   <url>
+    <loc>https://xxren8218.github.io/tags/index.html</loc>
+    
+    <lastmod>2021-02-28</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://xxren8218.github.io/links/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
@@ -318,13 +332,6 @@
   
   <url>
     <loc>https://xxren8218.github.io/repository/index.html</loc>
-    
-    <lastmod>2021-02-28</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://xxren8218.github.io/tags/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     
@@ -361,14 +368,14 @@
 
   
   <url>
-    <loc>https://xxren8218.github.io/tags/python%E5%9F%BA%E7%A1%80/</loc>
+    <loc>https://xxren8218.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/</loc>
     <lastmod>2021-05-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/</loc>
+    <loc>https://xxren8218.github.io/tags/python%E5%9F%BA%E7%A1%80/</loc>
     <lastmod>2021-05-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -445,14 +452,14 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/tags/%E9%80%92%E5%BD%92/</loc>
+    <loc>https://xxren8218.github.io/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/</loc>
     <lastmod>2021-05-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/</loc>
+    <loc>https://xxren8218.github.io/tags/%E9%80%92%E5%BD%92/</loc>
     <lastmod>2021-05-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -489,14 +496,14 @@
 
   
   <url>
-    <loc>https://xxren8218.github.io/categories/python/</loc>
+    <loc>https://xxren8218.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</loc>
     <lastmod>2021-05-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</loc>
+    <loc>https://xxren8218.github.io/categories/python/</loc>
     <lastmod>2021-05-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
