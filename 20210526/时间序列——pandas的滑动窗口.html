@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>时间序列——pandas的滑动窗口 | X.X.Ren的个人博客</title>
+  <meta name="description" content="pandas滑动窗口 进行预测单独拿某一天的值不合理，可以用一个滑动窗口，取一个平均值，比较平稳。  1234%matplotlib inline import matplotlib.pylabimport numpy as npimport pandas as pd 1df &#x3D; pd.Series(np.random.randn(600), index &#x3D; pd.date_range(&amp;#x27">
+<meta property="og:type" content="article">
+<meta property="og:title" content="时间序列——pandas的滑动窗口">
+<meta property="og:url" content="https://xxren8218.github.io/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="pandas滑动窗口 进行预测单独拿某一天的值不合理，可以用一个滑动窗口，取一个平均值，比较平稳。  1234%matplotlib inline import matplotlib.pylabimport numpy as npimport pandas as pd 1df &#x3D; pd.Series(np.random.randn(600), index &#x3D; pd.date_range(&amp;#x27">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210526005000.png">
+<meta property="article:published_time" content="2021-05-25T16:49:14.000Z">
+<meta property="article:modified_time" content="2021-05-25T16:55:27.470Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="机器学习基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210526005000.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%B3%95/" style="font-size: 13px; color: #fff">二分法</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.33px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.17px; color: #fff">其他</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" style="font-size: 13px; color: #fff">内置函数</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px; color: #fff">动态规划</a> <a href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" style="font-size: 13px; color: #fff">单调栈</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13.67px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 13.17px; color: #fff">哈希表</a> <a href="/tags/%E5%A4%9A%E6%8C%87%E9%92%88/" style="font-size: 13.17px; color: #fff">多指针</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 13.17px; color: #fff">字符串</a> <a href="/tags/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" style="font-size: 13px; color: #fff">快慢指针</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/" style="font-size: 13px; color: #fff">快速幂</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.5px; color: #fff">排序</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 13.5px; color: #fff">数学</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13.67px; color: #fff">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.17px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.83px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.17px; color: #fff">机器学习基础实战</a> <a href="/tags/%E6%9F%A5%E6%89%BE/" style="font-size: 13px; color: #fff">查找</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px; color: #fff">栈</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 13px; color: #fff">滑动窗口</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E6%A0%88/" style="font-size: 13px; color: #fff">辅助栈</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/" style="font-size: 13px; color: #fff">辅助素组</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px; color: #fff">递归</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94ARIMA%E6%A8%A1%E5%9E%8B%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E6%8B%A9.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="时间序列——ARIMA模型参数的选择" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94ARIMA%E6%A8%A1%E5%9E%8B%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E6%8B%A9.html" class="title">时间序列——ARIMA模型参数的选择</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-25T16:57:08.000Z" itemprop="datePublished">2021-05-26 00:57:08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94ARIMA%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="时间序列——ARIMA的一些概念" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94ARIMA%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5.html" class="title">时间序列——ARIMA的一些概念</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-25T16:51:04.000Z" itemprop="datePublished">2021-05-26 00:51:04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="时间序列——pandas的滑动窗口" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" class="title">时间序列——pandas的滑动窗口</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-25T16:49:14.000Z" itemprop="datePublished">2021-05-26 00:49:14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%95%B0%E6%8D%AE%E9%87%8D%E9%87%87%E6%A0%B7.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="时间序列——pandas的数据重采样" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%95%B0%E6%8D%AE%E9%87%8D%E9%87%87%E6%A0%B7.html" class="title">时间序列——pandas的数据重采样</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-25T16:48:15.000Z" itemprop="datePublished">2021-05-26 00:48:15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%94%9F%E6%88%90%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="时间序列——pandas生成时间序列" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%94%9F%E6%88%90%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97.html" class="title">时间序列——pandas生成时间序列</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-25T16:46:08.000Z" itemprop="datePublished">2021-05-26 00:46:08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#pandas%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="toc-text">pandas滑动窗口</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-时间序列——pandas的滑动窗口" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      时间序列——pandas的滑动窗口
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" class="article-date">
+        发布于<time datetime="2021-05-25T16:49:14.000Z" itemprop="datePublished">
+            2021-05-26 00:49:14
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" class="article-date">
+        更新于<time datetime="2021-05-25T16:55:27.470Z" itemprop="dateUpdated">
+            2021-05-26 00:55:27
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag">机器学习基础</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" class="leancloud_visitors"  data-flag-title="时间序列——pandas的滑动窗口">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="pandas滑动窗口"><a href="#pandas滑动窗口" class="headerlink" title="pandas滑动窗口"></a>pandas滑动窗口</h3><ul>
+<li>进行预测单独拿某一天的值不合理，可以用一个滑动窗口，取一个平均值，比较平稳。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline </span><br><span class="line"><span class="keyword">import</span> matplotlib.pylab</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df = pd.Series(np.random.randn(<span class="number">600</span>), index = pd.date_range(<span class="string">&#x27;7/1/2021&#x27;</span>, freq = <span class="string">&#x27;D&#x27;</span>, periods = <span class="number">600</span>))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.head()</span><br></pre></td></tr></table></figure>
+<pre><code>2021-07-01   -1.507234
+2021-07-02    1.460754
+2021-07-03   -0.092146
+2021-07-04    2.486930
+2021-07-05    1.214179
+Freq: D, dtype: float64
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r = df.rolling(window = <span class="number">10</span>) <span class="comment"># 滑动窗口的大小。默认从左边开始滑动。</span></span><br><span class="line">r</span><br></pre></td></tr></table></figure>
+<pre><code>Rolling [window=10,center=False,axis=0]
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># r.max, r.median, r.std, r.skew, r.sum, r.var</span></span><br><span class="line">print(r.mean()) <span class="comment"># 小于窗口长度不会计算！为NaN</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre><code>2021-07-01         NaN
+2021-07-02         NaN
+2021-07-03         NaN
+2021-07-04         NaN
+2021-07-05         NaN
+2021-07-06         NaN
+2021-07-07         NaN
+2021-07-08         NaN
+2021-07-09         NaN
+2021-07-10    0.413176
+2021-07-11    0.489658
+2021-07-12    0.342502
+2021-07-28   -0.162861
+2021-07-29   -0.214442
+2021-07-30   -0.257007
+                ...   
+2023-02-17    0.289090
+2023-02-18   -0.049574
+2023-02-19   -0.095974
+2023-02-20   -0.226629
+Freq: D, Length: 600, dtype: float64
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">%matplotlib inline</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">15</span>, <span class="number">5</span>))</span><br><span class="line"></span><br><span class="line">df.plot(style=<span class="string">&#x27;r--&#x27;</span>)</span><br><span class="line">df.rolling(window=<span class="number">10</span>).mean().plot(style=<span class="string">&#x27;b&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1bafae87630&gt;
+</code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210526005000.png" alt=""></p>
+<p><strong>可以看到滑动窗口的平均值更平稳一些</strong></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" title="时间序列——pandas的滑动窗口" target="_blank" rel="external">https://xxren8218.github.io/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94ARIMA%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5.html" title="时间序列——ARIMA的一些概念"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%95%B0%E6%8D%AE%E9%87%8D%E9%87%87%E6%A0%B7.html" title="时间序列——pandas的数据重采样"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+</body>
+</html>
