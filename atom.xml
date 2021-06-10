@@ -89,11 +89,11 @@
   </entry>
   
   <entry>
-    <title>05_ 推荐系统冷启动问题</title>
+    <title>05-推荐系统冷启动问题</title>
     <link href="https://xxren8218.github.io/20210610/05-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%86%B7%E5%90%AF%E5%8A%A8%E9%97%AE%E9%A2%98.html"/>
     <id>https://xxren8218.github.io/20210610/05-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%86%B7%E5%90%AF%E5%8A%A8%E9%97%AE%E9%A2%98.html</id>
     <published>2021-06-10T09:33:03.000Z</published>
-    <updated>2021-06-10T09:36:42.295Z</updated>
+    <updated>2021-06-10T09:46:03.192Z</updated>
     
     <content type="html"><![CDATA[<h3 id="推荐系统的冷启动问题"><a href="#推荐系统的冷启动问题" class="headerlink" title="推荐系统的冷启动问题"></a>推荐系统的冷启动问题</h3><ul><li><p>推荐系统冷启动概念</p><ul><li>⽤户冷启动：如何为新⽤户做个性化推荐</li><li>物品冷启动：如何将新物品推荐给⽤户（协同过滤）</li><li>系统冷启动：⽤户冷启动+物品冷启动</li><li>本质是推荐系统依赖历史数据，没有历史数据⽆法预测⽤户偏好</li></ul></li><li><p>用户冷启动</p><ul><li><p>1.收集⽤户特征</p><ul><li><p>⽤户注册信息：性别、年龄、地域</p></li><li><p>设备信息：定位、⼿机型号、app列表</p></li><li><p>社交信息、推⼴素材、安装来源</p><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210610173438.png" alt=""></p></li></ul></li><li><p>2 引导用户填写兴趣</p><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210610173458.png" alt=""></p></li><li><p>3 使用其它站点的行为数据, 例如腾讯视频&amp;QQ音乐 今日头条&amp;抖音</p></li><li><p>4 新老用户推荐策略的差异</p><ul><li>新⽤户在冷启动阶段更倾向于热门排⾏榜，⽼⽤户会更加需要长尾推荐</li><li>Explore Exploit⼒度</li><li>使⽤单独的特征和模型预估</li></ul></li><li><p>举例 性别与电视剧的关系</p></li></ul><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210610173540.png" alt=""></p><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210610173600.png" alt=""></p></li><li><p>物品冷启动</p><ul><li>给物品打标签</li><li>利用物品的内容信息，将新物品先投放给曾经喜欢过和它内容相似的其他物品的用户。</li></ul><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210610173622.png" alt=""></p></li><li><p>系统冷启动</p><ul><li>基于内容的推荐 系统早期</li><li>基于内容的推荐逐渐过渡到协同过滤</li><li>基于内容的推荐和协同过滤的推荐结果都计算出来 加权求和得到最终推荐结果</li></ul></li></ul>]]></content>
     
