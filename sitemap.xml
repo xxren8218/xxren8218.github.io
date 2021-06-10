@@ -527,14 +527,14 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/tags/index.html</loc>
+    <loc>https://xxren8218.github.io/repository/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/repository/index.html</loc>
+    <loc>https://xxren8218.github.io/tags/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     
@@ -683,6 +683,20 @@
   </url>
   
   <url>
+    <loc>https://xxren8218.github.io/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/</loc>
+    <lastmod>2021-06-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xxren8218.github.io/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/</loc>
+    <lastmod>2021-06-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://xxren8218.github.io/tags/%E8%BE%85%E5%8A%A9%E6%A0%88/</loc>
     <lastmod>2021-06-10</lastmod>
     <changefreq>daily</changefreq>
@@ -698,20 +712,6 @@
   
   <url>
     <loc>https://xxren8218.github.io/tags/%E5%8D%95%E8%B0%83%E6%A0%88/</loc>
-    <lastmod>2021-06-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://xxren8218.github.io/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/</loc>
-    <lastmod>2021-06-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://xxren8218.github.io/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/</loc>
     <lastmod>2021-06-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -746,13 +746,6 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/</loc>
-    <lastmod>2021-06-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://xxren8218.github.io/tags/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/</loc>
     <lastmod>2021-06-10</lastmod>
     <changefreq>daily</changefreq>
@@ -760,7 +753,7 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/</loc>
+    <loc>https://xxren8218.github.io/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/</loc>
     <lastmod>2021-06-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -768,6 +761,13 @@
   
   <url>
     <loc>https://xxren8218.github.io/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</loc>
+    <lastmod>2021-06-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xxren8218.github.io/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/</loc>
     <lastmod>2021-06-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
