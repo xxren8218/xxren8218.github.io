@@ -17,26 +17,32 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>降维算法——PCA(主成分分析) | X.X.Ren的个人博客</title>
-  <meta name="description" content="鸢尾花数据集的降维——PCA PCA的降维是不依赖标签（分类的），而是依赖样本的方差（协方差）  1234import numpy as npimport pandas as pddf &#x3D; pd.read_csv(&amp;#x27;iris.data&amp;#x27;)df.head()                        5.1       3.5       1.4       0.2">
+  <title>02-动态规划设计之最长递增子序列 | X.X.Ren的个人博客</title>
+  <meta name="description" content="很多人了解了动态规划，但还是不会写状态转移方程，没有思路，怎么办？本文就借助「最长递增子序列」来讲一种设计动态规划的通用技巧：数学归纳思想。 最长递增子序列（Longest Increasing Subsequence，简写 LIS）是比较经典的一个问题，比较容易想到的是动态规划解法，时间复杂度 O(N^2)，我们借这个问题来由浅入深讲解如何写动态规划。 比较难想到的是利用二分查找，时间复杂度是">
 <meta property="og:type" content="article">
-<meta property="og:title" content="降维算法——PCA(主成分分析)">
-<meta property="og:url" content="https://xxren8218.github.io/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html">
+<meta property="og:title" content="02-动态规划设计之最长递增子序列">
+<meta property="og:url" content="https://xxren8218.github.io/20210615/02-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%E4%B9%8B%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="鸢尾花数据集的降维——PCA PCA的降维是不依赖标签（分类的），而是依赖样本的方差（协方差）  1234import numpy as npimport pandas as pddf &#x3D; pd.read_csv(&amp;#x27;iris.data&amp;#x27;)df.head()                        5.1       3.5       1.4       0.2">
+<meta property="og:description" content="很多人了解了动态规划，但还是不会写状态转移方程，没有思路，怎么办？本文就借助「最长递增子序列」来讲一种设计动态规划的通用技巧：数学归纳思想。 最长递增子序列（Longest Increasing Subsequence，简写 LIS）是比较经典的一个问题，比较容易想到的是动态规划解法，时间复杂度 O(N^2)，我们借这个问题来由浅入深讲解如何写动态规划。 比较难想到的是利用二分查找，时间复杂度是">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515143327.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515143458.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515143541.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515143554.png">
-<meta property="article:published_time" content="2021-05-15T06:31:02.000Z">
-<meta property="article:modified_time" content="2021-05-15T06:39:58.519Z">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183006.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183020.PNG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183039.PNG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183224.gif">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183054.PNG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183309.gif">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183118.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183133.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183151.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183204.jpg">
+<meta property="article:published_time" content="2021-06-15T10:28:49.000Z">
+<meta property="article:modified_time" content="2021-06-15T10:36:34.228Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="机器学习基础">
+<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515143327.png">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183006.jpg">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210615/02-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%E4%B9%8B%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -387,21 +393,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E9%99%8D%E7%BB%B4%E2%80%94%E2%80%94PCA"><span class="toc-text">鸢尾花数据集的降维——PCA</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E5%8D%8F%E6%96%B9%E5%B7%AE%E7%9F%A9%E9%98%B5%E7%9A%84%E7%89%B9%E5%BE%81%E5%80%BC%E5%92%8C%E7%89%B9%E5%BE%81%E5%90%91%E9%87%8F"><span class="toc-text">计算协方差矩阵的特征值和特征向量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cumsum-%E5%87%BD%E6%95%B0%E7%9A%84%E8%A7%A3%E9%87%8A%EF%BC%9A"><span class="toc-text">cumsum()函数的解释：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PCA%E4%BD%BF%E5%BE%97%E7%BB%93%E6%9E%9C%E6%9B%B4%E5%AE%B9%E6%98%93%E5%88%86%E7%B1%BB"><span class="toc-text">PCA使得结果更容易分类</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%A7%A3%E6%B3%95"><span class="toc-text">一、动态规划解法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E8%A7%A3%E6%B3%95"><span class="toc-text">二、二分查找解法</span></a></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-降维算法——PCA-主成分分析" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-02-动态规划设计之最长递增子序列" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      降维算法——PCA(主成分分析)
+      02-动态规划设计之最长递增子序列
     </h1>
   
 
@@ -410,18 +416,18 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar"></i>
-    <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html" class="article-date">
-        发布于<time datetime="2021-05-15T06:31:02.000Z" itemprop="datePublished">
-            2021-05-15 14:31:02
+    <a href="/20210615/02-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%E4%B9%8B%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.html" class="article-date">
+        发布于<time datetime="2021-06-15T10:28:49.000Z" itemprop="datePublished">
+            2021-06-15 18:28:49
         </time>
     </a>
 </span>
 
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-    <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html" class="article-date">
-        更新于<time datetime="2021-05-15T06:39:58.519Z" itemprop="dateUpdated">
-            2021-05-15 14:39:58
+    <a href="/20210615/02-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%E4%B9%8B%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.html" class="article-date">
+        更新于<time datetime="2021-06-15T10:36:34.228Z" itemprop="dateUpdated">
+            2021-06-15 18:36:34
         </time>
     </a>
 </span>
@@ -430,24 +436,19 @@
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+    <a class="article-category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
   </span>
 
         
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag">机器学习基础</a>
-  </span>
-
 
         
 
 	<span class="article-read hidden-xs">
     	<i class="icon icon-eye-fill" aria-hidden="true"></i>
-    	<span id="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html" class="leancloud_visitors"  data-flag-title="降维算法——PCA(主成分分析)">0</span>
+    	<span id="/20210615/02-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%E4%B9%8B%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.html" class="leancloud_visitors"  data-flag-title="02-动态规划设计之最长递增子序列">0</span>
     </span>
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210615/02-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%E4%B9%8B%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.html#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -456,260 +457,60 @@
 	</div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="鸢尾花数据集的降维——PCA"><a href="#鸢尾花数据集的降维——PCA" class="headerlink" title="鸢尾花数据集的降维——PCA"></a>鸢尾花数据集的降维——PCA</h1><ul>
-<li>PCA的降维是不依赖标签（分类的），而是依赖样本的方差（协方差）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">df = pd.read_csv(<span class="string">&#x27;iris.data&#x27;</span>)</span><br><span class="line">df.head()</span><br></pre></td></tr></table></figure>
-<div style="overflow: scroll;">
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>5.1</th>
-      <th>3.5</th>
-      <th>1.4</th>
-      <th>0.2</th>
-      <th>Iris-setosa</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>4.9</td>
-      <td>3.0</td>
-      <td>1.4</td>
-      <td>0.2</td>
-      <td>Iris-setosa</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>4.7</td>
-      <td>3.2</td>
-      <td>1.3</td>
-      <td>0.2</td>
-      <td>Iris-setosa</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>4.6</td>
-      <td>3.1</td>
-      <td>1.5</td>
-      <td>0.2</td>
-      <td>Iris-setosa</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>5.0</td>
-      <td>3.6</td>
-      <td>1.4</td>
-      <td>0.2</td>
-      <td>Iris-setosa</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5.4</td>
-      <td>3.9</td>
-      <td>1.7</td>
-      <td>0.4</td>
-      <td>Iris-setosa</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df.columns=[<span class="string">&#x27;sepal_len&#x27;</span>, <span class="string">&#x27;sepal_wid&#x27;</span>, <span class="string">&#x27;petal_len&#x27;</span>, <span class="string">&#x27;petal_wid&#x27;</span>, <span class="string">&#x27;class&#x27;</span>]</span><br><span class="line">df.head()</span><br></pre></td></tr></table></figure>
-<div style="overflow: scroll;">
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>sepal_len</th>
-      <th>sepal_wid</th>
-      <th>petal_len</th>
-      <th>petal_wid</th>
-      <th>class</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>4.9</td>
-      <td>3.0</td>
-      <td>1.4</td>
-      <td>0.2</td>
-      <td>Iris-setosa</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>4.7</td>
-      <td>3.2</td>
-      <td>1.3</td>
-      <td>0.2</td>
-      <td>Iris-setosa</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>4.6</td>
-      <td>3.1</td>
-      <td>1.5</td>
-      <td>0.2</td>
-      <td>Iris-setosa</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>5.0</td>
-      <td>3.6</td>
-      <td>1.4</td>
-      <td>0.2</td>
-      <td>Iris-setosa</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5.4</td>
-      <td>3.9</td>
-      <td>1.7</td>
-      <td>0.4</td>
-      <td>Iris-setosa</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># split data table into data X and class labels y</span></span><br><span class="line"></span><br><span class="line">X = df.ix[:,<span class="number">0</span>:<span class="number">4</span>].values</span><br><span class="line">y = df.ix[:,<span class="number">4</span>].values</span><br></pre></td></tr></table></figure>
-<p><strong> 数据的可视化 </strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line">label_dict = &#123;<span class="number">1</span>: <span class="string">&#x27;Iris-Setosa&#x27;</span>,</span><br><span class="line">              <span class="number">2</span>: <span class="string">&#x27;Iris-Versicolor&#x27;</span>,</span><br><span class="line">              <span class="number">3</span>: <span class="string">&#x27;Iris-Virgnica&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">feature_dict = &#123;<span class="number">0</span>: <span class="string">&#x27;sepal length [cm]&#x27;</span>,</span><br><span class="line">                <span class="number">1</span>: <span class="string">&#x27;sepal width [cm]&#x27;</span>,</span><br><span class="line">                <span class="number">2</span>: <span class="string">&#x27;petal length [cm]&#x27;</span>,</span><br><span class="line">                <span class="number">3</span>: <span class="string">&#x27;petal width [cm]&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">6</span>))</span><br><span class="line"><span class="keyword">for</span> cnt <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">    plt.subplot(<span class="number">2</span>, <span class="number">2</span>, cnt+<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">for</span> lab <span class="keyword">in</span> (<span class="string">&#x27;Iris-setosa&#x27;</span>, <span class="string">&#x27;Iris-versicolor&#x27;</span>, <span class="string">&#x27;Iris-virginica&#x27;</span>):</span><br><span class="line">        plt.hist(X[y==lab, cnt],</span><br><span class="line">                     label=lab,</span><br><span class="line">                     bins=<span class="number">10</span>,</span><br><span class="line">                     alpha=<span class="number">0.3</span>,)</span><br><span class="line">    plt.xlabel(feature_dict[cnt])</span><br><span class="line">    plt.legend(loc=<span class="string">&#x27;upper right&#x27;</span>, fancybox=<span class="literal">True</span>, fontsize=<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515143327.png" alt=""></p>
-<p><strong> 一般要先进行数据的标准化，归一化，或正态化的预处理 </strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line">X_std = StandardScaler().fit_transform(X)</span><br><span class="line"><span class="built_in">print</span> (X_std)</span><br></pre></td></tr></table></figure>
-<pre><code>[[-1.1483555  -0.11805969 -1.35396443 -1.32506301]
- [-1.3905423   0.34485856 -1.41098555 -1.32506301]
- [-1.51163569  0.11339944 -1.29694332 -1.32506301]
- [-1.02726211  1.27069504 -1.35396443 -1.32506301]
- [-0.54288852  1.9650724  -1.18290109 -1.0614657 ]
- [-1.51163569  0.8077768  -1.35396443 -1.19326436]
- [-1.02726211  0.8077768  -1.29694332 -1.32506301]
- [-1.75382249 -0.34951881 -1.35396443 -1.32506301]
- [-1.1483555   0.11339944 -1.29694332 -1.45686167]
- [-0.54288852  1.50215416 -1.29694332 -1.32506301]
- [-1.2694489   0.8077768  -1.23992221 -1.32506301]
- [-1.2694489  -0.11805969 -1.35396443 -1.45686167]
- [-1.87491588 -0.11805969 -1.52502777 -1.45686167]
- [-0.05851493  2.19653152 -1.46800666 -1.32506301]
- ...
- [-0.54288852  1.9650724  -1.41098555 -1.0614657 ]
- [-0.90616871  1.03923592 -1.35396443 -1.19326436]
- [-0.17960833  1.73361328 -1.18290109 -1.19326436]
- [-0.90616871  1.73361328 -1.29694332 -1.19326436]
- [ 1.15241904  0.34485856  1.21198569  1.4427088 ]
- [ 1.03132564  0.57631768  1.09794346  1.70630611]
- [ 1.03132564 -0.11805969  0.81283789  1.4427088 ]
- [ 0.54695205 -1.27535529  0.69879566  0.91551417]
- [ 0.78913885 -0.11805969  0.81283789  1.04731282]
- [ 0.42585866  0.8077768   0.92688012  1.4427088 ]
- [ 0.06257847 -0.11805969  0.75581678  0.78371551]]
-</code></pre><p><strong> 手撕协方差 </strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mean_vec = np.mean(X_std, axis=<span class="number">0</span>)</span><br><span class="line">cov_mat = (X_std - mean_vec).T.dot((X_std - mean_vec)) / (X_std.shape[<span class="number">0</span>]-<span class="number">1</span>)</span><br><span class="line">print(<span class="string">&#x27;Covariance matrix \n%s&#x27;</span> %cov_mat)</span><br></pre></td></tr></table></figure>
-<pre><code>Covariance matrix 
-[[ 1.00675676 -0.10448539  0.87716999  0.82249094]
- [-0.10448539  1.00675676 -0.41802325 -0.35310295]
- [ 0.87716999 -0.41802325  1.00675676  0.96881642]
- [ 0.82249094 -0.35310295  0.96881642  1.00675676]]
-</code></pre><p><strong> 直接可以在numpy中调用cov（）,协方差函数 </strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&#x27;NumPy covariance matrix: \n%s&#x27;</span> %np.cov(X_std.T))</span><br></pre></td></tr></table></figure>
-<pre><code>NumPy covariance matrix: 
-[[ 1.00675676 -0.10448539  0.87716999  0.82249094]
- [-0.10448539  1.00675676 -0.41802325 -0.35310295]
- [ 0.87716999 -0.41802325  1.00675676  0.96881642]
- [ 0.82249094 -0.35310295  0.96881642  1.00675676]]
-</code></pre><p>可以看到对角线上的都为1，因为自身与自身的协方差肯定是1</p>
-<ul>
-<li>标准化以后是1。——相关系数。</li>
-<li>没有标准化的数据，仅仅是方差。</li>
-</ul>
-<h3 id="计算协方差矩阵的特征值和特征向量"><a href="#计算协方差矩阵的特征值和特征向量" class="headerlink" title="计算协方差矩阵的特征值和特征向量"></a>计算协方差矩阵的特征值和特征向量</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cov_mat = np.cov(X_std.T)</span><br><span class="line"></span><br><span class="line">eig_vals, eig_vecs = np.linalg.eig(cov_mat)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;Eigenvectors \n%s&#x27;</span> %eig_vecs)</span><br><span class="line">print(<span class="string">&#x27;\nEigenvalues \n%s&#x27;</span> %eig_vals)</span><br></pre></td></tr></table></figure>
-<pre><code>Eigenvectors 
-[[ 0.52308496 -0.36956962 -0.72154279  0.26301409]
- [-0.25956935 -0.92681168  0.2411952  -0.12437342]
- [ 0.58184289 -0.01912775  0.13962963 -0.80099722]
- [ 0.56609604 -0.06381646  0.63380158  0.52321917]]
-
-Eigenvalues 
-[ 2.92442837  0.93215233  0.14946373  0.02098259]
-</code></pre><p><strong> 特征值的大小代表特征向量的重要程度 </strong></p>
-<p>下面的代码将其进行排序</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Make a list of (eigenvalue, eigenvector) tuples</span></span><br><span class="line">eig_pairs = [(np.<span class="built_in">abs</span>(eig_vals[i]), eig_vecs[:,i]) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(eig_vals))]</span><br><span class="line"><span class="built_in">print</span> (eig_pairs)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;----------&#x27;</span>)</span><br><span class="line"><span class="comment"># Sort the (eigenvalue, eigenvector) tuples from high to low</span></span><br><span class="line">eig_pairs.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>], reverse=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Visually confirm that the list is correctly sorted by decreasing eigenvalues</span></span><br><span class="line">print(<span class="string">&#x27;Eigenvalues in descending order:&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> eig_pairs:</span><br><span class="line">    print(i[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
-<pre><code>[(2.9244283691111144, array([ 0.52308496, -0.25956935,  0.58184289,  0.56609604])), (0.93215233025350641, array([-0.36956962, -0.92681168, -0.01912775, -0.06381646])), (0.14946373489813314, array([-0.72154279,  0.2411952 ,  0.13962963,  0.63380158])), (0.020982592764270606, array([ 0.26301409, -0.12437342, -0.80099722,  0.52321917]))]
-----------
-Eigenvalues in descending order:
-2.92442836911
-0.932152330254
-0.149463734898
-0.0209825927643
-</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tot = <span class="built_in">sum</span>(eig_vals)</span><br><span class="line">var_exp = [(i / tot)*<span class="number">100</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">sorted</span>(eig_vals, reverse=<span class="literal">True</span>)]</span><br><span class="line"><span class="built_in">print</span> (var_exp)</span><br><span class="line">cum_var_exp = np.cumsum(var_exp)  <span class="comment"># 来验证最后的和是否为100% 以及维度的选择——cumsum()的解释在下面。</span></span><br><span class="line">cum_var_exp</span><br></pre></td></tr></table></figure>
-<pre><code>[72.620033326920336, 23.147406858644135, 3.7115155645845164, 0.52104424985101538]
-
-
-
-
-
-array([  72.62003333,   95.76744019,   99.47895575,  100.        ])
-</code></pre><h3 id="cumsum-函数的解释："><a href="#cumsum-函数的解释：" class="headerlink" title="cumsum()函数的解释："></a>cumsum()函数的解释：</h3><ul>
-<li>为什么要用它呢？<ul>
-<li>可以判断到底降维到几维。（设置阈值。比如百分之95%，那么降到2维即可）</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line"><span class="built_in">print</span> (a)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;-----------&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (np.cumsum(a))</span><br></pre></td></tr></table></figure>
-<pre><code>[1 2 3 4]
------------
-[ 1  3  6 10]
-</code></pre><p><strong> 作图展示特征值所占的百分比 </strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">6</span>, <span class="number">4</span>))</span><br><span class="line"></span><br><span class="line">plt.bar(<span class="built_in">range</span>(<span class="number">4</span>), var_exp, alpha=<span class="number">0.5</span>, align=<span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">            label=<span class="string">&#x27;individual explained variance&#x27;</span>)</span><br><span class="line">plt.step(<span class="built_in">range</span>(<span class="number">4</span>), cum_var_exp, where=<span class="string">&#x27;mid&#x27;</span>,                <span class="comment"># 阶梯图。where，表示在哪里开始跳跃。</span></span><br><span class="line">             label=<span class="string">&#x27;cumulative explained variance&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Explained variance ratio&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;Principal components&#x27;</span>)</span><br><span class="line">plt.legend(loc=<span class="string">&#x27;best&#x27;</span>)</span><br><span class="line">plt.tight_layout() <span class="comment"># 最自动调整图的大小。使其填满图像区域。</span></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515143458.png" alt=""></p>
-<p><strong> 确定w的维度 </strong></p>
-<ul>
-<li>拿前两个特征向量。——基变换:w.T * x0 = x1</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">matrix_w = np.hstack((eig_pairs[<span class="number">0</span>][<span class="number">1</span>].reshape(<span class="number">4</span>,<span class="number">1</span>),</span><br><span class="line">                      eig_pairs[<span class="number">1</span>][<span class="number">1</span>].reshape(<span class="number">4</span>,<span class="number">1</span>)))</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;Matrix W:\n&#x27;</span>, matrix_w)</span><br></pre></td></tr></table></figure>
-<pre><code>Matrix W:
- [[ 0.52308496 -0.36956962]
- [-0.25956935 -0.92681168]
- [ 0.58184289 -0.01912775]
- [ 0.56609604 -0.06381646]]
-</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Y = X_std.dot(matrix_w)</span><br><span class="line">Y</span><br></pre></td></tr></table></figure>
-<pre><code>array([[-2.10795032,  0.64427554],
-       [-2.38797131,  0.30583307],
-       [-2.32487909,  0.56292316],
-       [-2.40508635, -0.687591  ],
-       [-2.08320351, -1.53025171],
-       [-2.4636848 , -0.08795413],
-       [-2.25174963, -0.25964365],
-       [-2.3645813 ,  1.08255676],
-       [-2.20946338,  0.43707676],
-       [-2.17862017, -1.08221046],
-       [-2.34525657, -0.17122946],
-       ...
-       [ 2.00701161, -0.60663655],
-       [ 1.89319854, -0.68227708],
-       [ 1.13831104,  0.70171953],
-       [ 2.03519535, -0.86076914],
-       [ 1.99464025, -1.04517619],
-       [ 1.85977129, -0.37934387],
-       [ 1.54200377,  0.90808604],
-       [ 1.50925493, -0.26460621],
-       [ 1.3690965 , -1.01583909],
-       [ 0.94680339,  0.02182097]])
-</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">6</span>, <span class="number">4</span>))</span><br><span class="line"><span class="keyword">for</span> lab, col <span class="keyword">in</span> <span class="built_in">zip</span>((<span class="string">&#x27;Iris-setosa&#x27;</span>, <span class="string">&#x27;Iris-versicolor&#x27;</span>, <span class="string">&#x27;Iris-virginica&#x27;</span>),</span><br><span class="line">                        (<span class="string">&#x27;blue&#x27;</span>, <span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>)):</span><br><span class="line">     plt.scatter(X[y==lab, <span class="number">0</span>],</span><br><span class="line">                X[y==lab, <span class="number">1</span>],</span><br><span class="line">                label=lab,</span><br><span class="line">                c=col)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;sepal_len&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;sepal_wid&#x27;</span>)</span><br><span class="line">plt.legend(loc=<span class="string">&#x27;best&#x27;</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515143541.png" alt=""></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">6</span>, <span class="number">4</span>))</span><br><span class="line"><span class="keyword">for</span> lab, col <span class="keyword">in</span> <span class="built_in">zip</span>((<span class="string">&#x27;Iris-setosa&#x27;</span>, <span class="string">&#x27;Iris-versicolor&#x27;</span>, <span class="string">&#x27;Iris-virginica&#x27;</span>),</span><br><span class="line">                        (<span class="string">&#x27;blue&#x27;</span>, <span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>)):</span><br><span class="line">     plt.scatter(Y[y==lab, <span class="number">0</span>],</span><br><span class="line">                Y[y==lab, <span class="number">1</span>],</span><br><span class="line">                label=lab,</span><br><span class="line">                c=col)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;Principal Component 1&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Principal Component 2&#x27;</span>)</span><br><span class="line">plt.legend(loc=<span class="string">&#x27;lower center&#x27;</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210515143554.png" alt=""></p>
-<h2 id="PCA使得结果更容易分类"><a href="#PCA使得结果更容易分类" class="headerlink" title="PCA使得结果更容易分类"></a>PCA使得结果更容易分类</h2><p><strong> 降维后数据的意义不存在了 </strong></p>
+        <p>很多人了解了动态规划，但还是不会写状态转移方程，没有思路，怎么办？本文就借助「最长递增子序列」来讲一种设计动态规划的通用技巧：<strong>数学归纳思想。</strong></p>
+<p>最长递增子序列（Longest Increasing Subsequence，简写 LIS）是比较经典的一个问题，比较容易想到的是动态规划解法，时间复杂度 O(N^2)，我们借这个问题来由浅入深讲解如何写动态规划。</p>
+<p>比较难想到的是利用二分查找，时间复杂度是 O(NlogN)，我们通过一种简单的纸牌游戏来辅助理解这种巧妙的解法。</p>
+<p>先看一下题目，很容易理解：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183006.jpg" alt=""></p>
+<p>注意<strong>「子序列」</strong>和<strong>「子串」</strong>这两个名词的区别，子串一定是连续的，而子序列不一定是连续的。下面先来一步一步设计动态规划算法解决这个问题。</p>
+<h3 id="一、动态规划解法"><a href="#一、动态规划解法" class="headerlink" title="一、动态规划解法"></a>一、动态规划解法</h3><p><strong>动态规划的核心设计思想是数学归纳法。</strong></p>
+<p>相信大家对数学归纳法都不陌生，高中就学过，而且思路很简单。比如我们想证明一个数学结论，那么我们先假设这个结论在 k &lt; n 时成立，然后想办法证明 k=<em>n</em> 的时候此结论也成立。如果能够证明出来，那么就说明这个结论对于 k 等于任何数都成立。</p>
+<p>类似的，我们设计动态规划算法，不是需要一个 dp 数组吗？我们可以假设 <strong>dp[0…i−1]</strong> 都已经被算出来了，然后问自己：怎么通过这些结果算出<em>dp[i] ?</em></p>
+<p>直接拿最长递增子序列这个问题举例你就明白了。不过，首先要定义清楚 dp 数组的含义，即 dp[i] 的值到底代表着什么？</p>
+<p><strong>我们的定义是这样的：dp[i] 表示以 nums[i] 这个数结尾的最长递增子序列的长度。</strong></p>
+<p>举个例子：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183020.PNG" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183039.PNG" alt=""></p>
+<p>算法演进的过程是这样的:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183224.gif" alt=""></p>
+<p>根据这个定义，我们的最终结果（子序列的最大长度）应该是 dp 数组中的最大值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="built_in">max</span>(dp)</span><br></pre></td></tr></table></figure>
+<p>读者也许会问，刚才这个过程中每个 dp[i] 的结果是我们肉眼看出来的，我们应该怎么设计算法逻辑来正确计算每个 dp[i] 呢？</p>
+<p><strong>这就是动态规划的重头戏了，要思考如何进行状态转移，这里就可以使用数学归纳的思想</strong></p>
+<p>我们已经知道了 dp[0…4] 的所有结果，我们如何通过这些已知结果推出 dp[5]呢？</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183054.PNG" alt=""></p>
+<p>根据刚才我们对 dp 数组的定义，现在想求 dp[5] 的值，也就是想求以 nums[5] 为结尾的最长递增子序列。</p>
+<p>nums[5] = 3，既然是递增子序列，我们只要找到前面那些结尾比 3 小的子序列，然后把 3 接到最后，就可以形成一个新的递增子序列，而且这个新的子序列长度加一。</p>
+<p>当然，可能形成很多种新的子序列，但是我们只要最长的，把最长子序列的长度作为 dp[5] 的值即可。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183309.gif" alt=""></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i):</span><br><span class="line">    <span class="keyword">if</span> nums[j] &lt; nums[i]:</span><br><span class="line">        dp[i] = <span class="built_in">max</span>(dp[i],  dp[j]+<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>这段代码的逻辑就可以算出 dp[5]。到这里，这道算法题我们就基本做完了。读者也许会问，我们刚才只是算了 dp[5] 呀，dp[4], dp[3] 这些怎么算呢？</p>
+<p>类似数学归纳法，你已经可以通过 dp[0…4] 算出 dp[5] 了，那么任意 dp[i] 你肯定都可以算出来:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(nums)):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i):</span><br><span class="line">    	<span class="keyword">if</span> nums[j] &lt; nums[i]:</span><br><span class="line">        	dp[i] = <span class="built_in">max</span>(dp[i], dp[j]+<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>还有一个细节问题，就是 base case。dp 数组应该全部初始化为 1，因为子序列最少也要包含自己，所以长度最小为 1。下面我们看一下完整代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lengthOfLIS</span>(<span class="params">nums</span>):</span></span><br><span class="line">    n = <span class="built_in">len</span>(nums)</span><br><span class="line">    dp = [<span class="number">1</span>]*n</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">         <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i):</span><br><span class="line">                <span class="keyword">if</span> nums[j] &lt; nums[i]:</span><br><span class="line">                    dp[i] = <span class="built_in">max</span>(dp[i], dp[j]+<span class="number">1</span>)</span><br><span class="line">                    </span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">max</span>(dp)</span><br></pre></td></tr></table></figure>
+<p>至此，这道题就解决了，时间复杂度 O(N^2)。总结一下动态规划的设计流程：</p>
+<p>首先明确 dp 数组所存数据的含义。这步很重要，如果不得当或者不够清晰，会阻碍之后的步骤。</p>
+<p>然后根据 dp 数组的定义，运用数学归纳法的思想，假设 dp[0…<em>i</em>−1] 都已知，想办法求出 dp[i]，一旦这一步完成，整个题目基本就解决了。</p>
+<p>但如果无法完成这一步，很可能就是 dp 数组的定义不够恰当，需要重新定义 dp 数组的含义；或者可能是 dp 数组存储的信息还不够，不足以推出下一步的答案，需要把 dp 数组扩大成二维数组甚至三维数组。</p>
+<h3 id="二、二分查找解法"><a href="#二、二分查找解法" class="headerlink" title="二、二分查找解法"></a>二、二分查找解法</h3><p>这个解法的时间复杂度会将为 O(NlogN)，但是说实话，正常人基本想不到这种解法（也许玩过某些纸牌游戏的人可以想出来）。所以如果大家了解一下就好，正常情况下能够给出动态规划解法就已经很不错了。</p>
+<p>根据题目的意思，我都很难想象这个问题竟然能和二分查找扯上关系。其实最长递增子序列和一种叫做 patience game 的纸牌游戏有关，甚至有一种排序方法就叫做 patience sorting（耐心排序）。</p>
+<p>为了简单起见，后文跳过所有数学证明，通过一个简化的例子来理解一下思路。</p>
+<p>首先，给你一排扑克牌，我们像遍历数组那样从左到右一张一张处理这些扑克牌，最终要把这些牌分成若干堆</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183118.jpg" alt=""></p>
+<p>处理这些扑克牌要遵循以下规则：</p>
+<p>只能把点数小的牌压到点数比它大的牌上。如果当前牌点数较大没有可以放置的堆，则新建一个堆，把这张牌放进去。如果当前牌有多个堆可供选择，则选择最左边的堆放置。</p>
+<p>比如说上述的扑克牌最终会被分成这样 5 堆（我们认为 A 的值是最大的，而不是 1）。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183133.jpg" alt=""></p>
+<p>为什么遇到多个可选择堆的时候要放到最左边的堆上呢？因为这样可以保证牌堆顶的牌有序（2, 4, 7, 8, Q），证明略。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183151.jpg" alt=""></p>
+<p>按照上述规则执行，可以<strong>算出最长递增子序列，牌的堆数就是我们想求的最长递增子序列的长度</strong>，证明略。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210615183204.jpg" alt=""></p>
+<p>我们只要把处理扑克牌的过程编程写出来即可。每次处理一张扑克牌不是要找一个合适的牌堆顶来放吗，牌堆顶的牌不是有序吗，这就能用到二分查找了：用二分查找来搜索当前牌应放置的位置。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lengthOfLIS</span>(<span class="params">nums</span>):</span></span><br><span class="line">    n = <span class="built_in">len</span>(nums)</span><br><span class="line">    top = [<span class="number">0</span>]*n</span><br><span class="line">    <span class="comment"># 初始化牌堆数为 0</span></span><br><span class="line">    piles = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        <span class="comment"># 要处理的扑克牌</span></span><br><span class="line">        poker = nums[i]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 搜索左侧边界的二分查找</span></span><br><span class="line">        left, right = <span class="number">0</span>, piles</span><br><span class="line">        <span class="keyword">while</span> left &lt; right:</span><br><span class="line">            mid = (left + right) / <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> top[mid] &gt; poker:</span><br><span class="line">                right = mid</span><br><span class="line">            <span class="keyword">elif</span> top[mid] &lt; poker:</span><br><span class="line">                left = mid + <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                right = mid</span><br><span class="line">                </span><br><span class="line">		<span class="comment"># 没找到合适的牌堆，新建一个堆</span></span><br><span class="line">        <span class="keyword">if</span> left == piles:</span><br><span class="line">            piles += <span class="number">1</span></span><br><span class="line">        <span class="comment"># 把这张牌放到牌堆顶</span></span><br><span class="line">        top[left] = poker</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># 牌堆数就是LIS的长度    </span></span><br><span class="line">	<span class="keyword">return</span> piles            </span><br></pre></td></tr></table></figure>
+<p>至此，二分查找的解法也讲解完毕。</p>
+<p>这个解法确实很难想到。首先涉及数学证明，谁能想到按照这些规则执行，就能得到最长递增子序列呢？其次还有二分查找的运用，要是对二分查找的细节不清楚，给了思路也很难写对。</p>
+<p>所以，这个方法作为思维拓展好了。但动态规划的设计方法应该完全理解：<strong>假设之前的答案已知，利用数学归纳的思想正确进行状态的推演转移，最终得到答案。</strong></p>
 
       
     </div>
@@ -719,7 +520,7 @@ array([  72.62003333,   95.76744019,   99.47895575,  100.        ])
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://xxren8218.github.io/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html" title="降维算法——PCA(主成分分析)" target="_blank" rel="external">https://xxren8218.github.io/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94PCA-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90.html</a>
+      <a href="https://xxren8218.github.io/20210615/02-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%E4%B9%8B%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.html" title="02-动态规划设计之最长递增子序列" target="_blank" rel="external">https://xxren8218.github.io/20210615/02-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%E4%B9%8B%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -766,12 +567,12 @@ array([  72.62003333,   95.76744019,   99.47895575,  100.        ])
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/20210517/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89%EF%BC%9A%E5%8C%85%E5%90%ABmin%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88.html" title="剑指Offer（二十）：包含min函数的栈"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="/20210615/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html" title="二分查找算法详解"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/20210515/%E9%99%8D%E7%BB%B4%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94LDA-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90.html" title="降维算法——LDA(线性判别分析)"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/20210611/01-%E5%88%9D%E8%AF%86%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92.html" title="01-初识动态规划"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
