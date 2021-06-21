@@ -17,23 +17,27 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>时间序列——pandas的滑动窗口 | X.X.Ren的个人博客</title>
-  <meta name="description" content="pandas滑动窗口 进行预测单独拿某一天的值不合理，可以用一个滑动窗口，取一个平均值，比较平稳。  1234%matplotlib inline import matplotlib.pylabimport numpy as npimport pandas as pd 1df &#x3D; pd.Series(np.random.randn(600), index &#x3D; pd.date_range(&amp;#x27">
+  <title>18-分布式文件系统 HDFS | X.X.Ren的个人博客</title>
+  <meta name="description" content="分布式文件系统 HDFS掌握目标：  知道什么是hdfs 说出hdfs的架构 能够掌握hdfs的环境搭建 能够掌握hdfs shell的基本使用 知道hdfs shell的优缺点  2.1 HDFS的使用 启动HDFS  来到$HADOOP_HOME&#x2F;sbin目录下 执行start-dfs.sh  1[hadoop@hadoop00 sbin]$ .&#x2F;start-dfs.sh  可以看到 name">
 <meta property="og:type" content="article">
-<meta property="og:title" content="时间序列——pandas的滑动窗口">
-<meta property="og:url" content="https://xxren8218.github.io/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html">
+<meta property="og:title" content="18-分布式文件系统 HDFS">
+<meta property="og:url" content="https://xxren8218.github.io/20210622/18-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="pandas滑动窗口 进行预测单独拿某一天的值不合理，可以用一个滑动窗口，取一个平均值，比较平稳。  1234%matplotlib inline import matplotlib.pylabimport numpy as npimport pandas as pd 1df &#x3D; pd.Series(np.random.randn(600), index &#x3D; pd.date_range(&amp;#x27">
+<meta property="og:description" content="分布式文件系统 HDFS掌握目标：  知道什么是hdfs 说出hdfs的架构 能够掌握hdfs的环境搭建 能够掌握hdfs shell的基本使用 知道hdfs shell的优缺点  2.1 HDFS的使用 启动HDFS  来到$HADOOP_HOME&#x2F;sbin目录下 执行start-dfs.sh  1[hadoop@hadoop00 sbin]$ .&#x2F;start-dfs.sh  可以看到 name">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210526005000.png">
-<meta property="article:published_time" content="2021-05-25T16:49:14.000Z">
-<meta property="article:modified_time" content="2021-05-25T16:55:27.470Z">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004022.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004044.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004102.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004151.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004230.jpg">
+<meta property="article:published_time" content="2021-06-21T16:38:13.000Z">
+<meta property="article:modified_time" content="2021-06-21T16:43:15.059Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="机器学习基础">
+<meta property="article:tag" content="推荐系统基础">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210526005000.png">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004022.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210622/18-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -384,21 +388,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#pandas%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="toc-text">pandas滑动窗口</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS"><span class="toc-text">分布式文件系统 HDFS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-HDFS%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">2.1 HDFS的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-HDFS-shell%E6%93%8D%E4%BD%9C"><span class="toc-text">2.2 HDFS shell操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ls"><span class="toc-text">ls</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#text"><span class="toc-text">text</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mv"><span class="toc-text">mv</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#put"><span class="toc-text">put</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rm"><span class="toc-text">rm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-HDFS-shell%E6%93%8D%E4%BD%9C%E7%BB%83%E4%B9%A0"><span class="toc-text">2.2.1 HDFS shell操作练习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-HDFS%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="toc-text">2.3 HDFS设计思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-HDFS%E6%9E%B6%E6%9E%84"><span class="toc-text">2.4 HDFS架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-HDFS%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">2.5 HDFS环境搭建</span></a></li></ol></li></ol></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-时间序列——pandas的滑动窗口" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-18-分布式文件系统-HDFS" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      时间序列——pandas的滑动窗口
+      18-分布式文件系统 HDFS
     </h1>
   
 
@@ -407,18 +411,18 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar"></i>
-    <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" class="article-date">
-        发布于<time datetime="2021-05-25T16:49:14.000Z" itemprop="datePublished">
-            2021-05-26 00:49:14
+    <a href="/20210622/18-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS.html" class="article-date">
+        发布于<time datetime="2021-06-21T16:38:13.000Z" itemprop="datePublished">
+            2021-06-22 00:38:13
         </time>
     </a>
 </span>
 
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-    <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" class="article-date">
-        更新于<time datetime="2021-05-25T16:55:27.470Z" itemprop="dateUpdated">
-            2021-05-26 00:55:27
+    <a href="/20210622/18-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS.html" class="article-date">
+        更新于<time datetime="2021-06-21T16:43:15.059Z" itemprop="dateUpdated">
+            2021-06-22 00:43:15
         </time>
     </a>
 </span>
@@ -427,13 +431,13 @@
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
   </span>
 
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag">机器学习基础</a>
+	<a class="article-tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" rel="tag">推荐系统基础</a>
   </span>
 
 
@@ -441,10 +445,10 @@
 
 	<span class="article-read hidden-xs">
     	<i class="icon icon-eye-fill" aria-hidden="true"></i>
-    	<span id="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" class="leancloud_visitors"  data-flag-title="时间序列——pandas的滑动窗口">0</span>
+    	<span id="/20210622/18-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS.html" class="leancloud_visitors"  data-flag-title="18-分布式文件系统 HDFS">0</span>
     </span>
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210622/18-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS.html#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -453,46 +457,217 @@
 	</div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h3 id="pandas滑动窗口"><a href="#pandas滑动窗口" class="headerlink" title="pandas滑动窗口"></a>pandas滑动窗口</h3><ul>
-<li>进行预测单独拿某一天的值不合理，可以用一个滑动窗口，取一个平均值，比较平稳。</li>
+        <h1 id="分布式文件系统-HDFS"><a href="#分布式文件系统-HDFS" class="headerlink" title="分布式文件系统 HDFS"></a>分布式文件系统 HDFS</h1><p>掌握目标：</p>
+<ul>
+<li>知道什么是hdfs</li>
+<li>说出hdfs的架构</li>
+<li>能够掌握hdfs的环境搭建</li>
+<li>能够掌握hdfs shell的基本使用</li>
+<li>知道hdfs shell的优缺点</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline </span><br><span class="line"><span class="keyword">import</span> matplotlib.pylab</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df = pd.Series(np.random.randn(<span class="number">600</span>), index = pd.date_range(<span class="string">&#x27;7/1/2021&#x27;</span>, freq = <span class="string">&#x27;D&#x27;</span>, periods = <span class="number">600</span>))</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.head()</span><br></pre></td></tr></table></figure>
-<pre><code>2021-07-01   -1.507234
-2021-07-02    1.460754
-2021-07-03   -0.092146
-2021-07-04    2.486930
-2021-07-05    1.214179
-Freq: D, dtype: float64
-</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r = df.rolling(window = <span class="number">10</span>) <span class="comment"># 滑动窗口的大小。默认从左边开始滑动。</span></span><br><span class="line">r</span><br></pre></td></tr></table></figure>
-<pre><code>Rolling [window=10,center=False,axis=0]
-</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># r.max, r.median, r.std, r.skew, r.sum, r.var</span></span><br><span class="line">print(r.mean()) <span class="comment"># 小于窗口长度不会计算！为NaN</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<pre><code>2021-07-01         NaN
-2021-07-02         NaN
-2021-07-03         NaN
-2021-07-04         NaN
-2021-07-05         NaN
-2021-07-06         NaN
-2021-07-07         NaN
-2021-07-08         NaN
-2021-07-09         NaN
-2021-07-10    0.413176
-2021-07-11    0.489658
-2021-07-12    0.342502
-2021-07-28   -0.162861
-2021-07-29   -0.214442
-2021-07-30   -0.257007
-                ...   
-2023-02-17    0.289090
-2023-02-18   -0.049574
-2023-02-19   -0.095974
-2023-02-20   -0.226629
-Freq: D, Length: 600, dtype: float64
-</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">%matplotlib inline</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">15</span>, <span class="number">5</span>))</span><br><span class="line"></span><br><span class="line">df.plot(style=<span class="string">&#x27;r--&#x27;</span>)</span><br><span class="line">df.rolling(window=<span class="number">10</span>).mean().plot(style=<span class="string">&#x27;b&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<pre><code>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1bafae87630&gt;
-</code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210526005000.png" alt=""></p>
-<p><strong>可以看到滑动窗口的平均值更平稳一些</strong></p>
+<h3 id="2-1-HDFS的使用"><a href="#2-1-HDFS的使用" class="headerlink" title="2.1 HDFS的使用"></a>2.1 HDFS的使用</h3><ul>
+<li><p>启动HDFS</p>
+<ul>
+<li>来到$HADOOP_HOME/sbin目录下</li>
+<li>执行start-dfs.sh</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@hadoop00 sbin]$ ./start-dfs.sh</span><br></pre></td></tr></table></figure>
+<ul>
+<li>可以看到 namenode和 datanode启动的日志信息</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Starting namenodes on [hadoop00]</span><br><span class="line">hadoop00: starting namenode, logging to /home/hadoop/app/hadoop-2.6.0-cdh5.7.0/logs/hadoop-hadoop-namenode-hadoop00.out</span><br><span class="line">localhost: starting datanode, logging to /home/hadoop/app/hadoop-2.6.0-cdh5.7.0/logs/hadoop-hadoop-datanode-hadoop00.out</span><br><span class="line">Starting secondary namenodes [0.0.0.0]</span><br><span class="line">0.0.0.0: starting secondarynamenode, logging to /home/hadoop/app/hadoop-2.6.0-cdh5.7.0/logs/hadoop-hadoop-secondarynamenode-hadoop00.out</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通过jps命令查看当前运行的进程</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@hadoop00 sbin]$ jps</span><br><span class="line">4416 DataNode</span><br><span class="line">4770 Jps</span><br><span class="line">4631 SecondaryNameNode</span><br><span class="line">4251 NameNode</span><br></pre></td></tr></table></figure>
+<ul>
+<li>可以看到 NameNode DataNode 以及 SecondaryNameNode 说明启动成功</li>
+</ul>
+</li>
+<li><p>通过可视化界面查看HDFS的运行情况</p>
+<ul>
+<li>通过浏览器查看 主机ip:50070端口 </li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004022.png" alt=""></p>
+<ul>
+<li>Overview界面查看整体情况</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004044.png" alt=""></p>
+<ul>
+<li>Datanodes界面查看datanode的情况</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004102.png" alt=""></p>
+</li>
+</ul>
+<h3 id="2-2-HDFS-shell操作"><a href="#2-2-HDFS-shell操作" class="headerlink" title="2.2 HDFS shell操作"></a>2.2 HDFS shell操作</h3><ul>
+<li><p>调用文件系统(FS)Shell命令应使用 bin/hadoop fs <args>的形式</p>
+<ul>
+<li><h3 id="ls"><a href="#ls" class="headerlink" title="ls"></a>ls</h3><p>使用方法：hadoop fs -ls <args></p>
+<p>如果是文件，则按照如下格式返回文件信息：<br>文件名 &lt;副本数&gt; 文件大小 修改日期 修改时间 权限 用户ID 组ID<br>如果是目录，则返回它直接子文件的一个列表，就像在Unix中一样。目录返回列表的信息如下：<br>目录名 <dir> 修改日期 修改时间 权限 用户ID 组ID<br>示例：<br>hadoop fs -ls /user/hadoop/file1 /user/hadoop/file2 hdfs://host:port/user/hadoop/dir1 /nonexistentfile<br>返回值：<br>成功返回0，失败返回-1。 </p>
+</li>
+<li><h3 id="text"><a href="#text" class="headerlink" title="text"></a>text</h3><p>使用方法：hadoop fs -text <src> </p>
+<p>将源文件输出为文本格式。允许的格式是zip和TextRecordInputStream。</p>
+</li>
+<li><h3 id="mv"><a href="#mv" class="headerlink" title="mv"></a>mv</h3><p>使用方法：hadoop fs -mv URI [URI …] <dest></p>
+<p>将文件从源路径移动到目标路径。这个命令允许有多个源路径，此时目标路径必须是一个目录。不允许在不同的文件系统间移动文件。<br>示例：</p>
+<ul>
+<li>hadoop fs -mv /user/hadoop/file1 /user/hadoop/file2</li>
+<li>hadoop fs -mv hdfs://host:port/file1 hdfs://host:port/file2 hdfs://host:port/file3 hdfs://host:port/dir1</li>
+</ul>
+<p>返回值：</p>
+<p>成功返回0，失败返回-1。</p>
+</li>
+<li><h3 id="put"><a href="#put" class="headerlink" title="put"></a>put</h3><p>使用方法：hadoop fs -put <localsrc> … <dst></p>
+<p>从本地文件系统中复制单个或多个源路径到目标文件系统。也支持从标准输入中读取输入写入目标文件系统。</p>
+<ul>
+<li>hadoop fs -put localfile /user/hadoop/hadoopfile</li>
+<li>hadoop fs -put localfile1 localfile2 /user/hadoop/hadoopdir</li>
+<li>hadoop fs -put localfile hdfs://host:port/hadoop/hadoopfile</li>
+<li>hadoop fs -put - hdfs://host:port/hadoop/hadoopfile<br>从标准输入中读取输入。</li>
+</ul>
+<p>返回值：</p>
+<p>成功返回0，失败返回-1。</p>
+</li>
+<li><h3 id="rm"><a href="#rm" class="headerlink" title="rm"></a>rm</h3><p>使用方法：hadoop fs -rm URI [URI …]</p>
+<p>删除指定的文件。只删除非空目录和文件。请参考rmr命令了解递归删除。<br>示例：</p>
+<ul>
+<li>hadoop fs -rm hdfs://host:port/file /user/hadoop/emptydir</li>
+</ul>
+<p>返回值：</p>
+<p>成功返回0，失败返回-1。</p>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html">http://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html</a></p>
+</li>
+</ul>
+<h3 id="2-2-1-HDFS-shell操作练习"><a href="#2-2-1-HDFS-shell操作练习" class="headerlink" title="2.2.1 HDFS shell操作练习"></a>2.2.1 HDFS shell操作练习</h3><ul>
+<li><p>在centos 中创建 test.txt  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch test.txt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在centos中为test.txt 添加文本内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi test.txt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在HDFS中创建 hadoop001/test 文件夹</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -mkdir -p /hadoop001/test</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把text.txt文件上传到HDFS中</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -put test.txt /hadoop001/test/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看hdfs中 hadoop001/test/test.txt 文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -cat /hadoop001/test/test.txt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将hdfs中 hadoop001/test/test.txt文件下载到centos</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -get /hadoop001/test/test.txt test.txt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除HDFS中 hadoop001/test/</p>
+<p>hadoop fs -rm -r /hadoop001</p>
+</li>
+</ul>
+<h3 id="2-3-HDFS设计思路"><a href="#2-3-HDFS设计思路" class="headerlink" title="2.3 HDFS设计思路"></a>2.3 HDFS设计思路</h3><ul>
+<li><p>分布式文件系统的设计思路：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004151.png" alt=""></p>
+</li>
+</ul>
+<ul>
+<li>HDFS的设计目标<ul>
+<li>适合运行在通用硬件(commodity hardware)上的分布式文件系统</li>
+<li>高度容错性的系统，适合部署在廉价的机器上</li>
+<li>HDFS能提供高吞吐量的数据访问，非常适合大规模数据集上的应用</li>
+<li>容易扩展，为用户提供性能不错的文件存储服务</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-4-HDFS架构"><a href="#2-4-HDFS架构" class="headerlink" title="2.4 HDFS架构"></a>2.4 HDFS架构</h3><ul>
+<li>1个NameNode/NN(Master)  带 DataNode/DN(Slaves) (Master-Slave结构)</li>
+<li>1个文件会被拆分成多个Block</li>
+<li>NameNode(NN)<ul>
+<li>负责客户端请求的响应</li>
+<li>负责元数据（文件的名称、副本系数、Block存放的DN）的管理<ul>
+<li>元数据 MetaData 描述数据的数据</li>
+</ul>
+</li>
+<li>监控DataNode健康状况 10分钟 <code>心跳</code> 没有收到DataNode报告认为Datanode死掉了。将数据再存储一份。</li>
+</ul>
+</li>
+<li>DataNode(DN)<ul>
+<li>存储用户的文件对应的数据块(Block)</li>
+<li>要定期向NN发送心跳信息，汇报本身及其所有的block信息，健康状况</li>
+</ul>
+</li>
+<li>分布式集群NameNode和DataNode部署在不同机器上</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622004230.jpg" alt=""></p>
+<ul>
+<li>HDFS优缺点<ul>
+<li>优点<ul>
+<li>数据冗余 硬件容错</li>
+<li>适合存储大文件</li>
+<li>处理流式数据</li>
+<li>可构建在廉价机器上</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>高延迟的数据访问。——在各个机器之间通讯，延迟高。</li>
+<li>小文件存储。即使文件大小小于128M，它也会占128M的空间。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-5-HDFS环境搭建"><a href="#2-5-HDFS环境搭建" class="headerlink" title="2.5 HDFS环境搭建"></a>2.5 HDFS环境搭建</h3><ul>
+<li><p>下载jdk（java development kit,） 和 hadoop 放到 ~/software目录下 然后解压到 ~/app目录下</p>
+<ul>
+<li>因为大数据Hadoop等是用 java 开发的，java 需要在JVM上运行，而JDK就包含了JVM（JVM：java的虚拟机）</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf 压缩包名字 -C ~/app/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置环境变量</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bash_profile</span><br><span class="line">export JAVA_HOME=/home/hadoop/app/jdk1.8.0_91</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br><span class="line">export HADOOP_HOME=/home/hadoop/app/hadoop......</span><br><span class="line">export PATH=$HADOOP_HOME/bin:$PATH</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">保存退出后</span></span><br><span class="line">source ~/.bash_profile</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入到解压后的hadoop目录 修改配置文件</p>
+<ul>
+<li><p>配置文件作用</p>
+<ul>
+<li>core-site.xml  指定hdfs的访问方式</li>
+<li>hdfs-site.xml  指定namenode 和 datanode 的数据存储位置</li>
+<li>mapred-site.xml 配置mapreduce</li>
+<li>yarn-site.xml  配置yarn</li>
+</ul>
+</li>
+<li><p>修改hadoop-env.sh</p>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd etc/hadoop</span><br><span class="line">vi hadoop-env.sh</span><br><span class="line"><span class="meta">#</span><span class="bash">找到下面内容添加java home</span></span><br><span class="line">export_JAVA_HOME=/home/hadoop/app/jdk1.8.0_91</span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改 core-site.xml 在 <configuration>节点中添加</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>fs.default.name<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://hadoop000:8020<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改hdfs-site.xml 在 configuration节点中添加</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.namenode.name.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/app/tmp/dfs/name<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.datanode.data.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/app/tmp/dfs/data<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.replication<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>1<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改 mapred-site.xml </li>
+<li>默认没有这个 从模板文件复制 </li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp mapred-site.xml.template mapred-site.xml</span><br></pre></td></tr></table></figure>
+<p>​    在mapred-site.xml  的configuration 节点中添加</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>mapreduce.framework.name<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>yarn<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改yarn-site.xml configuration 节点中添加</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.aux-services<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>mapreduce_shuffle<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>来到hadoop的bin目录——格式化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./hadoop namenode -format (这个命令只运行一次)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动hdfs 进入到  sbin</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./start-dfs.sh</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动启动yarn 在sbin中</p>
+</li>
+</ul>
 
       
     </div>
@@ -502,7 +677,7 @@ Freq: D, Length: 600, dtype: float64
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://xxren8218.github.io/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html" title="时间序列——pandas的滑动窗口" target="_blank" rel="external">https://xxren8218.github.io/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3.html</a>
+      <a href="https://xxren8218.github.io/20210622/18-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS.html" title="18-分布式文件系统 HDFS" target="_blank" rel="external">https://xxren8218.github.io/20210622/18-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -548,13 +723,9 @@ Freq: D, Length: 600, dtype: float64
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94ARIMA%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5.html" title="时间序列——ARIMA的一些概念"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/20210526/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E2%80%94%E2%80%94pandas%E7%9A%84%E6%95%B0%E6%8D%AE%E9%87%8D%E9%87%87%E6%A0%B7.html" title="时间序列——pandas的数据重采样"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/20210621/17-Hadoop%E6%A6%82%E8%BF%B0.html" title="17-Hadoop概述"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
