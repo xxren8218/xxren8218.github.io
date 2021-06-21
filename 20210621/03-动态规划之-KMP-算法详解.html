@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>03-动态规划之 KMP 算法详解 | X.X.Ren的个人博客</title>
+  <meta name="description" content="动态规划之 KMP 算法详解KMP 算法（Knuth-Morris-Pratt 算法）是一个著名的字符串匹配算法，效率很高，但是确实有点复杂。 KMP 算法比较难理解。有一些优秀的同学通过手推 KMP 算法的过程来辅助理解该算法，这是一种办法，不过本文要从逻辑层面帮助读者理解算法的原理。十行代码之间，KMP 灰飞烟灭。 先在开头约定，本文用pat表示模式串，长度为M，txt表示文本串，长度为N。K">
+<meta property="og:type" content="article">
+<meta property="og:title" content="03-动态规划之 KMP 算法详解">
+<meta property="og:url" content="https://xxren8218.github.io/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="动态规划之 KMP 算法详解KMP 算法（Knuth-Morris-Pratt 算法）是一个著名的字符串匹配算法，效率很高，但是确实有点复杂。 KMP 算法比较难理解。有一些优秀的同学通过手推 KMP 算法的过程来辅助理解该算法，这是一种办法，不过本文要从逻辑层面帮助读者理解算法的原理。十行代码之间，KMP 灰飞烟灭。 先在开头约定，本文用pat表示模式串，长度为M，txt表示文本串，长度为N。K">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180706.gif">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180728.gif">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180744.gif">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180840.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180857.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180910.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180932.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180945.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180959.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181013.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181025.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181040.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181054.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181109.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181128.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181141.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181156.gif">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181226.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181239.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181254.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181306.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181317.gif">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181335.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181353.gif">
+<meta property="article:published_time" content="2021-06-21T10:05:59.000Z">
+<meta property="article:modified_time" content="2021-06-21T10:14:07.647Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180706.gif">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">38</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%B3%95/" style="font-size: 13.11px; color: #fff">二分法</a> <a href="/tags/%E4%BC%AA%E5%A4%B4%E8%8A%82%E7%82%B9/" style="font-size: 13px; color: #fff">伪头节点</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.22px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.11px; color: #fff">其他</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" style="font-size: 13px; color: #fff">内置函数</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px; color: #fff">动态规划</a> <a href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" style="font-size: 13px; color: #fff">单调栈</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13.56px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 13.44px; color: #fff">哈希表</a> <a href="/tags/%E5%A4%9A%E6%8C%87%E9%92%88/" style="font-size: 13.44px; color: #fff">多指针</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 13.11px; color: #fff">字符串</a> <a href="/tags/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/" style="font-size: 13px; color: #fff">归并排序</a> <a href="/tags/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" style="font-size: 13.11px; color: #fff">快慢指针</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/" style="font-size: 13px; color: #fff">快速幂</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.33px; color: #fff">排序</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">推荐系统基础</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 13.33px; color: #fff">数学</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13.78px; color: #fff">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.11px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.89px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.11px; color: #fff">机器学习基础实战</a> <a href="/tags/%E6%9F%A5%E6%89%BE/" style="font-size: 13px; color: #fff">查找</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px; color: #fff">栈</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 13px; color: #fff">滑动窗口</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E5%88%97%E8%A1%A8/" style="font-size: 13.11px; color: #fff">辅助列表</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E6%A0%88/" style="font-size: 13.11px; color: #fff">辅助栈</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/" style="font-size: 13px; color: #fff">辅助素组</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13.33px; color: #fff">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13.67px; color: #fff">链表</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210621/17-Hadoop%E6%A6%82%E8%BF%B0.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="17-Hadoop概述" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210621/17-Hadoop%E6%A6%82%E8%BF%B0.html" class="title">17-Hadoop概述</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-21T10:21:17.000Z" itemprop="datePublished">2021-06-21 18:21:17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="03-动态规划之 KMP 算法详解" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html" class="title">03-动态规划之 KMP 算法详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-21T10:05:59.000Z" itemprop="datePublished">2021-06-21 18:05:59</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210617/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%88%A0%E9%99%A4%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E7%BB%93%E7%82%B9%E2%80%942.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="剑指Offer（五十六）：删除排序链表中重复的结点—2" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210617/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%88%A0%E9%99%A4%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E7%BB%93%E7%82%B9%E2%80%942.html" class="title">剑指Offer（五十六）：删除排序链表中重复的结点—2</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-17T10:04:34.000Z" itemprop="datePublished">2021-06-17 18:04:34</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210617/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%88%A0%E9%99%A4%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E7%BB%93%E7%82%B9.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="剑指Offer（五十六）：删除排序链表中重复的结点" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210617/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%88%A0%E9%99%A4%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E7%BB%93%E7%82%B9.html" class="title">剑指Offer（五十六）：删除排序链表中重复的结点</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-17T10:03:30.000Z" itemprop="datePublished">2021-06-17 18:03:30</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210617/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E4%BA%94%EF%BC%89%EF%BC%9A%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%8E%AF%E7%9A%84%E5%85%A5%E5%8F%A3%E7%BB%93%E7%82%B9.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="剑指Offer（五十五）：链表中环的入口结点" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210617/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E4%BA%94%EF%BC%89%EF%BC%9A%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%8E%AF%E7%9A%84%E5%85%A5%E5%8F%A3%E7%BB%93%E7%82%B9.html" class="title">剑指Offer（五十五）：链表中环的入口结点</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-17T10:01:28.000Z" itemprop="datePublished">2021-06-17 18:01:28</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3"><span class="toc-text">动态规划之 KMP 算法详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81KMP-%E7%AE%97%E6%B3%95%E6%A6%82%E8%BF%B0"><span class="toc-text">一、KMP 算法概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%8A%B6%E6%80%81%E6%9C%BA%E6%A6%82%E8%BF%B0"><span class="toc-text">二、状态机概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%9E%84%E5%BB%BA%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB%E5%9B%BE"><span class="toc-text">三、构建状态转移图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">四、代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%9C%80%E5%90%8E%E6%80%BB%E7%BB%93"><span class="toc-text">五、最后总结</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-03-动态规划之-KMP-算法详解" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      03-动态规划之 KMP 算法详解
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html" class="article-date">
+        发布于<time datetime="2021-06-21T10:05:59.000Z" itemprop="datePublished">
+            2021-06-21 18:05:59
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html" class="article-date">
+        更新于<time datetime="2021-06-21T10:14:07.647Z" itemprop="dateUpdated">
+            2021-06-21 18:14:07
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+  </span>
+
+        
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html" class="leancloud_visitors"  data-flag-title="03-动态规划之 KMP 算法详解">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="动态规划之-KMP-算法详解"><a href="#动态规划之-KMP-算法详解" class="headerlink" title="动态规划之 KMP 算法详解"></a>动态规划之 KMP 算法详解</h2><p>KMP 算法（Knuth-Morris-Pratt 算法）是一个著名的字符串匹配算法，效率很高，但是确实有点复杂。</p>
+<p>KMP 算法比较难理解。有一些优秀的同学通过手推 KMP 算法的过程来辅助理解该算法，这是一种办法，不过本文要从逻辑层面帮助读者理解算法的原理。十行代码之间，KMP 灰飞烟灭。</p>
+<p><strong>先在开头约定，本文用<code>pat</code>表示模式串，长度为<code>M</code>，<code>txt</code>表示文本串，长度为<code>N</code>。KMP 算法是在<code>txt</code>中查找子串<code>pat</code>，如果存在，返回这个子串的起始索引，否则返回 -1</strong>。</p>
+<p>为什么我认为 KMP 算法就是个动态规划问题呢，等会有解释。对于动态规划，之前多次强调了要明确<code>dp</code>数组的含义，而且同一个问题可能有不止一种定义<code>dp</code>数组含义的方法，不同的定义会有不同的解法。</p>
+<p>常见的 KMP 算法应该是，一波诡异的操作处理<code>pat</code>后形成一个一维的数组<code>next</code>，然后根据这个数组经过又一波复杂操作去匹配<code>txt</code>。时间复杂度 O(N)，空间复杂度 O(M)。其实它这个<code>next</code>数组就相当于<code>dp</code>数组，其中元素的含义跟<code>pat</code>的前缀和后缀有关，判定规则比较复杂，不太好理解。</p>
+<p>本文则用一个<strong>二维</strong>的<code>dp</code>数组（但空间复杂度还是 O(M)），重新定义其中元素的含义，使得代码长度大大减少，可解释性大大提高。</p>
+<p>PS：原代码使用的数组名称是<code>dfa</code>（确定有限状态机），本文还是沿用<code>dp</code>数组的名称。</p>
+<blockquote>
+<h3 id="一、KMP-算法概述"><a href="#一、KMP-算法概述" class="headerlink" title="一、KMP 算法概述"></a>一、KMP 算法概述</h3></blockquote>
+<p>首先还是简单介绍一下 KMP 算法和暴力匹配算法的不同在哪里，难点在哪里，和动态规划有啥关系。</p>
+<p>暴力的字符串匹配算法很容易写，看一下它的运行逻辑：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 暴力匹配</span></span><br><span class="line">def search(pat, txt):(pat-&gt;string, txt-&gt;string)</span><br><span class="line">    M = <span class="built_in">len</span>(pat)</span><br><span class="line">    N = <span class="built_in">len</span>(txt)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N - M + <span class="number">1</span>):</span><br><span class="line">        <span class="comment"># 记录每次匹配成功的字串的元素个数</span></span><br><span class="line">        count = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(M):</span><br><span class="line">            <span class="keyword">if</span> pat[j] != txt[i + j]:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            count += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># pat 全部匹配了</span></span><br><span class="line">        <span class="keyword">if</span> (count == M): <span class="keyword">return</span> i</span><br><span class="line"></span><br><span class="line">    <span class="comment"># txt 中不存在 pat 子串</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>对于暴力算法，如果出现不匹配字符，同时回退<code>txt</code>和<code>pat</code>的指针，嵌套 for 循环，时间复杂度 <em>O</em>(MN)，空间复杂度<em>O</em>(1)。最主要的问题是，如果字符串中重复的字符比较多，该算法就显得很蠢。</p>
+<p>比如 txt = “aaacaaab” pat = “aaab”：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180706.gif" alt=""></p>
+<center>暴力算法</center>
+
+
+<p>很明显，<code>pat</code>中根本没有字符 c，根本没必要回退指针<code>i</code>，暴力解法明显多做了很多不必要的操作。</p>
+<p>KMP 算法的不同之处在于，它会花费空间来记录一些信息，在上述情况中就会显得很聪明：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180728.gif" alt=""></p>
+<center>KMP算法</center>
+
+
+<p>再比如类似的 txt = “aaaaaaab” pat = “aaab”，暴力解法还会和上面那个例子一样蠢蠢地回退指针<code>i</code>，而 KMP 算法又会耍聪明：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180744.gif" alt=""></p>
+<center>KMP算法</center>
+
+
+<p>因为 KMP 算法知道字符 b 之前的字符 a 都是匹配的，所以每次只需要比较字符 b 是否被匹配就行了。</p>
+<p><strong>KMP 算法永不回退<code>txt</code>的指针<code>i</code>，不走回头路（不会重复扫描<code>txt</code>），而是借助<code>dp</code>数组中储存的信息把<code>pat</code>移到正确的位置继续匹配</strong>，时间复杂度只需 O(N)，用空间换时间，所以我认为它是一种动态规划算法。</p>
+<p>KMP 算法的难点在于，如何计算<code>dp</code>数组中的信息？如何根据这些信息正确地移动<code>pat</code>的指针？这个就需要<strong>确定有限状态自动机</strong>来辅助了，别怕这种高大上的文学词汇，其实和动态规划的<code>dp</code>数组如出一辙，等你学会了也可以拿这个词去吓唬别人。</p>
+<p>还有一点需要明确的是：<strong>计算这个<code>dp</code>数组，只和<code>pat</code>串有关</strong>。意思是说，只要给我个<code>pat</code>，我就能通过这个模式串计算出<code>dp</code>数组，然后你可以给我不同的<code>txt</code>，我都不怕，利用这个<code>dp</code>数组我都能在 O(N) 时间完成字符串匹配。</p>
+<p>具体来说，比如上文举的两个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">txt1 = <span class="string">&quot;aaacaaab&quot;</span> </span><br><span class="line">pat = <span class="string">&quot;aaab&quot;</span></span><br><span class="line">txt2 = <span class="string">&quot;aaaaaaab&quot;</span> </span><br><span class="line">pat = <span class="string">&quot;aaab&quot;</span></span><br></pre></td></tr></table></figure>
+<p>我们的<code>txt</code>不同，但是<code>pat</code>是一样的，所以 KMP 算法使用的<code>dp</code>数组是同一个。只不过对于<code>txt1</code>的下面这个即将出现的未匹配情况：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180840.png" alt=""></p>
+<p><code>dp</code>数组指示<code>pat</code>这样移动：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180857.jpg" alt=""></p>
+<p>PS：这个<code>j</code>不要理解为索引，它的含义更准确地说应该是<strong>状态</strong>（state），所以它会出现这个奇怪的位置，后文会详述。</p>
+<p>而对于<code>txt2</code>的下面这个即将出现的未匹配情况：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180910.jpg" alt=""></p>
+<p><code>dp</code>数组指示<code>pat</code>这样移动：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180932.jpg" alt=""></p>
+<p>明白了<code>dp</code>数组只和<code>pat</code>有关，那么我们这样设计 KMP 算法就会比较漂亮：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KMP</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, pat</span>):</span></span><br><span class="line">        self.pat = pat</span><br><span class="line">        <span class="comment"># 通过 pat 构建 dp 数组</span></span><br><span class="line">        <span class="comment"># 需要 O(N) 时间</span></span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">search</span>(<span class="params">self, txt</span>):</span></span><br><span class="line">        <span class="comment"># 借助 dp 数组去匹配 txt</span></span><br><span class="line">        <span class="comment"># 需要 O(N) 时间</span></span><br></pre></td></tr></table></figure>
+<p>这样，当我们需要用同一<code>pat</code>去匹配不同<code>txt</code>时，就不需要浪费时间构造<code>dp</code>数组了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kmp = KMP(<span class="string">&quot;aaab&quot;</span>)</span><br><span class="line">pos1 = kmp.search(<span class="string">&quot;aaacaaab&quot;</span>) <span class="comment"># 4</span></span><br><span class="line">pos2 = kmp.search(<span class="string">&quot;aaaaaaab&quot;</span>) <span class="comment"># 4</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<h3 id="二、状态机概述"><a href="#二、状态机概述" class="headerlink" title="二、状态机概述"></a>二、状态机概述</h3></blockquote>
+<p>为什么说 KMP 算法和状态机有关呢？是这样的，我们可以认为<code>pat</code>的匹配就是状态的转移。比如当 pat = “ABABC”：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180945.jpg" alt=""></p>
+<p>如上图，圆圈内的数字就是状态，状态 0 是起始状态，状态 5（<code>pat.length</code>）是终止状态。开始匹配时<code>pat</code>处于起始状态，一旦转移到终止状态，就说明在<code>txt</code>中找到了<code>pat</code>。</p>
+<p>比如说如果当前处于状态 2，就说明字符 “AB” 被匹配：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621180959.jpg" alt=""></p>
+<p>另外，处于某个状态时，遇到不同的字符，<code>pat</code>状态转移的行为也不同。比如说假设现在匹配到了状态 4，如果遇到字符 A 就应该转移到状态 3，遇到字符 C 就应该转移到状态 5，如果遇到字符 B 就应该转移到状态 0：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181013.jpg" alt=""></p>
+<p>具体什么意思呢，举例解释一下。用变量<code>j</code>表示指向当前状态的指针，当前<code>pat</code>匹配到了状态 4</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181025.jpg" alt=""></p>
+<p>如果遇到了字符 “A”，根据箭头指示，转移到状态 3 是最聪明的：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181040.jpg" alt=""></p>
+<p>如果遇到了字符 “B”，根据箭头指示，只能转移到状态 0（一夜回到解放前）：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181054.jpg" alt=""></p>
+<p>如果遇到了字符 “C”，根据箭头指示，应该转移到终止状态 5，这也就意味着匹配完成：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181109.jpg" alt=""></p>
+<p>当然了，还可能遇到其他字符，比如 Z，但是显然应该转移到起始状态 0，因为<code>pat</code>中根本都没有字符 Z：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181128.jpg" alt=""></p>
+<p>这里为了清晰起见，我们画状态图时就把其他字符转移到状态 0 的箭头省略，只画<code>pat</code>中出现的字符的状态转移：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181141.jpg" alt=""></p>
+<p>KMP 算法最关键的步骤就是构造这个状态转移图。<strong>要确定状态转移的行为，得明确两个变量，一个是当前的匹配状态，另一个是遇到的字符</strong>；确定了这两个变量后，就可以知道这个情况下应该转移到哪个状态。</p>
+<p>下面看一下 KMP 算法根据这幅状态转移图匹配字符串<code>txt</code>的过程：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181156.gif" alt=""></p>
+<p><strong>请记住这个 GIF 的匹配过程，这就是 KMP 算法的核心逻辑</strong>！</p>
+<p>为了描述状态转移图，我们定义一个二维 dp 数组，它的含义如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">dp[j][c] = <span class="built_in">next</span></span><br><span class="line"><span class="number">0</span> &lt;= j &lt; M，代表当前的状态</span><br><span class="line"><span class="number">0</span> &lt;= c &lt; <span class="number">256</span>，代表遇到的字符（ASCII 码）</span><br><span class="line"><span class="number">0</span> &lt;= <span class="built_in">next</span> &lt;= M，代表下一个状态</span><br><span class="line"></span><br><span class="line">dp[<span class="number">4</span>][<span class="string">&#x27;A&#x27;</span>] = <span class="number">3</span> 表示：</span><br><span class="line">当前是状态 <span class="number">4</span>，如果遇到字符 A，</span><br><span class="line">pat 应该转移到状态 <span class="number">3</span></span><br><span class="line"></span><br><span class="line">dp[<span class="number">1</span>][<span class="string">&#x27;B&#x27;</span>] = <span class="number">2</span> 表示：</span><br><span class="line">当前是状态 <span class="number">1</span>，如果遇到字符 B，</span><br><span class="line">pat 应该转移到状态  <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>根据我们这个 dp 数组的定义和刚才状态转移的过程，我们可以先写出 KMP 算法的 search 函数代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">search</span>(<span class="params">String txt</span>):</span></span><br><span class="line">    M = <span class="built_in">len</span>(pat)</span><br><span class="line">    N = <span class="built_in">len</span>(txt)</span><br><span class="line">    <span class="comment"># pat 的初始态为 0</span></span><br><span class="line">    j = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        <span class="comment"># 当前是状态 j，遇到字符 txt[i]，</span></span><br><span class="line">        <span class="comment"># pat 应该转移到哪个状态？</span></span><br><span class="line">        j = dp[j][<span class="built_in">ord</span>(txt[i])]</span><br><span class="line">        <span class="comment"># 如果达到终止态，返回匹配开头的索引</span></span><br><span class="line">        <span class="keyword">if</span> j == M: <span class="keyword">return</span> i - M + <span class="number">1</span></span><br><span class="line">   </span><br><span class="line">    <span class="comment"># 没到达终止态，匹配失败</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>注意：python的内置函数ord(“a”) 输出字符串的ASCII编码</li>
+<li>python的内置函数chr(67) 输出ASCII编码对应的字符串</li>
+</ul>
+<p>到这里，应该还是很好理解的吧，<code>dp</code>数组就是我们刚才画的那幅状态转移图，如果不清楚的话回去看下 GIF 的算法演进过程。</p>
+<p>下面讲解：如何通过<code>pat</code>构建这个<code>dp</code>数组？</p>
+<blockquote>
+<h3 id="三、构建状态转移图"><a href="#三、构建状态转移图" class="headerlink" title="三、构建状态转移图"></a>三、构建状态转移图</h3></blockquote>
+<p>回想刚才说的：<strong>要确定状态转移的行为，必须明确两个变量，一个是当前的匹配状态，另一个是遇到的字符</strong>，而且我们已经根据这个逻辑确定了<code>dp</code>数组的含义，那么构造<code>dp</code>数组的框架就是这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> <span class="number">0</span> &lt;= j &lt; M: <span class="comment"># 状态</span></span><br><span class="line">    <span class="keyword">for</span> <span class="number">0</span> &lt;= c &lt; <span class="number">256</span>: <span class="comment"># 字符</span></span><br><span class="line">        dp[j][c] = <span class="built_in">next</span></span><br></pre></td></tr></table></figure>
+<p>这个 next 状态应该怎么求呢？显然，<strong>如果遇到的字符<code>c</code>和<code>pat[j]</code>匹配的话</strong>，状态就应该向前推进一个，也就是说<code>next = j + 1</code>，我们不妨称这种情况为<strong>状态推进</strong>：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181226.jpg" alt=""></p>
+<p><strong>如果遇到的字符<code>c</code>和<code>pat[j]</code>不匹配的话</strong>，状态就要回退（或者原地不动），我们不妨称这种情况为<strong>状态重启</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181239.jpg" alt=""></p>
+<p>那么，如何得知在哪个状态重启呢？解答这个问题之前，我们再定义一个名字：<strong>影子状态</strong>（我编的名字），用变量<code>X</code>表示。<strong>所谓影子状态，就是和当前状态具有相同的前缀</strong>。比如下面这种情况：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181254.jpg" alt=""></p>
+<p>当前状态<code>j = 4</code>，其影子状态为<code>X = 2</code>，它们都有相同的前缀 “AB”。因为状态<code>X</code>和状态<code>j</code>存在相同的前缀，所以当状态<code>j</code>准备进行状态重启的时候（遇到的字符<code>c</code>和<code>pat[j]</code>不匹配），可以通过<code>X</code>的状态转移图来获得<strong>最近的重启位置</strong>。</p>
+<p>比如说刚才的情况，如果状态<code>j</code>遇到一个字符 “A”，应该转移到哪里呢？首先状态 4 只有遇到 “C” 才能推进状态，遇到 “A” 显然只能进行状态重启。<strong>状态<code>j</code>会把这个字符委托给状态<code>X</code>处理，也就是<code>dp[j][&#39;A&#39;] = dp[X][&#39;A&#39;]</code></strong>：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181306.jpg" alt=""></p>
+<p>为什么这样可以呢？因为：既然<code>j</code>这边已经确定字符 “A” 无法推进状态，<strong>只能回退</strong>，而且 KMP 算法就是要<strong>尽可能少的回退</strong>，以免多余的计算。那么<code>j</code>就可以去问问和自己具有相同前缀的<code>X</code>，如果<code>X</code>遇见 “A” 可以进行「状态推进」，那就转移过去，因为这样回退最少：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181317.gif" alt=""></p>
+<p>当然，如果遇到的字符是 “B”，状态<code>X</code>也不能进行「状态推进」，只能回退，<code>j</code>只要跟着<code>X</code>指引的方向回退就行了：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181335.jpg" alt=""></p>
+<p>你也许会问，这个<code>X</code>怎么知道遇到字符 “B” 要回退到状态 0 呢？因为<code>X</code>永远跟在<code>j</code>的身后，状态<code>X</code>如何转移，在之前就已经算出来了。动态规划算法不就是利用过去的结果解决现在的问题吗？</p>
+<p>这样，我们就可以细化一下刚才的框架代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(M):</span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">256</span>):</span><br><span class="line">        <span class="keyword">if</span> c == <span class="built_in">ord</span>(pat[j]):</span><br><span class="line">            <span class="comment"># 状态推进</span></span><br><span class="line">            dp[j][c] = j + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 状态重启</span></span><br><span class="line">            <span class="comment"># 委托 X 计算重启位置</span></span><br><span class="line">            dp[j][c] = dp[X][c]</span><br></pre></td></tr></table></figure>
+<blockquote>
+<h3 id="四、代码实现"><a href="#四、代码实现" class="headerlink" title="四、代码实现"></a>四、代码实现</h3><ul>
+<li>注意python如何生成二维矩阵</li>
+</ul>
+</blockquote>
+<p>如果之前的内容你都能理解，恭喜你，现在就剩下一个问题：影子状态<code>X</code>是如何得到的呢？下面先直接看完整代码吧。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KMP</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, pat</span>):</span></span><br><span class="line">        self.pat = pat</span><br><span class="line">        M = <span class="built_in">len</span>(pat)</span><br><span class="line">        <span class="comment"># dp[状态][字符] = 下个状态</span></span><br><span class="line">        self.dp = [[<span class="number">0</span>] * <span class="number">256</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(M)]</span><br><span class="line">        <span class="comment">######################</span></span><br><span class="line">        <span class="comment">#     二维矩阵的生成    #</span></span><br><span class="line">        <span class="comment">#      M 行 256 列    #      </span></span><br><span class="line">        <span class="comment">######################</span></span><br><span class="line">        <span class="comment"># base case</span></span><br><span class="line">        self.dp[<span class="number">0</span>][<span class="built_in">ord</span>(pat[<span class="number">0</span>])] = <span class="number">1</span></span><br><span class="line">        <span class="comment"># 影子状态 X 初始为 0</span></span><br><span class="line">        X = <span class="number">0</span></span><br><span class="line">        <span class="comment"># 当前状态 j 从 1 开始</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, M):</span><br><span class="line">            <span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">256</span>):</span><br><span class="line">                <span class="keyword">if</span> <span class="built_in">ord</span>(pat[j]) == c:</span><br><span class="line">                    self.dp[j][c] = j + <span class="number">1</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    self.dp[j][c] = self.dp[X][c]</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 更新影子状态</span></span><br><span class="line">            X = self.dp[X][<span class="built_in">ord</span>(pat[j])]</span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">search</span>(<span class="params">self</span>):</span></span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+<p>先解释一下这一行代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># base case</span></span><br><span class="line">dp[<span class="number">0</span>][<span class="built_in">ord</span>(pat[<span class="number">0</span>])] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>这行代码是 base case，只有遇到 pat[0] 这个字符才能使状态从 0 转移到 1，遇到其它字符的话还是停留在状态 0。</p>
+<p>影子状态<code>X</code>是先初始化为 0，然后随着<code>j</code>的前进而不断更新的。下面看看到底应该<strong>如何更新影子状态<code>X</code></strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">X = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, M)</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment"># 更新影子状态</span></span><br><span class="line">    <span class="comment"># 当前是状态 X，遇到字符 pat[j],</span></span><br><span class="line">    <span class="comment"># pat 应该转移到哪个状态？</span></span><br><span class="line">    X = dp[X][<span class="built_in">ord</span>(pat[J])]</span><br></pre></td></tr></table></figure>
+<p>更新<code>X</code>其实和<code>search</code>函数中更新状态<code>j</code>的过程是非常相似的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">j = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">    <span class="comment"># 当前是状态 j，遇到字符 txt[i]，</span></span><br><span class="line">    <span class="comment"># pat 应该转移到哪个状态？</span></span><br><span class="line">    j = dp[j][<span class="built_in">ord</span>(txt[i])]</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p><strong>其中的原理非常微妙</strong>，注意代码中 for 循环的变量初始值，可以这样理解：后者是在<code>txt</code>中匹配<code>pat</code>，前者是在<code>pat</code>中匹配<code>pat[1:]</code>，状态<code>X</code>总是落后状态<code>j</code>一个状态，与<code>j</code>具有最长的相同前缀。所以我把<code>X</code>比喻为影子状态，似乎也有一点贴切。</p>
+<p>另外，构建 dp 数组是根据 base case<code>dp[0][..]</code>向后推演。这就是我认为 KMP 算法就是一种动态规划算法的原因。</p>
+<p>下面来看一下状态转移图的完整构造过程，你就能理解状态<code>X</code>作用之精妙了：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210621181353.gif" alt=""></p>
+<p>至此，KMP 算法就已经再无奥妙可言了！看下 KMP 算法的完整代码吧：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KMP</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, pat</span>):</span></span><br><span class="line">        self.pat = pat</span><br><span class="line">        M = <span class="built_in">len</span>(pat)</span><br><span class="line">        <span class="comment"># dp[状态][字符] = 下个状态</span></span><br><span class="line">        self.dp = [[<span class="number">0</span>] * <span class="number">256</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(M)]</span><br><span class="line">        <span class="comment">######################</span></span><br><span class="line">        <span class="comment">#     二维矩阵的生成    #</span></span><br><span class="line">        <span class="comment">#      M 行 256 列    #</span></span><br><span class="line">        <span class="comment">######################</span></span><br><span class="line">        <span class="comment"># base case</span></span><br><span class="line">        self.dp[<span class="number">0</span>][<span class="built_in">ord</span>(pat[<span class="number">0</span>])] = <span class="number">1</span></span><br><span class="line">        <span class="comment"># 影子状态 X 初始为 0</span></span><br><span class="line">        X = <span class="number">0</span></span><br><span class="line">        <span class="comment"># 当前状态 j 从 1 开始</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, M):</span><br><span class="line">            <span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">256</span>):</span><br><span class="line">                <span class="keyword">if</span> <span class="built_in">ord</span>(pat[j]) == c:</span><br><span class="line">                    self.dp[j][c] = j + <span class="number">1</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    self.dp[j][c] = self.dp[X][c]</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 更新影子状态</span></span><br><span class="line">            X = self.dp[X][<span class="built_in">ord</span>(pat[j])]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">search</span>(<span class="params">self, txt</span>):</span></span><br><span class="line">        M = <span class="built_in">len</span>(self.pat)</span><br><span class="line">        N = <span class="built_in">len</span>(txt)</span><br><span class="line">        <span class="comment"># pat 的初始态为 0</span></span><br><span class="line">        j = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">            <span class="comment"># 当前是状态 j，遇到字符 txt[i]，</span></span><br><span class="line">            <span class="comment"># pat 应该转移到哪个状态？</span></span><br><span class="line">            j = self.dp[j][<span class="built_in">ord</span>(txt[i])]</span><br><span class="line">            <span class="comment"># 如果达到终止态，返回匹配开头的索引</span></span><br><span class="line">            <span class="keyword">if</span> j == M: <span class="keyword">return</span> i - M + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 没到达终止态，匹配失败</span></span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>经过之前的详细举例讲解，你应该可以理解这段代码的含义了，当然你也可以把 KMP 算法写成一个函数。核心代码也就是两个函数中 for 循环的部分，数一下有超过十行吗？</p>
+<blockquote>
+<h3 id="五、最后总结"><a href="#五、最后总结" class="headerlink" title="五、最后总结"></a>五、最后总结</h3></blockquote>
+<p>传统的 KMP 算法是使用一个一维数组<code>next</code>记录前缀信息，而本文是使用一个二维数组<code>dp</code>以状态转移的角度解决字符匹配问题，但是空间复杂度仍然是 O(256M) = O(M)。</p>
+<p>在<code>pat</code>匹配<code>txt</code>的过程中，只要明确了「<strong>当前处在哪个状态</strong>」和「<strong>遇到的字符是什么</strong>」这两个问题，就可以确定应该转移到哪个状态（推进或回退）。</p>
+<p>对于一个模式串<code>pat</code>，其总共就有 M 个状态，对于 ASCII 字符，总共不会超过 256 种。所以我们就构造一个数组<code>dp[M][256]</code>来包含所有情况，并且明确<code>dp</code>数组的含义：</p>
+<p><strong><code>dp[j][c] = next</code>表示，当前是状态<code>j</code>，遇到了字符<code>c</code>，应该转移到状态<code>next</code>。</strong></p>
+<p>明确了其含义，就可以很容易写出 search 函数的代码。</p>
+<p>对于如何构建这个<code>dp</code>数组，需要一个辅助状态<code>X</code>，它永远比当前状态<code>j</code>落后一个状态，拥有和<code>j</code>最长的相同前缀，我们给它起了个名字叫「影子状态」。</p>
+<p>在构建当前状态<code>j</code>的转移方向时，只有字符<code>pat[j]</code>才能使状态推进（<code>dp[j][pat[j]] = j+1</code>）；而对于其他字符只能进行状态回退，应该去请教影子状态<code>X</code>应该回退到哪里（<code>dp[j][other] = dp[X][other]</code>，其中<code>other</code>是除了<code>pat[j]</code>之外所有字符）。</p>
+<p>对于影子状态<code>X</code>，我们把它初始化为 0，并且随着<code>j</code>的前进进行更新，更新的方式和 search 过程更新<code>j</code>的过程非常相似（<code>X = dp[X][pat[j]]</code>）。</p>
+<p>KMP 算法也就是动态规划的思路，是按照一套框架来的，无非就是描述问题逻辑，明确<code>dp</code>数组含义，定义 base case 这点破事。</p>
+<p>希望这篇文章能让大家对动态规划有更深的理解，并摆脱被 KMP 算法支配的恐惧。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html" title="03-动态规划之 KMP 算法详解" target="_blank" rel="external">https://xxren8218.github.io/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/20210621/17-Hadoop%E6%A6%82%E8%BF%B0.html" title="17-Hadoop概述"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/20210617/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%94%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%88%A0%E9%99%A4%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E7%BB%93%E7%82%B9%E2%80%942.html" title="剑指Offer（五十六）：删除排序链表中重复的结点—2"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+</body>
+</html>
