@@ -17,21 +17,23 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>运算符 | X.X.Ren的个人博客</title>
-  <meta name="description" content="运算符目标 算数运算符 比较（关系）运算符 逻辑运算符 赋值运算符 运算符的优先级  数学符号表链接：https:&#x2F;&#x2F;zh.wikipedia.org&#x2F;wiki&#x2F;数学符号表 01. 算数运算符 是完成基本的算术运算使用的符号，用来处理四则运算      运算符 描述 实例     + 加 10 + 20 &#x3D; 30   - 减 10 - 20 &#x3D; -10   * 乘 10 * 20 &#x3D; 200">
+  <title>04-动态规划之高楼扔鸡蛋 | X.X.Ren的个人博客</title>
+  <meta name="description" content="动态规划之高楼扔鸡蛋今天要聊一个很经典的算法问题，若干层楼，若干个鸡蛋，让你算出最少的尝试次数，找到鸡蛋恰好摔不碎的那层楼。国内大厂以及谷歌脸书面试都经常考察这道题，只不过他们觉得扔鸡蛋太浪费，改成扔杯子，扔破碗什么的。 具体的问题等会再说，但是这道题的解法技巧很多，光动态规划就好几种效率不同的思路，最后还有一种极其高效数学解法。秉承我们一贯的作风，拒绝奇技淫巧，拒绝过于诡异的技巧，因为这些技巧无">
 <meta property="og:type" content="article">
-<meta property="og:title" content="运算符">
-<meta property="og:url" content="https://xxren8218.github.io/20210305/%E8%BF%90%E7%AE%97%E7%AC%A6.html">
+<meta property="og:title" content="04-动态规划之高楼扔鸡蛋">
+<meta property="og:url" content="https://xxren8218.github.io/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="运算符目标 算数运算符 比较（关系）运算符 逻辑运算符 赋值运算符 运算符的优先级  数学符号表链接：https:&#x2F;&#x2F;zh.wikipedia.org&#x2F;wiki&#x2F;数学符号表 01. 算数运算符 是完成基本的算术运算使用的符号，用来处理四则运算      运算符 描述 实例     + 加 10 + 20 &#x3D; 30   - 减 10 - 20 &#x3D; -10   * 乘 10 * 20 &#x3D; 200">
+<meta property="og:description" content="动态规划之高楼扔鸡蛋今天要聊一个很经典的算法问题，若干层楼，若干个鸡蛋，让你算出最少的尝试次数，找到鸡蛋恰好摔不碎的那层楼。国内大厂以及谷歌脸书面试都经常考察这道题，只不过他们觉得扔鸡蛋太浪费，改成扔杯子，扔破碗什么的。 具体的问题等会再说，但是这道题的解法技巧很多，光动态规划就好几种效率不同的思路，最后还有一种极其高效数学解法。秉承我们一贯的作风，拒绝奇技淫巧，拒绝过于诡异的技巧，因为这些技巧无">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-03-05T12:06:31.000Z">
-<meta property="article:modified_time" content="2021-03-05T12:06:46.905Z">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622192232.jpg">
+<meta property="article:published_time" content="2021-06-22T10:24:57.000Z">
+<meta property="article:modified_time" content="2021-06-22T11:22:49.609Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="python基础">
+<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622192232.jpg">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/20210305/%E8%BF%90%E7%AE%97%E7%AC%A6.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -382,21 +384,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-text">运算符</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#01-%E7%AE%97%E6%95%B0%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-text">01. 算数运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#02-%E6%AF%94%E8%BE%83%EF%BC%88%E5%85%B3%E7%B3%BB%EF%BC%89%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-text">02. 比较（关系）运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-text">03. 逻辑运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#04-%E8%B5%8B%E5%80%BC%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-text">04. 赋值运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#05-%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-text">05. 运算符的优先级</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B"><span class="toc-text">动态规划之高楼扔鸡蛋</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%A7%A3%E6%9E%90%E9%A2%98%E7%9B%AE"><span class="toc-text">一、解析题目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90"><span class="toc-text">二、思路分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%96%91%E9%9A%BE%E8%A7%A3%E7%AD%94"><span class="toc-text">三、疑难解答</span></a></li></ol></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-运算符" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-04-动态规划之高楼扔鸡蛋" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      运算符
+      04-动态规划之高楼扔鸡蛋
     </h1>
   
 
@@ -405,18 +407,18 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar"></i>
-    <a href="/20210305/%E8%BF%90%E7%AE%97%E7%AC%A6.html" class="article-date">
-        发布于<time datetime="2021-03-05T12:06:31.000Z" itemprop="datePublished">
-            2021-03-05 20:06:31
+    <a href="/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html" class="article-date">
+        发布于<time datetime="2021-06-22T10:24:57.000Z" itemprop="datePublished">
+            2021-06-22 18:24:57
         </time>
     </a>
 </span>
 
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-    <a href="/20210305/%E8%BF%90%E7%AE%97%E7%AC%A6.html" class="article-date">
-        更新于<time datetime="2021-03-05T12:06:46.905Z" itemprop="dateUpdated">
-            2021-03-05 20:06:46
+    <a href="/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html" class="article-date">
+        更新于<time datetime="2021-06-22T11:22:49.609Z" itemprop="dateUpdated">
+            2021-06-22 19:22:49
         </time>
     </a>
 </span>
@@ -425,24 +427,19 @@
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/python/">python</a>
+    <a class="article-category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
   </span>
 
         
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/python%E5%9F%BA%E7%A1%80/" rel="tag">python基础</a>
-  </span>
-
 
         
 
 	<span class="article-read hidden-xs">
     	<i class="icon icon-eye-fill" aria-hidden="true"></i>
-    	<span id="/20210305/%E8%BF%90%E7%AE%97%E7%AC%A6.html" class="leancloud_visitors"  data-flag-title="运算符">0</span>
+    	<span id="/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html" class="leancloud_visitors"  data-flag-title="04-动态规划之高楼扔鸡蛋">0</span>
     </span>
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210305/%E8%BF%90%E7%AE%97%E7%AC%A6.html#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -451,238 +448,63 @@
 	</div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h1><h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
-<li>算数运算符</li>
-<li>比较（关系）运算符</li>
-<li>逻辑运算符</li>
-<li>赋值运算符</li>
-<li>运算符的优先级</li>
-</ul>
-<p>数学符号表链接：<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/数学符号表">https://zh.wikipedia.org/wiki/数学符号表</a></p>
-<h2 id="01-算数运算符"><a href="#01-算数运算符" class="headerlink" title="01. 算数运算符"></a>01. 算数运算符</h2><ul>
-<li>是完成基本的算术运算使用的符号，用来处理四则运算</li>
-</ul>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">运算符</th>
-<th style="text-align:center">描述</th>
-<th>实例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">+</td>
-<td style="text-align:center">加</td>
-<td>10 + 20 = 30</td>
-</tr>
-<tr>
-<td style="text-align:center">-</td>
-<td style="text-align:center">减</td>
-<td>10 - 20 = -10</td>
-</tr>
-<tr>
-<td style="text-align:center">*</td>
-<td style="text-align:center">乘</td>
-<td>10 * 20 = 200</td>
-</tr>
-<tr>
-<td style="text-align:center">/</td>
-<td style="text-align:center">除</td>
-<td>10 / 20 = 0.5</td>
-</tr>
-<tr>
-<td style="text-align:center">//</td>
-<td style="text-align:center">取整除</td>
-<td>返回除法的整数部分（商） 9 // 2 输出结果 4</td>
-</tr>
-<tr>
-<td style="text-align:center">%</td>
-<td style="text-align:center">取余数</td>
-<td>返回除法的余数 9 % 2 = 1</td>
-</tr>
-<tr>
-<td style="text-align:center">**</td>
-<td style="text-align:center">幂</td>
-<td>又称次方、乘方，2 ** 3 = 8</td>
-</tr>
-</tbody>
-</table>
-</div>
-<ul>
-<li>在 Python 中 <code>*</code> 运算符还可以用于字符串，计算结果就是字符串重复指定次数的结果</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="string">&quot;-&quot;</span> * <span class="number">50</span></span><br><span class="line">Out[<span class="number">1</span>]: <span class="string">&#x27;----------------------------------------&#x27;</span> </span><br></pre></td></tr></table></figure>
-<h2 id="02-比较（关系）运算符"><a href="#02-比较（关系）运算符" class="headerlink" title="02. 比较（关系）运算符"></a>02. 比较（关系）运算符</h2><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>运算符</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>==</td>
-<td>检查两个操作数的值是否 <strong>相等</strong>，如果是，则条件成立，返回 True</td>
-</tr>
-<tr>
-<td>!=</td>
-<td>检查两个操作数的值是否 <strong>不相等</strong>，如果是，则条件成立，返回 True</td>
-</tr>
-<tr>
-<td>&gt;</td>
-<td>检查左操作数的值是否 <strong>大于</strong> 右操作数的值，如果是，则条件成立，返回 True</td>
-</tr>
-<tr>
-<td>&lt;</td>
-<td>检查左操作数的值是否 <strong>小于</strong> 右操作数的值，如果是，则条件成立，返回 True</td>
-</tr>
-<tr>
-<td>&gt;=</td>
-<td>检查左操作数的值是否 <strong>大于或等于</strong> 右操作数的值，如果是，则条件成立，返回 True</td>
-</tr>
-<tr>
-<td>&lt;=</td>
-<td>检查左操作数的值是否 <strong>小于或等于</strong> 右操作数的值，如果是，则条件成立，返回 True</td>
-</tr>
-</tbody>
-</table>
-</div>
+        <h2 id="动态规划之高楼扔鸡蛋"><a href="#动态规划之高楼扔鸡蛋" class="headerlink" title="动态规划之高楼扔鸡蛋"></a>动态规划之高楼扔鸡蛋</h2><p>今天要聊一个很经典的算法问题，若干层楼，若干个鸡蛋，让你算出最少的尝试次数，找到鸡蛋恰好摔不碎的那层楼。国内大厂以及谷歌脸书面试都经常考察这道题，只不过他们觉得扔鸡蛋太浪费，改成扔杯子，扔破碗什么的。</p>
+<p>具体的问题等会再说，但是这道题的解法技巧很多，光动态规划就好几种效率不同的思路，最后还有一种极其高效数学解法。秉承我们一贯的作风，拒绝奇技淫巧，拒绝过于诡异的技巧，因为这些技巧无法举一反三，学了不太划算。</p>
+<p>下面就来用我们一直强调的动态规划通用思路来研究一下这道题。</p>
 <blockquote>
-<p>Python 2.x 中判断 <strong>不等于</strong> 还可以使用 <code>&lt;&gt;</code> 运算符</p>
-<p><code>!=</code> 在 Python 2.x 中同样可以用来判断 <strong>不等于</strong></p>
-</blockquote>
-<h2 id="03-逻辑运算符"><a href="#03-逻辑运算符" class="headerlink" title="03. 逻辑运算符"></a>03. 逻辑运算符</h2><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>运算符</th>
-<th>逻辑表达式</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>and</td>
-<td>x and y</td>
-<td>只有 x 和 y 的值都为 True，才会返回 True<br />否则只要 x 或者 y 有一个值为 False，就返回 False</td>
-</tr>
-<tr>
-<td>or</td>
-<td>x or y</td>
-<td>只要 x 或者 y 有一个值为 True，就返回 True<br />只有 x 和 y 的值都为 False，才会返回 False</td>
-</tr>
-<tr>
-<td>not</td>
-<td>not x</td>
-<td>如果 x 为 True，返回 False<br />如果 x 为 False，返回 True</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h2 id="04-赋值运算符"><a href="#04-赋值运算符" class="headerlink" title="04. 赋值运算符"></a>04. 赋值运算符</h2><ul>
-<li>在 Python 中，使用 <code>=</code> 可以给变量赋值</li>
-<li>在算术运算时，为了简化代码的编写，<code>Python</code> 还提供了一系列的 与 <strong>算术运算符</strong> 对应的 <strong>赋值运算符</strong></li>
-<li>注意：<strong>赋值运算符中间不能使用空格</strong></li>
-</ul>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>运算符</th>
-<th>描述</th>
-<th>实例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>=</td>
-<td>简单的赋值运算符</td>
-<td>c = a + b 将 a + b 的运算结果赋值为 c</td>
-</tr>
-<tr>
-<td>+=</td>
-<td>加法赋值运算符</td>
-<td>c += a 等效于 c = c + a</td>
-</tr>
-<tr>
-<td>-=</td>
-<td>减法赋值运算符</td>
-<td>c -= a 等效于 c = c - a</td>
-</tr>
-<tr>
-<td>*=</td>
-<td>乘法赋值运算符</td>
-<td>c <em>= a 等效于 c = c </em> a</td>
-</tr>
-<tr>
-<td>/=</td>
-<td>除法赋值运算符</td>
-<td>c /= a 等效于 c = c / a</td>
-</tr>
-<tr>
-<td>//=</td>
-<td>取整除赋值运算符</td>
-<td>c //= a 等效于 c = c // a</td>
-</tr>
-<tr>
-<td>%=</td>
-<td>取 <strong>模</strong> (余数)赋值运算符</td>
-<td>c %= a 等效于 c = c % a</td>
-</tr>
-<tr>
-<td>**=</td>
-<td>幂赋值运算符</td>
-<td>c <strong>= a 等效于 c = c </strong> a</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h2 id="05-运算符的优先级"><a href="#05-运算符的优先级" class="headerlink" title="05. 运算符的优先级"></a>05. 运算符的优先级</h2><ul>
-<li>以下表格的算数优先级由高到最低顺序排列</li>
-</ul>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>运算符</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>**</td>
-<td>幂 (最高优先级)</td>
-</tr>
-<tr>
-<td>* / % //</td>
-<td>乘、除、取余数、取整除</td>
-</tr>
-<tr>
-<td>+ -</td>
-<td>加法、减法</td>
-</tr>
-<tr>
-<td>&lt;= &lt; &gt; &gt;=</td>
-<td>比较运算符</td>
-</tr>
-<tr>
-<td>== !=</td>
-<td>等于运算符</td>
-</tr>
-<tr>
-<td>= %= /= //= -= += <em>= *</em>=</td>
-<td>赋值运算符</td>
-</tr>
-<tr>
-<td>not or and</td>
-<td>逻辑运算符</td>
-</tr>
-</tbody>
-</table>
-</div>
+<h3 id="一、解析题目"><a href="#一、解析题目" class="headerlink" title="一、解析题目"></a>一、解析题目</h3></blockquote>
+<p>题目是这样：你面前有一栋从 1 到<code>N</code>共<code>N</code>层的楼，然后给你<code>K</code>个鸡蛋（<code>K</code>至少为 1）。现在确定这栋楼存在楼层<code>0 &lt;= F &lt;= N</code>，在这层楼将鸡蛋扔下去，鸡蛋<strong>恰好没摔碎</strong>（高于<code>F</code>的楼层都会碎，低于<code>F</code>的楼层都不会碎）。现在问你，<strong>最坏</strong>情况下，你<strong>至少</strong>要扔几次鸡蛋，才能<strong>确定</strong>这个楼层<code>F</code>呢？</p>
+<p>PS：F 可以为 0，比如说鸡蛋在 1 层都能摔碎，那么 F = 0。</p>
+<p>也就是让你找摔不碎鸡蛋的最高楼层<code>F</code>，但什么叫「最坏情况」下「至少」要扔几次呢？我们分别举个例子就明白了。</p>
+<p>比方说<strong>现在先不管鸡蛋个数的限制</strong>，有 7 层楼，你怎么去找鸡蛋恰好摔碎的那层楼？</p>
+<p>最原始的方式就是线性扫描：我先在 1 楼扔一下，没碎，我再去 2 楼扔一下，没碎，我再去 3 楼……</p>
+<p>以这种策略，<strong>最坏</strong>情况应该就是我试到第 7 层鸡蛋也没碎（<code>F = 7</code>），也就是我扔了 7 次鸡蛋。</p>
+<p>现在你应该理解什么叫做「最坏情况」下了，<strong>鸡蛋破碎一定发生在搜索区间穷尽时</strong>，不会说你在第 1 层摔一下鸡蛋就碎了，这是你运气好，不是最坏情况。</p>
+<p>现在再来理解一下什么叫「至少」要扔几次。依然不考虑鸡蛋个数限制，同样是 7 层楼，我们可以优化策略。</p>
+<p>最好的策略是使用二分查找思路，我先去第<code>(1 + 7) / 2 = 4</code>层扔一下：</p>
+<p>如果碎了说明<code>F</code>小于 4，我就去第<code>(1 + 3) / 2 = 2</code>层试……</p>
+<p>如果没碎说明<code>F</code>大于等于 4，我就去第<code>(5 + 7) / 2 = 6</code>层试……</p>
+<p>以这种策略，<strong>最坏</strong>情况应该是试到第 7 层鸡蛋还没碎（<code>F = 7</code>），或者鸡蛋一直碎到第 1 层（<code>F = 0</code>）。然而无论那种最坏情况，只需要试<code>log7</code>向上取整等于 3 次，比刚才的 7 次要少，这就是所谓的<strong>至少</strong>要扔几次。</p>
+<p>实际上，如果不限制鸡蛋个数的话，二分思路显然可以得到最少尝试的次数，但问题是，<strong>现在给你了鸡蛋个数的限制<code>K</code>，直接使用二分思路就不行了</strong>。</p>
+<p>比如说只给你 1 个鸡蛋，7 层楼，你敢用二分吗？你直接去第 4 层扔一下，如果鸡蛋没碎还好，但如果碎了你就没有鸡蛋继续测试了，无法确定鸡蛋恰好摔不碎的楼层<code>F</code>了。这种情况下只能用线性扫描的方法，算法返回结果应该是 7。</p>
+<p>有的读者也许会有这种想法：二分查找排除楼层的速度无疑是最快的，那干脆先用二分查找，等到只剩 1 个鸡蛋的时候再执行线性扫描，这样得到的结果是不是就是最少的扔鸡蛋次数呢？</p>
+<p>很遗憾，并不是，比如说把楼层变高一些，100 层，给你 2 个鸡蛋，你在 50 层扔一下，碎了，那就只能线性扫描 1～49 层了，最坏情况下要扔 50 次。</p>
+<p>如果不要「二分」，变成「五分」「十分」都会大幅减少最坏情况下的尝试次数。比方说第一个鸡蛋每隔十层楼扔，在哪里碎了第二个鸡蛋一个个线性扫描，总共不会超过 20 次。</p>
+<p>最优解其实是 14 次。最优策略非常多，而且并没有什么规律可言。</p>
+<p>说了这么多废话，就是确保大家理解了题目的意思，而且认识到这个题目确实复杂，就连我们手算都不容易，如何用算法解决呢？</p>
+<blockquote>
+<h3 id="二、思路分析"><a href="#二、思路分析" class="headerlink" title="二、思路分析"></a>二、思路分析</h3></blockquote>
+<p>对动态规划问题，直接套我们以前多次强调的框架即可：这个问题有什么「状态」，有什么「选择」，然后穷举。</p>
+<p><strong>「状态」很明显，就是当前拥有的鸡蛋数<code>K</code>和需要测试的楼层数<code>N</code></strong>。随着测试的进行，鸡蛋个数可能减少，楼层的搜索范围会减小，这就是状态的变化。</p>
+<p><strong>「选择」其实就是去选择哪层楼扔鸡蛋</strong>。回顾刚才的线性扫描和二分思路，二分查找每次选择到楼层区间的中间去扔鸡蛋，而线性扫描选择一层层向上测试。不同的选择会造成状态的转移。</p>
+<p>现在明确了「状态」和「选择」，<strong>动态规划的基本思路就形成了</strong>：肯定是个二维的<code>dp</code>数组或者带有两个状态参数的<code>dp</code>函数来表示状态转移；外加一个 for 循环来遍历所有选择，择最优的选择更新结果 ：</p>
+<p><code>dp（）</code> 函数的含义：鸡蛋数目为k，可选楼层数为N时的最小扔鸡蛋次数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 伪代码</span></span><br><span class="line"><span class="comment"># 当前状态为 (K 个鸡蛋，N 层楼)</span></span><br><span class="line"><span class="comment"># 返回这个状态下的最优结果</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">K, N</span>):</span></span><br><span class="line">    res = <span class="built_in">float</span>(<span class="string">&#x27;INF&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> <span class="number">1</span> &lt;= i &lt;= N:</span><br><span class="line">        res = <span class="built_in">min</span>(res, 这次在第 i 层楼扔鸡蛋)</span><br><span class="line">    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+<p>这段伪码还没有展示递归和状态转移，不过大致的算法框架已经完成了。</p>
+<p>我们在第<code>i</code>层楼扔了鸡蛋之后，可能出现两种情况：鸡蛋碎了，鸡蛋没碎。<strong>注意，这时候状态转移就来了</strong>：</p>
+<p><strong>如果鸡蛋碎了</strong>，那么鸡蛋的个数<code>K</code>应该减一，搜索的楼层区间应该从<code>[1..N]</code>变为<code>[1..i-1]</code>共<code>i-1</code>层楼；</p>
+<p><strong>如果鸡蛋没碎</strong>，那么鸡蛋的个数<code>K</code>不变，搜索的楼层区间应该从 <code>[1..N]</code>变为<code>[i+1..N]</code>共<code>N-i</code>层楼。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210622192232.jpg" alt=""></p>
+<p>图1</p>
+<p>PS：细心的读者可能会问，在第<code>i</code>层楼扔鸡蛋如果没碎，楼层的搜索区间缩小至上面的楼层，是不是应该包含第<code>i</code>层楼呀？不必，因为已经包含了。开头说了 F 是可以等于 0 的，向上递归后，第<code>i</code>层楼其实就相当于第 0 层，可以被取到，所以说并没有错误。</p>
+<p>因为我们要求的是<strong>最坏情况</strong>下扔鸡蛋的次数，所以鸡蛋在第<code>i</code>层楼碎没碎，取决于那种情况的结果<strong>更大</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">K, N</span>):</span></span><br><span class="line">    <span class="keyword">for</span> <span class="number">1</span> &lt;= i &lt;= N:</span><br><span class="line">        <span class="comment"># 最坏情况下的最少扔鸡蛋次数</span></span><br><span class="line">        res = <span class="built_in">min</span>(res, </span><br><span class="line">                  <span class="built_in">max</span>( </span><br><span class="line">                        dp(K - <span class="number">1</span>, i - <span class="number">1</span>), <span class="comment"># 碎</span></span><br><span class="line">                        dp(K, N - i)      <span class="comment"># 没碎</span></span><br><span class="line">                     ) + <span class="number">1</span> <span class="comment"># 在第 i 楼扔了一次</span></span><br><span class="line">                 )</span><br><span class="line">    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+<p>递归的 base case 很容易理解：当楼层数<code>N</code>等于 0 时，显然不需要扔鸡蛋；当鸡蛋数<code>K</code>为 1 时，显然只能线性扫描所有楼层：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">K, N</span>):</span></span><br><span class="line">    <span class="keyword">if</span> K == <span class="number">1</span>: <span class="keyword">return</span> N</span><br><span class="line">    <span class="keyword">if</span> N == <span class="number">0</span>: <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>至此，其实这道题就解决了！只要添加一个备忘录消除重叠子问题即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">superEggDrop</span>(<span class="params">K: <span class="built_in">int</span>, N: <span class="built_in">int</span></span>):</span></span><br><span class="line"></span><br><span class="line">    memo = <span class="built_in">dict</span>()</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">K, N</span>) -&gt; int:</span></span><br><span class="line">        <span class="comment"># base case</span></span><br><span class="line">        <span class="keyword">if</span> K == <span class="number">1</span>: <span class="keyword">return</span> N</span><br><span class="line">        <span class="keyword">if</span> N == <span class="number">0</span>: <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        <span class="comment"># 避免重复计算</span></span><br><span class="line">        <span class="keyword">if</span> (K, N) <span class="keyword">in</span> memo:</span><br><span class="line">            <span class="keyword">return</span> memo[(K, N)]</span><br><span class="line"></span><br><span class="line">        res = <span class="built_in">float</span>(<span class="string">&#x27;INF&#x27;</span>)</span><br><span class="line">        <span class="comment"># 穷举所有可能的选择</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, N + <span class="number">1</span>):</span><br><span class="line">            res = <span class="built_in">min</span>(res, </span><br><span class="line">                      <span class="built_in">max</span>(</span><br><span class="line">                            dp(K, N - i), </span><br><span class="line">                            dp(K - <span class="number">1</span>, i - <span class="number">1</span>)</span><br><span class="line">                         ) + <span class="number">1</span></span><br><span class="line">                  )</span><br><span class="line">        <span class="comment"># 记入备忘录</span></span><br><span class="line">        memo[(K, N)] = res</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dp(K, N)</span><br></pre></td></tr></table></figure>
+<p>这个算法的时间复杂度是多少呢？<strong>动态规划算法的时间复杂度就是子问题个数 × 函数本身的复杂度</strong>。</p>
+<p>函数本身的复杂度就是忽略递归部分的复杂度，这里<code>dp</code>函数中有一个 for 循环，所以函数本身的复杂度是 O(N)。</p>
+<p>子问题个数也就是不同状态组合的总数，显然是两个状态的乘积，也就是 O(KN)。</p>
+<p>所以算法的总时间复杂度是 O(K*N^2), 空间复杂度为子问题个数，即 O(KN)。</p>
+<blockquote>
+<h3 id="三、疑难解答"><a href="#三、疑难解答" class="headerlink" title="三、疑难解答"></a>三、疑难解答</h3></blockquote>
+<p>这个问题很复杂，但是算法代码却十分简洁，这就是动态规划的特性，穷举加备忘录/DP table 优化，真的没啥新意。</p>
+<p>首先，有读者可能不理解代码中为什么用一个 for 循环遍历楼层<code>[1..N]</code>，也许会把这个逻辑和之前探讨的线性扫描混为一谈。其实不是的，<strong>这只是在做一次「选择」</strong>。</p>
+<p>比方说你有 2 个鸡蛋，面对 10 层楼，你得拿一个鸡蛋去某一层楼扔对吧？那选择去哪一层楼扔呢？不知道，那就把这 10 层楼全试一遍。至于鸡蛋碎没碎，下次怎么选择不用你操心，有正确的状态转移，递归会算出每个选择的代价，我们取最优的那个就是最优解。</p>
+<p>其实，这个问题还有更好的解法，比如修改代码中的 for 循环为二分搜索，可以将时间复杂度降为 O(K<em>N</em>logN)；再改进动态规划解法可以进一步降为 O(KN)；使用数学方法解决，时间复杂度达到最优 O(K*logN)，空间复杂度达到 O(1)。</p>
+<p>二分的解法也有点误导性，你很可能以为它跟我们之前讨论的二分思路扔鸡蛋有关系，实际上没有半毛钱关系。能用二分搜索是因为状态转移方程的函数图像具有单调性，可以快速找到最小值。</p>
+<p>我觉得吧，我们这种解法就够了：<strong>找状态，做选择</strong>，足够清晰易懂，可流程化，可举一反三。掌握这套框架学有余力的话，二分查找的优化应该可以看懂，之后的优化也就随缘吧。</p>
 
       
     </div>
@@ -692,7 +514,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://xxren8218.github.io/20210305/%E8%BF%90%E7%AE%97%E7%AC%A6.html" title="运算符" target="_blank" rel="external">https://xxren8218.github.io/20210305/%E8%BF%90%E7%AE%97%E7%AC%A6.html</a>
+      <a href="https://xxren8218.github.io/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html" title="04-动态规划之高楼扔鸡蛋" target="_blank" rel="external">https://xxren8218.github.io/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -738,13 +560,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/20210305/%E5%BE%AA%E7%8E%AF.html" title="循环"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/20210305/%E5%88%A4%E6%96%AD%EF%BC%88if%EF%BC%89%E8%AF%AD%E5%8F%A5.html" title="判断（if）语句"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/20210622/18-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-HDFS.html" title="18-分布式文件系统 HDFS"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
