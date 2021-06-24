@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>20-MapReduce实战——基于MRJob | X.X.Ren的个人博客</title>
+  <meta name="description" content="MapReduce实战1 利用MRJob编写和运行MapReduce代码mrjob 简介  提出背景 若要写MapReduce，一般也不会用hadoop streaming,它没有任何封装，是自己写脚本，通过指令上传。 实际上有很多步骤有优化的余地。——出现了MRJob的库   使用python开发在Hadoop上运行的程序, mrjob是最简单的方式 mrjob程序可以在本地测试运行也可以部署到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="20-MapReduce实战——基于MRJob">
+<meta property="og:url" content="https://xxren8218.github.io/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="MapReduce实战1 利用MRJob编写和运行MapReduce代码mrjob 简介  提出背景 若要写MapReduce，一般也不会用hadoop streaming,它没有任何封装，是自己写脚本，通过指令上传。 实际上有很多步骤有优化的余地。——出现了MRJob的库   使用python开发在Hadoop上运行的程序, mrjob是最简单的方式 mrjob程序可以在本地测试运行也可以部署到">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210625004312.PNG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210625004332.PNG">
+<meta property="article:published_time" content="2021-06-24T16:41:37.000Z">
+<meta property="article:modified_time" content="2021-06-24T16:43:51.781Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="推荐系统基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210625004312.PNG">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">38</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">36</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a><span class="category-list-count">5</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 13.9px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%B3%95/" style="font-size: 13.1px; color: #fff">二分法</a> <a href="/tags/%E4%BC%AA%E5%A4%B4%E8%8A%82%E7%82%B9/" style="font-size: 13px; color: #fff">伪头节点</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.2px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.1px; color: #fff">其他</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" style="font-size: 13px; color: #fff">内置函数</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px; color: #fff">动态规划</a> <a href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" style="font-size: 13px; color: #fff">单调栈</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13.5px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 13.4px; color: #fff">哈希表</a> <a href="/tags/%E5%A4%9A%E6%8C%87%E9%92%88/" style="font-size: 13.4px; color: #fff">多指针</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 13.1px; color: #fff">字符串</a> <a href="/tags/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/" style="font-size: 13px; color: #fff">归并排序</a> <a href="/tags/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" style="font-size: 13.1px; color: #fff">快慢指针</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/" style="font-size: 13px; color: #fff">快速幂</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.3px; color: #fff">排序</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">推荐系统基础</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 13.3px; color: #fff">数学</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13.7px; color: #fff">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.1px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.8px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.1px; color: #fff">机器学习基础实战</a> <a href="/tags/%E6%9F%A5%E6%89%BE/" style="font-size: 13px; color: #fff">查找</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px; color: #fff">栈</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 13px; color: #fff">滑动窗口</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E5%88%97%E8%A1%A8/" style="font-size: 13.1px; color: #fff">辅助列表</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E6%A0%88/" style="font-size: 13.1px; color: #fff">辅助栈</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/" style="font-size: 13px; color: #fff">辅助素组</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13.3px; color: #fff">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13.6px; color: #fff">链表</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210625/21-MapReduce%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="21-MapReduce原理详解" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210625/21-MapReduce%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3.html" class="title">21-MapReduce原理详解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-24T16:49:11.000Z" itemprop="datePublished">2021-06-25 00:49:11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="20-MapReduce实战——基于MRJob" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html" class="title">20-MapReduce实战——基于MRJob</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-24T16:41:37.000Z" itemprop="datePublished">2021-06-25 00:41:37</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210625/05-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B%E8%BF%9B%E9%98%B6%E7%89%88.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="05-动态规划之高楼扔鸡蛋进阶版" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210625/05-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B%E8%BF%9B%E9%98%B6%E7%89%88.html" class="title">05-动态规划之高楼扔鸡蛋进阶版</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-24T16:36:48.000Z" itemprop="datePublished">2021-06-25 00:36:48</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210623/19-hadoop%E4%B9%8BYARN-MapReduce.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="19-hadoop之YARN &amp; MapReduce" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210623/19-hadoop%E4%B9%8BYARN-MapReduce.html" class="title">19-hadoop之YARN &amp; MapReduce</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-23T04:50:39.000Z" itemprop="datePublished">2021-06-23 12:50:39</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="04-动态规划之高楼扔鸡蛋" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html" class="title">04-动态规划之高楼扔鸡蛋</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-22T10:24:57.000Z" itemprop="datePublished">2021-06-22 18:24:57</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce%E5%AE%9E%E6%88%98"><span class="toc-text">MapReduce实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%A9%E7%94%A8MRJob%E7%BC%96%E5%86%99%E5%92%8C%E8%BF%90%E8%A1%8CMapReduce%E4%BB%A3%E7%A0%81"><span class="toc-text">1 利用MRJob编写和运行MapReduce代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%BF%90%E8%A1%8CMRJOB%E7%9A%84%E4%B8%8D%E5%90%8C%E6%96%B9%E5%BC%8F"><span class="toc-text">2 运行MRJOB的不同方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-mrjob-%E5%AE%9E%E7%8E%B0-topN%E7%BB%9F%E8%AE%A1%EF%BC%88%E5%AE%9E%E9%AA%8C%EF%BC%89"><span class="toc-text">3 mrjob 实现 topN统计（实验）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-MRJOB-%E6%96%87%E4%BB%B6%E5%90%88%E5%B9%B6"><span class="toc-text">4 MRJOB 文件合并</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-20-MapReduce实战——基于MRJob" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      20-MapReduce实战——基于MRJob
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html" class="article-date">
+        发布于<time datetime="2021-06-24T16:41:37.000Z" itemprop="datePublished">
+            2021-06-25 00:41:37
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html" class="article-date">
+        更新于<time datetime="2021-06-24T16:43:51.781Z" itemprop="dateUpdated">
+            2021-06-25 00:43:51
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" rel="tag">推荐系统基础</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html" class="leancloud_visitors"  data-flag-title="20-MapReduce实战——基于MRJob">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="MapReduce实战"><a href="#MapReduce实战" class="headerlink" title="MapReduce实战"></a>MapReduce实战</h2><h3 id="1-利用MRJob编写和运行MapReduce代码"><a href="#1-利用MRJob编写和运行MapReduce代码" class="headerlink" title="1 利用MRJob编写和运行MapReduce代码"></a>1 利用MRJob编写和运行MapReduce代码</h3><p><strong>mrjob 简介</strong></p>
+<ul>
+<li>提出背景<ul>
+<li>若要写MapReduce，一般也不会用hadoop streaming,它没有任何封装，是自己写脚本，通过指令上传。</li>
+<li>实际上有很多步骤有优化的余地。——出现了MRJob的库</li>
+</ul>
+</li>
+<li>使用python开发在Hadoop上运行的程序, mrjob是最简单的方式</li>
+<li>mrjob程序可以在本地测试运行也可以部署到Hadoop集群上运行</li>
+<li>如果不想成为hadoop专家, 但是需要利用Hadoop写MapReduce代码,mrJob是很好的选择</li>
+<li>优点：<ul>
+<li>如果涉及多个map和多个reduce，或上个MR的输出作为下一个MR的输入的话。若用hadoop-streaming，需要写多个脚本。而MRJob可以通过一个类对其进行解决。——MRStep。——应用：TOPN统计</li>
+</ul>
+</li>
+</ul>
+<p><strong>mrjob 安装</strong></p>
+<ul>
+<li>使用pip安装<ul>
+<li>pip install mrjob</li>
+</ul>
+</li>
+</ul>
+<p><strong>mrjob实现WordCount</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mrjob.job <span class="keyword">import</span> MRJob</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MRWordFrequencyCount</span>(<span class="params">MRJob</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mapper</span>(<span class="params">self, _, line</span>):</span></span><br><span class="line">        <span class="comment"># 得到三个生成器，需next</span></span><br><span class="line">        <span class="keyword">yield</span> <span class="string">&quot;chars&quot;</span>, <span class="built_in">len</span>(line)</span><br><span class="line">        <span class="keyword">yield</span> <span class="string">&quot;words&quot;</span>, <span class="built_in">len</span>(line.split())</span><br><span class="line">        <span class="keyword">yield</span> <span class="string">&quot;lines&quot;</span>, <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">	<span class="comment"># key 相同的会走到同一个reducer中</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reducer</span>(<span class="params">self, key, values</span>):</span></span><br><span class="line">        <span class="keyword">yield</span> key, <span class="built_in">sum</span>(values)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    调用run以后，他会自己调用mapper,和reducer方法。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    MRWordFrequencyCount.run() </span><br></pre></td></tr></table></figure>
+<ul>
+<li>每个单词词频的统计。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mrjob.job <span class="keyword">import</span> MRJob</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MRWordCount</span>(<span class="params">MRJob</span>):</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 每一行从line中输入</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mapper</span>(<span class="params">self, key, line</span>):</span></span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> line.split():</span><br><span class="line">            <span class="keyword">yield</span> word,<span class="number">1</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment"># word相同的 会走到同一个reduce</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reducer</span>(<span class="params">self, word, counts</span>):</span></span><br><span class="line">        <span class="keyword">yield</span> word, <span class="built_in">sum</span>(counts)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    MRWordCount.run()</span><br></pre></td></tr></table></figure>
+<p><strong>运行WordCount代码</strong></p>
+<p>打开命令行, 找到一篇文本文档, 敲如下命令:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python mr_word_count.py my_file.txt</span><br></pre></td></tr></table></figure>
+<h3 id="2-运行MRJOB的不同方式"><a href="#2-运行MRJOB的不同方式" class="headerlink" title="2 运行MRJOB的不同方式"></a>2 运行MRJOB的不同方式</h3><p>1、内嵌(-r inline)方式</p>
+<p>特点是调试方便，启动单一进程模拟任务执行状态和结果，默认(-r inline)可以省略，输出文件使用 &gt; output-file 或-o output-file，比如下面两种运行方式是等价的</p>
+<p>python word_count.py -r inline input.txt &gt; output.txt<br>python word_count.py input.txt &gt; output.txt</p>
+<p>2、本地(-r local)方式</p>
+<p>用于本地模拟Hadoop调试，与内嵌(inline)方式的区别是启动了多进程执行每一个任务。如：</p>
+<p>python word_count.py -r local input.txt &gt; output1.txt</p>
+<p>3、Hadoop(-r hadoop)方式</p>
+<p>用于hadoop环境，支持Hadoop运行调度控制参数，如：</p>
+<p>1)指定Hadoop任务调度优先级(VERY_HIGH|HIGH),如：—jobconf mapreduce.job.priority=VERY_HIGH。</p>
+<p>2)Map及Reduce任务个数限制，如：—jobconf mapreduce.map.tasks=2  —jobconf mapreduce.reduce.tasks=5</p>
+<p><strong>python word_count.py -r hadoop hdfs:///test.txt -o  hdfs:///output </strong></p>
+<ul>
+<li>要求输出的hadoop不能有内容——删掉output。</li>
+</ul>
+<p><strong>遇到的坑——code127错误</strong></p>
+<p>在后面加 -python-bin /miniconda2/envs/py365/bin/python就行。因为在虚拟机运行为py3.x，而本机环境为2.x！</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210625004312.PNG" alt=""></p>
+<h3 id="3-mrjob-实现-topN统计（实验）"><a href="#3-mrjob-实现-topN统计（实验）" class="headerlink" title="3 mrjob 实现 topN统计（实验）"></a>3 mrjob 实现 topN统计（实验）</h3><ul>
+<li>上个MR的输出作为下一个MR的输入的话。MRJob.MRStep</li>
+</ul>
+<p>统计数据中出现次数最多的前n个数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> mrjob.job <span class="keyword">import</span> MRJob,MRStep</span><br><span class="line"><span class="keyword">import</span> heapq</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TopNWords</span>(<span class="params">MRJob</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mapper</span>(<span class="params">self, _, line</span>):</span></span><br><span class="line">        <span class="keyword">if</span> line.strip() != <span class="string">&quot;&quot;</span>:</span><br><span class="line">            <span class="keyword">for</span> word <span class="keyword">in</span> line.strip().split():</span><br><span class="line">                <span class="keyword">yield</span> word,<span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 介于mapper和reducer之间，用于临时的将mapper输出的数据进行统计</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">combiner</span>(<span class="params">self, word, counts</span>):</span></span><br><span class="line">        <span class="keyword">yield</span> word,<span class="built_in">sum</span>(counts)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reducer_sum</span>(<span class="params">self, word, counts</span>):</span></span><br><span class="line">        <span class="keyword">yield</span> <span class="literal">None</span>,(<span class="built_in">sum</span>(counts),word) </span><br><span class="line">        <span class="comment"># key为None，只有value有值。</span></span><br><span class="line">		<span class="comment"># 调换位置原因——后面的取最大的N个值是按key进行取值的。</span></span><br><span class="line">        </span><br><span class="line">    <span class="comment"># 利用heapq将数据进行排序，将最大的2个取出</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">top_n_reducer</span>(<span class="params">self,_,word_cnts</span>):</span></span><br><span class="line">        <span class="keyword">for</span> cnt,word <span class="keyword">in</span> heapq.nlargest(<span class="number">2</span>,word_cnts):</span><br><span class="line">            <span class="keyword">yield</span> word,cnt <span class="comment"># 再调换一次。</span></span><br><span class="line">    </span><br><span class="line">	<span class="comment"># 实现steps方法用于指定自定义的mapper，comnbiner和reducer方法</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">steps</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 这里有两个MR。不过第二个没有mapper</span></span><br><span class="line">        <span class="keyword">return</span> [</span><br><span class="line">            MRStep(mapper=self.mapper,</span><br><span class="line">                   combiner=self.combiner,</span><br><span class="line">                   reducer=self.reducer_sum),</span><br><span class="line">            MRStep(reducer=self.top_n_reducer)</span><br><span class="line">        ]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    TopNWords.run()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>本地运行实例：</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210625004332.PNG" alt=""></p>
+<h3 id="4-MRJOB-文件合并"><a href="#4-MRJOB-文件合并" class="headerlink" title="4 MRJOB 文件合并"></a>4 MRJOB 文件合并</h3><p><strong>需求描述</strong></p>
+<ul>
+<li>两个文件合并 类似于数据库中的两张表合并</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">uid uname</span><br><span class="line">01 user1 </span><br><span class="line">02 user2</span><br><span class="line">03 user3</span><br><span class="line">uid orderid order_price</span><br><span class="line">01   01     80</span><br><span class="line">01   02     90</span><br><span class="line">02   03    82</span><br><span class="line">02   04    95</span><br></pre></td></tr></table></figure>
+<p><strong>mrjob 实现</strong></p>
+<p>实现对两个数据表进行join操作，显示效果为每个用户的所有订单信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;01:user1&quot;	&quot;01:80,02:90&quot;</span><br><span class="line">&quot;02:user2&quot;	&quot;03:82,04:95&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mrjob.job <span class="keyword">import</span> MRJob</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserOrderJoin</span>(<span class="params">MRJob</span>):</span></span><br><span class="line">    SORT_VALUES = <span class="literal">True</span></span><br><span class="line">    <span class="comment"># 二次排序参数：http://mrjob.readthedocs.io/en/latest/job.html</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mapper</span>(<span class="params">self, _, line</span>):</span></span><br><span class="line">        fields = line.strip().split(<span class="string">&#x27;\t&#x27;</span>) <span class="comment"># 用制表符进行拆分</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(fields) == <span class="number">2</span>:</span><br><span class="line">            <span class="comment"># user data</span></span><br><span class="line">            source = <span class="string">&#x27;A&#x27;</span></span><br><span class="line">            user_id = fields[<span class="number">0</span>]</span><br><span class="line">            user_name = fields[<span class="number">1</span>]</span><br><span class="line">            <span class="keyword">yield</span>  user_id,[source,user_name] <span class="comment"># 01 [A,user1]</span></span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">len</span>(fields) == <span class="number">3</span>:</span><br><span class="line">            <span class="comment"># order data</span></span><br><span class="line">            source =<span class="string">&#x27;B&#x27;</span></span><br><span class="line">            user_id = fields[<span class="number">0</span>]</span><br><span class="line">            order_id = fields[<span class="number">1</span>]</span><br><span class="line">            price = fields[<span class="number">2</span>]</span><br><span class="line">            <span class="keyword">yield</span> user_id,[source,order_id,price] <span class="comment">#01 [&#x27;B&#x27;,01,80][&#x27;B&#x27;,02,90]</span></span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reducer</span>(<span class="params">self,user_id,values</span>):</span></span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        每个用户的订单列表</span></span><br><span class="line"><span class="string">        &quot;01:user1&quot;	&quot;01:80,02:90&quot;</span></span><br><span class="line"><span class="string">        &quot;02:user2&quot;	&quot;03:82,04:95&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :param user_id:</span></span><br><span class="line"><span class="string">        :param values:[A,user1]  [&#x27;B&#x27;,01,80]</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">        values = [v <span class="keyword">for</span> v <span class="keyword">in</span> values]  <span class="comment"># 加了 &quot;A&quot;&quot;&quot;B&quot;以后保证先过来的是两个元素值。</span></span><br><span class="line">        							  <span class="comment"># 首行SORT_VALUES = True</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(values)&gt;<span class="number">1</span> :</span><br><span class="line">            user_name = values[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line">            order_info = [<span class="string">&#x27;:&#x27;</span>.join([v[<span class="number">1</span>],v[<span class="number">2</span>]]) <span class="keyword">for</span> v <span class="keyword">in</span> values[<span class="number">1</span>:]] <span class="comment">#[01:80,02:90]</span></span><br><span class="line">            <span class="keyword">yield</span> <span class="string">&#x27;:&#x27;</span>.join([user_id,user_name]),<span class="string">&#x27;,&#x27;</span>.join(order_info)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    UserOrderJoin.run()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>实现对两个数据表进行join操作，显示效果为每个用户所下订单的订单总量和累计消费金额</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;01:user1&quot;	[2, 170]</span><br><span class="line">&quot;02:user2&quot;	[2, 177]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mrjob.job <span class="keyword">import</span> MRJob</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserOrderJoin</span>(<span class="params">MRJob</span>):</span></span><br><span class="line">    <span class="comment"># 二次排序参数：http://mrjob.readthedocs.io/en/latest/job.html</span></span><br><span class="line">    SORT_VALUES = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mapper</span>(<span class="params">self, _, line</span>):</span></span><br><span class="line">        fields = line.strip().split(<span class="string">&#x27;\t&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(fields) == <span class="number">2</span>:</span><br><span class="line">            <span class="comment"># user data</span></span><br><span class="line">            source = <span class="string">&#x27;A&#x27;</span> </span><br><span class="line">            user_id = fields[<span class="number">0</span>]</span><br><span class="line">            user_name = fields[<span class="number">1</span>]</span><br><span class="line">            <span class="keyword">yield</span>  user_id,[source,user_name]</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">len</span>(fields) == <span class="number">3</span>:</span><br><span class="line">            <span class="comment"># order data</span></span><br><span class="line">            source =<span class="string">&#x27;B&#x27;</span></span><br><span class="line">            user_id = fields[<span class="number">0</span>]</span><br><span class="line">            order_id = fields[<span class="number">1</span>]</span><br><span class="line">            price = fields[<span class="number">2</span>]</span><br><span class="line">            <span class="keyword">yield</span> user_id,[source,order_id,price]</span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reducer</span>(<span class="params">self,user_id,values</span>):</span></span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        统计每个用户的订单数量和累计消费金额</span></span><br><span class="line"><span class="string">        :param user_id:</span></span><br><span class="line"><span class="string">        :param values:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">        values = [v <span class="keyword">for</span> v <span class="keyword">in</span> values]</span><br><span class="line">        user_name = <span class="literal">None</span></span><br><span class="line">        order_cnt = <span class="number">0</span></span><br><span class="line">        order_sum = <span class="number">0</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(values)&gt;<span class="number">1</span>:</span><br><span class="line">            <span class="keyword">for</span> v <span class="keyword">in</span> values:</span><br><span class="line">                <span class="keyword">if</span> <span class="built_in">len</span>(v) ==  <span class="number">2</span> :</span><br><span class="line">                    user_name = v[<span class="number">1</span>]</span><br><span class="line">                <span class="keyword">elif</span> <span class="built_in">len</span>(v) == <span class="number">3</span>:</span><br><span class="line">                    order_cnt += <span class="number">1</span></span><br><span class="line">                    order_sum += <span class="built_in">int</span>(v[<span class="number">2</span>])</span><br><span class="line">            <span class="keyword">yield</span> <span class="string">&quot;:&quot;</span>.join([user_id,user_name]),(order_cnt,order_sum)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    UserOrderJoin().run()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()	</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html" title="20-MapReduce实战——基于MRJob" target="_blank" rel="external">https://xxren8218.github.io/20210625/20-MapReduce%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8EMRJob.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren888.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren888.gitee.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/20210625/21-MapReduce%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3.html" title="21-MapReduce原理详解"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/20210625/05-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B%E8%BF%9B%E9%98%B6%E7%89%88.html" title="05-动态规划之高楼扔鸡蛋进阶版"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+</body>
+</html>
