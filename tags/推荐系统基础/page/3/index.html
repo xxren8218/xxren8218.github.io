@@ -53,7 +53,7 @@
       
       
       <div class="profile-block text-center">
-        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
+        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
           <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
         </a>
         <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
@@ -384,9 +384,9 @@
           
           <li><a href="/tags/推荐系统基础/">推荐系统基础</a></li>
           
-          <li><a href="/tags/python基础/">python基础</a></li>
-          
           <li><a href="/tags/机器学习基础/">机器学习基础</a></li>
+          
+          <li><a href="/tags/python基础/">python基础</a></li>
           
           <li><a href="/tags/数组/">数组</a></li>
           
@@ -735,6 +735,24 @@ $(function () {
       })
     })
   </script>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
 
 
 </body>
