@@ -18,12 +18,12 @@
   
   
   <title>01-二叉树之常用框架 | X.X.Ren的个人博客</title>
-  <meta name="description" content="二叉树之常用框架读完本文，你可以去力扣拿下： 226.翻转二叉树，难度 $\color{green}Easy$ 116.将二叉树展开为链表，难度 $\color{orange}Medium$ 114.填充二叉树节点的右侧指针，难度 $\color{orange}Medium$ 先刷二叉树的题目，先刷二叉树的题目，先刷二叉树的题目，因为很多经典算法，回溯、动归、分治算法，其实都是树的问题，而树的问题">
+  <meta name="description" content="二叉树之常用框架读完本文，你可以去力扣拿下： 226.翻转二叉树，难度 Easy 116.将二叉树展开为链表，难度 Medium 114.填充二叉树节点的右侧指针，难度 Medium 先刷二叉树的题目，先刷二叉树的题目，先刷二叉树的题目，因为很多经典算法，回溯、动归、分治算法，其实都是树的问题，而树的问题就永远逃不开树的递归遍历框架这几行破代码： 1234567# 二叉树遍历框架def trave">
 <meta property="og:type" content="article">
 <meta property="og:title" content="01-二叉树之常用框架">
 <meta property="og:url" content="https://xxren8218.github.io/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="二叉树之常用框架读完本文，你可以去力扣拿下： 226.翻转二叉树，难度 $\color{green}Easy$ 116.将二叉树展开为链表，难度 $\color{orange}Medium$ 114.填充二叉树节点的右侧指针，难度 $\color{orange}Medium$ 先刷二叉树的题目，先刷二叉树的题目，先刷二叉树的题目，因为很多经典算法，回溯、动归、分治算法，其实都是树的问题，而树的问题">
+<meta property="og:description" content="二叉树之常用框架读完本文，你可以去力扣拿下： 226.翻转二叉树，难度 Easy 116.将二叉树展开为链表，难度 Medium 114.填充二叉树节点的右侧指针，难度 Medium 先刷二叉树的题目，先刷二叉树的题目，先刷二叉树的题目，因为很多经典算法，回溯、动归、分治算法，其实都是树的问题，而树的问题就永远逃不开树的递归遍历框架这几行破代码： 1234567# 二叉树遍历框架def trave">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220806.jpg">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220820.jpg">
@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220851.jpg">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220915.jpg">
 <meta property="article:published_time" content="2021-06-28T14:07:14.000Z">
-<meta property="article:modified_time" content="2021-06-28T14:09:26.818Z">
+<meta property="article:modified_time" content="2021-06-28T14:13:54.285Z">
 <meta property="article:author" content="任晓雄">
 <meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
@@ -388,7 +388,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6"><span class="toc-text">二叉树之常用框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7"><span class="toc-text">一、二叉树的重要性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%86%99%E9%80%92%E5%BD%92%E7%AE%97%E6%B3%95%E7%9A%84%E7%A7%98%E8%AF%80"><span class="toc-text">二、写递归算法的秘诀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%AE%97%E6%B3%95%E5%AE%9E%E8%B7%B5"><span class="toc-text">三、算法实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#color-blue-bold-%E7%AC%AC%E4%B8%80%E9%A2%98%E3%80%81%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-text">$\color{blue}\bold{第一题、翻转二叉树}$</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#color-blue-bold-%E7%AC%AC%E4%BA%8C%E9%A2%98%E3%80%81%E5%A1%AB%E5%85%85%E4%BA%8C%E5%8F%89%E6%A0%91%E8%8A%82%E7%82%B9%E7%9A%84%E5%8F%B3%E4%BE%A7%E6%8C%87%E9%92%88"><span class="toc-text">$\color{blue}\bold{第二题、填充二叉树节点的右侧指针}$</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#color-blue-bold-%E7%AC%AC%E4%B8%89%E9%A2%98%E3%80%81%E5%B0%86%E4%BA%8C%E5%8F%89%E6%A0%91%E5%B1%95%E5%BC%80%E4%B8%BA%E9%93%BE%E8%A1%A8"><span class="toc-text">$\color{blue}\bold{第三题、将二叉树展开为链表}$</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%9C%80%E5%90%8E%E6%80%BB%E7%BB%93"><span class="toc-text">四、最后总结</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6"><span class="toc-text">二叉树之常用框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7"><span class="toc-text">一、二叉树的重要性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%86%99%E9%80%92%E5%BD%92%E7%AE%97%E6%B3%95%E7%9A%84%E7%A7%98%E8%AF%80"><span class="toc-text">二、写递归算法的秘诀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%AE%97%E6%B3%95%E5%AE%9E%E8%B7%B5"><span class="toc-text">三、算法实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%A2%98%E3%80%81%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-text">第一题、翻转二叉树</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%A2%98%E3%80%81%E5%A1%AB%E5%85%85%E4%BA%8C%E5%8F%89%E6%A0%91%E8%8A%82%E7%82%B9%E7%9A%84%E5%8F%B3%E4%BE%A7%E6%8C%87%E9%92%88"><span class="toc-text">第二题、填充二叉树节点的右侧指针</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%A2%98%E3%80%81%E5%B0%86%E4%BA%8C%E5%8F%89%E6%A0%91%E5%B1%95%E5%BC%80%E4%B8%BA%E9%93%BE%E8%A1%A8"><span class="toc-text">第三题、将二叉树展开为链表</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%9C%80%E5%90%8E%E6%80%BB%E7%BB%93"><span class="toc-text">四、最后总结</span></a></li></ol></li></ol>
     </nav>
   </div>
 </aside>
@@ -421,8 +421,8 @@
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
     <a href="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" class="article-date">
-        更新于<time datetime="2021-06-28T14:09:26.818Z" itemprop="dateUpdated">
-            2021-06-28 22:09:26
+        更新于<time datetime="2021-06-28T14:13:54.285Z" itemprop="dateUpdated">
+            2021-06-28 22:13:54
         </time>
     </a>
 </span>
@@ -453,9 +453,9 @@
     <div class="article-entry marked-body" itemprop="articleBody">
       
         <h2 id="二叉树之常用框架"><a href="#二叉树之常用框架" class="headerlink" title="二叉树之常用框架"></a>二叉树之常用框架</h2><p>读完本文，你可以去力扣拿下：</p>
-<p>226.翻转二叉树，难度 $\color{green}Easy$</p>
-<p>116.将二叉树展开为链表，难度 $\color{orange}Medium$</p>
-<p>114.填充二叉树节点的右侧指针，难度 $\color{orange}Medium$</p>
+<p>226.翻转二叉树，难度 <strong>Easy</strong></p>
+<p>116.将二叉树展开为链表，难度 <strong>Medium</strong></p>
+<p>114.填充二叉树节点的右侧指针，难度 <strong>Medium</strong></p>
 <p>先刷二叉树的题目，先刷二叉树的题目，先刷二叉树的题目，因为很多经典算法，回溯、动归、分治算法，其实都是树的问题，而树的问题就永远逃不开树的递归遍历框架这几行破代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 二叉树遍历框架</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">traverse</span>(<span class="params">root</span>):</span></span><br><span class="line">    <span class="comment"># 前序遍历</span></span><br><span class="line">    traverse(root.left)</span><br><span class="line">    <span class="comment"># 中序遍历</span></span><br><span class="line">    traverse(root.right)</span><br><span class="line">    <span class="comment"># 后序遍历</span></span><br></pre></td></tr></table></figure>
 <p>递归解法应该是最简单，最容易理解的才对，行云流水地写递归代码是学好算法的基本功，而二叉树相关的题目就是最练习递归基本功，最练习框架思维的。</p>
@@ -485,7 +485,7 @@
 <p>我们接下来看几道算法题目实操一下。</p>
 <blockquote>
 <h3 id="三、算法实践"><a href="#三、算法实践" class="headerlink" title="三、算法实践"></a>三、算法实践</h3></blockquote>
-<h4 id="color-blue-bold-第一题、翻转二叉树"><a href="#color-blue-bold-第一题、翻转二叉树" class="headerlink" title="$\color{blue}\bold{第一题、翻转二叉树}$"></a>$\color{blue}\bold{第一题、翻转二叉树}$</h4><p>我们先从简单的题开始，看看力扣第 226 题「翻转二叉树」，输入一个二叉树根节点<code>root</code>，让你把整棵树镜像翻转，比如输入的二叉树如下：</p>
+<h4 id="第一题、翻转二叉树"><a href="#第一题、翻转二叉树" class="headerlink" title="第一题、翻转二叉树"></a>第一题、翻转二叉树</h4><p>我们先从简单的题开始，看看力扣第 226 题「翻转二叉树」，输入一个二叉树根节点<code>root</code>，让你把整棵树镜像翻转，比如输入的二叉树如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">     4</span><br><span class="line">   &#x2F;   \</span><br><span class="line">  2     7</span><br><span class="line"> &#x2F; \   &#x2F; \</span><br><span class="line">1   3 6   9</span><br></pre></td></tr></table></figure>
 <p>算法原地翻转二叉树，使得以<code>root</code>为根的树变成：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">     4</span><br><span class="line">   &#x2F;   \</span><br><span class="line">  7     2</span><br><span class="line"> &#x2F; \   &#x2F; \</span><br><span class="line">9   6 3   1</span><br></pre></td></tr></table></figure>
@@ -497,7 +497,7 @@
 <p><code>中序遍历换节点 根据左根右的遍历顺序 相当于左侧节点交换了两次 右侧节点没换  因为遍历根的时候交换了左右节点 遍历右侧的时候还是之前那个左节点</code></p>
 <p>首先讲这道题目是想告诉你，<strong>二叉树题目的一个难点就是，如何把题目的要求细化成每个节点需要做的事情</strong>。</p>
 <p>这种洞察力需要多刷题训练，我们看下一道题</p>
-<h4 id="color-blue-bold-第二题、填充二叉树节点的右侧指针"><a href="#color-blue-bold-第二题、填充二叉树节点的右侧指针" class="headerlink" title="$\color{blue}\bold{第二题、填充二叉树节点的右侧指针}$"></a>$\color{blue}\bold{第二题、填充二叉树节点的右侧指针}$</h4><p>这是力扣第 116 题，看下题目：</p>
+<h4 id="第二题、填充二叉树节点的右侧指针"><a href="#第二题、填充二叉树节点的右侧指针" class="headerlink" title="第二题、填充二叉树节点的右侧指针"></a>第二题、填充二叉树节点的右侧指针</h4><p>这是力扣第 116 题，看下题目：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220806.jpg" alt=""></p>
 <p>函数签名如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect</span>(<span class="params">root</span>):</span></span><br></pre></td></tr></table></figure>
@@ -514,7 +514,7 @@
 <p>那么，我们的做法就是增加函数参数，一个节点做不到，我们就给他安排两个节点，<code>「将每一层二叉树节点连接起来」</code>可以细化成<code>「将每两个相邻节点都连接起来」</code>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 主函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect</span>(<span class="params">root</span>):</span></span><br><span class="line">    <span class="keyword">if</span> root == <span class="literal">None</span>: <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">    connectTwoNode(root.left, root.right)</span><br><span class="line">    <span class="keyword">return</span> root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义：输入两个节点，将它俩连接起来</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connectTwoNode</span>(<span class="params">Node node1, Node node2</span>):</span></span><br><span class="line">    <span class="keyword">if</span> node1 == <span class="literal">None</span> <span class="keyword">and</span> node2 == <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">        </span><br><span class="line">    <span class="comment">#### 前序遍历位置 ####</span></span><br><span class="line">    <span class="comment"># 将传入的两个节点连接</span></span><br><span class="line">    node1.<span class="built_in">next</span> = node2</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 连接相同父节点的两个子节点</span></span><br><span class="line">    connectTwoNode(node1.left, node1.right)</span><br><span class="line">    connectTwoNode(node2.left, node2.right)</span><br><span class="line">    <span class="comment"># 连接跨越父节点的两个子节点</span></span><br><span class="line">    connectTwoNode(node1.right, node2.left)</span><br></pre></td></tr></table></figure>
 <p>这样，<code>connectTwoNode</code>函数不断递归，可以无死角覆盖整棵二叉树，将所有相邻节点都连接起来，也就避免了我们之前出现的问题，这道题就解决了。</p>
-<h4 id="color-blue-bold-第三题、将二叉树展开为链表"><a href="#color-blue-bold-第三题、将二叉树展开为链表" class="headerlink" title="$\color{blue}\bold{第三题、将二叉树展开为链表}$"></a>$\color{blue}\bold{第三题、将二叉树展开为链表}$</h4><p>这是力扣第 114 题，看下题目：</p>
+<h4 id="第三题、将二叉树展开为链表"><a href="#第三题、将二叉树展开为链表" class="headerlink" title="第三题、将二叉树展开为链表"></a>第三题、将二叉树展开为链表</h4><p>这是力扣第 114 题，看下题目：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220851.jpg" alt=""></p>
 <p>函数签名如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">flatten</span>(<span class="params">root</span>):</span></span><br></pre></td></tr></table></figure>
