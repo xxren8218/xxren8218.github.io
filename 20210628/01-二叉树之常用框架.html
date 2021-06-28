@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>01-二叉树之常用框架 | X.X.Ren的个人博客</title>
+  <meta name="description" content="二叉树之常用框架读完本文，你可以去力扣拿下： 226.翻转二叉树，难度 $\color{green}Easy$ 116.将二叉树展开为链表，难度 $\color{orange}Medium$ 114.填充二叉树节点的右侧指针，难度 $\color{orange}Medium$ 先刷二叉树的题目，先刷二叉树的题目，先刷二叉树的题目，因为很多经典算法，回溯、动归、分治算法，其实都是树的问题，而树的问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="01-二叉树之常用框架">
+<meta property="og:url" content="https://xxren8218.github.io/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="二叉树之常用框架读完本文，你可以去力扣拿下： 226.翻转二叉树，难度 $\color{green}Easy$ 116.将二叉树展开为链表，难度 $\color{orange}Medium$ 114.填充二叉树节点的右侧指针，难度 $\color{orange}Medium$ 先刷二叉树的题目，先刷二叉树的题目，先刷二叉树的题目，因为很多经典算法，回溯、动归、分治算法，其实都是树的问题，而树的问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220806.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220820.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220834.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220851.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220915.jpg">
+<meta property="article:published_time" content="2021-06-28T14:07:14.000Z">
+<meta property="article:modified_time" content="2021-06-28T14:09:26.818Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220806.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">38</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 13.9px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%B3%95/" style="font-size: 13.1px; color: #fff">二分法</a> <a href="/tags/%E4%BC%AA%E5%A4%B4%E8%8A%82%E7%82%B9/" style="font-size: 13px; color: #fff">伪头节点</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.2px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.1px; color: #fff">其他</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" style="font-size: 13px; color: #fff">内置函数</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px; color: #fff">动态规划</a> <a href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" style="font-size: 13px; color: #fff">单调栈</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13.5px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 13.4px; color: #fff">哈希表</a> <a href="/tags/%E5%A4%9A%E6%8C%87%E9%92%88/" style="font-size: 13.4px; color: #fff">多指针</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 13.1px; color: #fff">字符串</a> <a href="/tags/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/" style="font-size: 13px; color: #fff">归并排序</a> <a href="/tags/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" style="font-size: 13.1px; color: #fff">快慢指针</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/" style="font-size: 13px; color: #fff">快速幂</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.3px; color: #fff">排序</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">推荐系统基础</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 13.3px; color: #fff">数学</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13.7px; color: #fff">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.1px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.8px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.1px; color: #fff">机器学习基础实战</a> <a href="/tags/%E6%9F%A5%E6%89%BE/" style="font-size: 13px; color: #fff">查找</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px; color: #fff">栈</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 13px; color: #fff">滑动窗口</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E5%88%97%E8%A1%A8/" style="font-size: 13.1px; color: #fff">辅助列表</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E6%A0%88/" style="font-size: 13.1px; color: #fff">辅助栈</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/" style="font-size: 13px; color: #fff">辅助素组</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13.3px; color: #fff">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13.6px; color: #fff">链表</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="01-二叉树之常用框架" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" class="title">01-二叉树之常用框架</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-28T14:07:14.000Z" itemprop="datePublished">2021-06-28 22:07:14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="08-动态规划之详解最长公共子序列系列问题" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" class="title">08-动态规划之详解最长公共子序列系列问题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-28T14:02:58.000Z" itemprop="datePublished">2021-06-28 22:02:58</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210626/23-%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%BA%A7%E5%93%81%E4%B8%8E%E4%BA%92%E8%81%94%E7%BD%91%E4%BA%A7%E5%93%81%E7%BB%93%E5%90%88.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="23-大数据产品与互联网产品结合" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210626/23-%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%BA%A7%E5%93%81%E4%B8%8E%E4%BA%92%E8%81%94%E7%BD%91%E4%BA%A7%E5%93%81%E7%BB%93%E5%90%88.html" class="title">23-大数据产品与互联网产品结合</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-25T16:53:04.000Z" itemprop="datePublished">2021-06-26 00:53:04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210626/22-hadoop%E6%A6%82%E5%BF%B5%E6%89%A9%E5%B1%95%E2%80%94%E2%80%94%E7%94%9F%E6%80%81%E4%B8%8EHDFS%E7%9A%84%E8%AF%BB%E5%86%99%E7%AD%89.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="22-hadoop概念扩展——生态与HDFS的读写等" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210626/22-hadoop%E6%A6%82%E5%BF%B5%E6%89%A9%E5%B1%95%E2%80%94%E2%80%94%E7%94%9F%E6%80%81%E4%B8%8EHDFS%E7%9A%84%E8%AF%BB%E5%86%99%E7%AD%89.html" class="title">22-hadoop概念扩展——生态与HDFS的读写等</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-25T16:43:34.000Z" itemprop="datePublished">2021-06-26 00:43:34</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210626/07-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E5%AD%90%E5%BA%8F%E5%88%97%E8%A7%A3%E9%A2%98%E6%A8%A1%E6%9D%BF%E2%80%94%E2%80%94%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E5%BA%8F%E5%88%97.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="07-动态规划之子序列解题模板——最长回文子序列" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210626/07-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E5%AD%90%E5%BA%8F%E5%88%97%E8%A7%A3%E9%A2%98%E6%A8%A1%E6%9D%BF%E2%80%94%E2%80%94%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E5%BA%8F%E5%88%97.html" class="title">07-动态规划之子序列解题模板——最长回文子序列</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-25T16:38:51.000Z" itemprop="datePublished">2021-06-26 00:38:51</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6"><span class="toc-text">二叉树之常用框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7"><span class="toc-text">一、二叉树的重要性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%86%99%E9%80%92%E5%BD%92%E7%AE%97%E6%B3%95%E7%9A%84%E7%A7%98%E8%AF%80"><span class="toc-text">二、写递归算法的秘诀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%AE%97%E6%B3%95%E5%AE%9E%E8%B7%B5"><span class="toc-text">三、算法实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#color-blue-bold-%E7%AC%AC%E4%B8%80%E9%A2%98%E3%80%81%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-text">$\color{blue}\bold{第一题、翻转二叉树}$</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#color-blue-bold-%E7%AC%AC%E4%BA%8C%E9%A2%98%E3%80%81%E5%A1%AB%E5%85%85%E4%BA%8C%E5%8F%89%E6%A0%91%E8%8A%82%E7%82%B9%E7%9A%84%E5%8F%B3%E4%BE%A7%E6%8C%87%E9%92%88"><span class="toc-text">$\color{blue}\bold{第二题、填充二叉树节点的右侧指针}$</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#color-blue-bold-%E7%AC%AC%E4%B8%89%E9%A2%98%E3%80%81%E5%B0%86%E4%BA%8C%E5%8F%89%E6%A0%91%E5%B1%95%E5%BC%80%E4%B8%BA%E9%93%BE%E8%A1%A8"><span class="toc-text">$\color{blue}\bold{第三题、将二叉树展开为链表}$</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%9C%80%E5%90%8E%E6%80%BB%E7%BB%93"><span class="toc-text">四、最后总结</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-01-二叉树之常用框架" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      01-二叉树之常用框架
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" class="article-date">
+        发布于<time datetime="2021-06-28T14:07:14.000Z" itemprop="datePublished">
+            2021-06-28 22:07:14
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" class="article-date">
+        更新于<time datetime="2021-06-28T14:09:26.818Z" itemprop="dateUpdated">
+            2021-06-28 22:09:26
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+  </span>
+
+        
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" class="leancloud_visitors"  data-flag-title="01-二叉树之常用框架">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="二叉树之常用框架"><a href="#二叉树之常用框架" class="headerlink" title="二叉树之常用框架"></a>二叉树之常用框架</h2><p>读完本文，你可以去力扣拿下：</p>
+<p>226.翻转二叉树，难度 $\color{green}Easy$</p>
+<p>116.将二叉树展开为链表，难度 $\color{orange}Medium$</p>
+<p>114.填充二叉树节点的右侧指针，难度 $\color{orange}Medium$</p>
+<p>先刷二叉树的题目，先刷二叉树的题目，先刷二叉树的题目，因为很多经典算法，回溯、动归、分治算法，其实都是树的问题，而树的问题就永远逃不开树的递归遍历框架这几行破代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 二叉树遍历框架</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">traverse</span>(<span class="params">root</span>):</span></span><br><span class="line">    <span class="comment"># 前序遍历</span></span><br><span class="line">    traverse(root.left)</span><br><span class="line">    <span class="comment"># 中序遍历</span></span><br><span class="line">    traverse(root.right)</span><br><span class="line">    <span class="comment"># 后序遍历</span></span><br></pre></td></tr></table></figure>
+<p>递归解法应该是最简单，最容易理解的才对，行云流水地写递归代码是学好算法的基本功，而二叉树相关的题目就是最练习递归基本功，最练习框架思维的。</p>
+<blockquote>
+<h3 id="一、二叉树的重要性"><a href="#一、二叉树的重要性" class="headerlink" title="一、二叉树的重要性"></a>一、二叉树的重要性</h3></blockquote>
+<p>举个例子，比如说我们的经典算法<code>「快速排序」</code>和<code>「归并排序」</code>，对于这两个算法，你有什么理解？<strong>如果你告诉我，快速排序就是个二叉树的前序遍历，归并排序就是个二叉树的后续遍历，那么我就知道你是个算法高手了</strong>。</p>
+<p>为什么快速排序和归并排序能和二叉树扯上关系？我们来简单分析一下他们的算法思想和代码框架：</p>
+<p>快速排序的逻辑是，若要对<code>nums[lo..hi]</code>进行排序，我们先找一个分界点<code>p</code>，通过交换元素使得<code>nums[lo..p-1]</code>都小于等于<code>nums[p]</code>，且<code>nums[p+1..hi]</code>都大于<code>nums[p]</code>，然后递归地去<code>nums[lo..p-1]</code>和<code>nums[p+1..hi]</code>中寻找新的分界点，最后整个数组就被排序了。</p>
+<p>快速排序的代码框架如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">nums, lo, hi</span>):</span></span><br><span class="line">    <span class="comment">##### 前序遍历位置 ##### </span></span><br><span class="line">    <span class="comment"># 通过交换元素构建分界点 p</span></span><br><span class="line">    p = partition(nums, lo, hi)</span><br><span class="line"></span><br><span class="line">    sort(nums, lo, p - <span class="number">1</span>)</span><br><span class="line">    sort(nums, p + <span class="number">1</span>, hi)</span><br></pre></td></tr></table></figure>
+<p>先构造分界点，然后去左右子数组构造分界点，你看这不就是一个二叉树的前序遍历吗？</p>
+<p>再说说归并排序的逻辑，若要对<code>nums[lo..hi]</code>进行排序，我们先对<code>nums[lo..mid]</code>排序，再对<code>nums[mid+1..hi]</code>排序，最后把这两个有序的子数组合并，整个数组就排好序了。</p>
+<p>归并排序的代码框架如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sort</span>(<span class="params">nums, lo, hi</span>):</span></span><br><span class="line">    mid = (lo + hi) / <span class="number">2</span></span><br><span class="line">    sort(nums, lo, mid)</span><br><span class="line">    sort(nums, mid + <span class="number">1</span>, hi)</span><br><span class="line"></span><br><span class="line">    <span class="comment">###### 后序遍历位置 #####</span></span><br><span class="line">    <span class="comment"># 合并两个排好序的子数组</span></span><br><span class="line">    merge(nums, lo, mid, hi)</span><br><span class="line">    <span class="comment">########################</span></span><br></pre></td></tr></table></figure>
+<p>先对左右子数组排序，然后合并（类似合并有序链表的逻辑），你看这是不是二叉树的后序遍历框架？另外，这不就是传说中的分治算法嘛，不过如此呀。</p>
+<p>如果你一眼就识破这些排序算法的底细，还需要背这些算法代码吗？这不是手到擒来，从框架慢慢扩展就能写出算法了。</p>
+<p>说了这么多，旨在说明，二叉树的算法思想的运用广泛，甚至可以说，只要涉及递归，都可以抽象成二叉树的问题。</p>
+<p><strong>所以接下来，我们直接上几道比较有意思，且能体现出递归算法精妙的二叉树题目</strong>。</p>
+<blockquote>
+<h3 id="二、写递归算法的秘诀"><a href="#二、写递归算法的秘诀" class="headerlink" title="二、写递归算法的秘诀"></a>二、写递归算法的秘诀</h3></blockquote>
+<p><strong>写递归算法的关键是要明确函数的「定义」是什么，然后相信这个定义，利用这个定义推导最终结果，绝不要试图跳入递归</strong>。</p>
+<p>怎么理解呢，我们用一个具体的例子来说，比如说让你计算一棵二叉树共有几个节点：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义：count(root) 返回以 root 为根的树有多少节点</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span>(<span class="params">root</span>):</span></span><br><span class="line">    <span class="comment"># base case</span></span><br><span class="line">    <span class="keyword">if</span> root == <span class="literal">None</span>: <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="comment"># 自己加上子树的节点数就是整棵树的节点数</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> + count(root.left) + count(root.right)</span><br></pre></td></tr></table></figure>
+<p>这个问题非常简单，大家应该都会写这段代码，<code>root</code>本身就是一个节点，加上左右子树的节点数就是以<code>root</code>为根的树的节点总数。</p>
+<p>左右子树的节点数怎么算？其实就是计算根为<code>root.left</code>和<code>root.right</code>两棵树的节点数呗，按照定义，递归调用<code>count</code>函数即可算出来。</p>
+<p><strong>写树相关的算法，简单说就是，先搞清楚当前<code>root</code>节点该做什么，然后根据函数定义递归调用子节点</strong>，递归调用会让孩子节点做相同的事情。</p>
+<p>我们接下来看几道算法题目实操一下。</p>
+<blockquote>
+<h3 id="三、算法实践"><a href="#三、算法实践" class="headerlink" title="三、算法实践"></a>三、算法实践</h3></blockquote>
+<h4 id="color-blue-bold-第一题、翻转二叉树"><a href="#color-blue-bold-第一题、翻转二叉树" class="headerlink" title="$\color{blue}\bold{第一题、翻转二叉树}$"></a>$\color{blue}\bold{第一题、翻转二叉树}$</h4><p>我们先从简单的题开始，看看力扣第 226 题「翻转二叉树」，输入一个二叉树根节点<code>root</code>，让你把整棵树镜像翻转，比如输入的二叉树如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">     4</span><br><span class="line">   &#x2F;   \</span><br><span class="line">  2     7</span><br><span class="line"> &#x2F; \   &#x2F; \</span><br><span class="line">1   3 6   9</span><br></pre></td></tr></table></figure>
+<p>算法原地翻转二叉树，使得以<code>root</code>为根的树变成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">     4</span><br><span class="line">   &#x2F;   \</span><br><span class="line">  7     2</span><br><span class="line"> &#x2F; \   &#x2F; \</span><br><span class="line">9   6 3   1</span><br></pre></td></tr></table></figure>
+<p>通过观察，<strong>我们发现只要把二叉树上的每一个节点的左右子节点进行交换，最后的结果就是完全翻转之后的二叉树</strong>。</p>
+<p>可以直接写出解法代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将整棵树的节点翻转</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">invertTree</span>(<span class="params">root</span>):</span></span><br><span class="line">    <span class="comment"># base case</span></span><br><span class="line">    <span class="keyword">if</span> root == <span class="literal">None</span>:<span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 前序遍历位置</span></span><br><span class="line">    <span class="comment"># root 节点需要交换它的左右子节点</span></span><br><span class="line">    tmp = root.left</span><br><span class="line">    root.left = root.right</span><br><span class="line">    root.right = tmp</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 让左右子节点继续翻转它们的子节点</span></span><br><span class="line">    invertTree(root.left)</span><br><span class="line">    invertTree(root.right)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> root</span><br></pre></td></tr></table></figure>
+<p>这道题目比较简单，关键思路在于我们发现翻转整棵树就是交换每个节点的左右子节点，于是我们把交换左右子节点的代码放在了前序遍历的位置。</p>
+<p>值得一提的是，如果把交换左右子节点的代码放在后序遍历的位置也是可以的，但是放在中序遍历的位置是不行的，请你想一想为什么？这个应该不难想到。</p>
+<p><code>中序遍历换节点 根据左根右的遍历顺序 相当于左侧节点交换了两次 右侧节点没换  因为遍历根的时候交换了左右节点 遍历右侧的时候还是之前那个左节点</code></p>
+<p>首先讲这道题目是想告诉你，<strong>二叉树题目的一个难点就是，如何把题目的要求细化成每个节点需要做的事情</strong>。</p>
+<p>这种洞察力需要多刷题训练，我们看下一道题</p>
+<h4 id="color-blue-bold-第二题、填充二叉树节点的右侧指针"><a href="#color-blue-bold-第二题、填充二叉树节点的右侧指针" class="headerlink" title="$\color{blue}\bold{第二题、填充二叉树节点的右侧指针}$"></a>$\color{blue}\bold{第二题、填充二叉树节点的右侧指针}$</h4><p>这是力扣第 116 题，看下题目：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220806.jpg" alt=""></p>
+<p>函数签名如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect</span>(<span class="params">root</span>):</span></span><br></pre></td></tr></table></figure>
+<p>题目的意思就是把二叉树的每一层节点都用<code>next</code>指针连接起来：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220820.jpg" alt=""></p>
+<p>而且题目说了，输入是一棵「完美二叉树」，形象地说整棵二叉树是一个正三角形，除了最右侧的节点<code>next</code>指针会指向<code>null</code>，其他节点的右侧一定有相邻的节点。</p>
+<p>这道题怎么做呢？把每一层的节点穿起来，是不是只要把每个节点的左右子节点都穿起来就行了？</p>
+<p>我们可以模仿上一道题，写出如下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect</span>(<span class="params">root</span>):</span></span><br><span class="line">    <span class="keyword">if</span> root == <span class="literal">None</span> <span class="keyword">and</span> root.left == <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> root</span><br><span class="line"></span><br><span class="line">    root.left.<span class="built_in">next</span> = root.right</span><br><span class="line"></span><br><span class="line">    connect(root.left)</span><br><span class="line">    connect(root.right)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> root</span><br></pre></td></tr></table></figure>
+<p>这样其实有很大问题，再看看这张图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220834.jpg" alt=""></p>
+<p>节点 5 和节点 6 不属于同一个父节点，那么按照这段代码的逻辑，它俩就没办法被穿起来，这是不符合题意的。</p>
+<p>回想刚才说的，<strong>二叉树的问题难点在于，如何把题目的要求细化成每个节点需要做的事情</strong>，但是如果只依赖一个节点的话，肯定是没办法连接<code>「跨父节点」</code>的两个相邻节点的。</p>
+<p>那么，我们的做法就是增加函数参数，一个节点做不到，我们就给他安排两个节点，<code>「将每一层二叉树节点连接起来」</code>可以细化成<code>「将每两个相邻节点都连接起来」</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 主函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect</span>(<span class="params">root</span>):</span></span><br><span class="line">    <span class="keyword">if</span> root == <span class="literal">None</span>: <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">    connectTwoNode(root.left, root.right)</span><br><span class="line">    <span class="keyword">return</span> root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义：输入两个节点，将它俩连接起来</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connectTwoNode</span>(<span class="params">Node node1, Node node2</span>):</span></span><br><span class="line">    <span class="keyword">if</span> node1 == <span class="literal">None</span> <span class="keyword">and</span> node2 == <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">        </span><br><span class="line">    <span class="comment">#### 前序遍历位置 ####</span></span><br><span class="line">    <span class="comment"># 将传入的两个节点连接</span></span><br><span class="line">    node1.<span class="built_in">next</span> = node2</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 连接相同父节点的两个子节点</span></span><br><span class="line">    connectTwoNode(node1.left, node1.right)</span><br><span class="line">    connectTwoNode(node2.left, node2.right)</span><br><span class="line">    <span class="comment"># 连接跨越父节点的两个子节点</span></span><br><span class="line">    connectTwoNode(node1.right, node2.left)</span><br></pre></td></tr></table></figure>
+<p>这样，<code>connectTwoNode</code>函数不断递归，可以无死角覆盖整棵二叉树，将所有相邻节点都连接起来，也就避免了我们之前出现的问题，这道题就解决了。</p>
+<h4 id="color-blue-bold-第三题、将二叉树展开为链表"><a href="#color-blue-bold-第三题、将二叉树展开为链表" class="headerlink" title="$\color{blue}\bold{第三题、将二叉树展开为链表}$"></a>$\color{blue}\bold{第三题、将二叉树展开为链表}$</h4><p>这是力扣第 114 题，看下题目：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220851.jpg" alt=""></p>
+<p>函数签名如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">flatten</span>(<span class="params">root</span>):</span></span><br></pre></td></tr></table></figure>
+<p>我们尝试给出这个函数的定义：</p>
+<p><strong>给<code>flatten</code>函数输入一个节点<code>root</code>，那么以<code>root</code>为根的二叉树就会被拉平为一条链表</strong>。</p>
+<p>我们再梳理一下，如何按题目要求把一棵树拉平成一条链表？很简单，以下流程：</p>
+<p>1、将<code>root</code>的左子树和右子树拉平。</p>
+<p>2、将<code>root</code>的右子树接到左子树下方，然后将整个左子树作为右子树。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220915.jpg" alt=""></p>
+<p>上面三步看起来最难的应该是第一步对吧，如何把<code>root</code>的左右子树拉平？其实很简单，按照<code>flatten</code>函数的定义，对<code>root</code>的左右子树递归调用<code>flatten</code>函数即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义：将以 root 为根的树拉平为链表</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">flatten</span>(<span class="params">root</span>):</span></span><br><span class="line">    <span class="comment"># base case</span></span><br><span class="line">    <span class="keyword">if</span> root == <span class="literal">None</span>: <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    flatten(root.left)</span><br><span class="line">    flatten(root.right)</span><br><span class="line"></span><br><span class="line">    <span class="comment">##### 后序遍历位置 #####</span></span><br><span class="line">    <span class="comment"># 1、左右子树已经被拉平成一条链表</span></span><br><span class="line">    left = root.left</span><br><span class="line">    right = root.right</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 2、将左子树作为右子树</span></span><br><span class="line">    root.left = <span class="literal">None</span></span><br><span class="line">    root.right = left</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3、将原先的右子树接到当前右子树的末端</span></span><br><span class="line">    p = root</span><br><span class="line">    <span class="keyword">while</span> p.right != <span class="literal">None</span>:</span><br><span class="line">        p = p.right</span><br><span class="line">        </span><br><span class="line">    p.right = right</span><br></pre></td></tr></table></figure>
+<p>你看，这就是递归的魅力，你说<code>flatten</code>函数是怎么把左右子树拉平的？不容易说清楚，<strong>但是只要知道<code>flatten</code>的定义如此，相信这个定义，让<code>root</code>做它该做的事情，然后<code>flatten</code>函数就会按照定义工作。</strong></p>
+<p>另外注意递归框架是后序遍历，因为我们要先拉平左右子树才能进行后续操作。</p>
+<p>至此，这道题也解决了，与 <code>[k 个一组反转链表]</code> 的递归思路和本题也有一些类似。</p>
+<blockquote>
+<h3 id="四、最后总结"><a href="#四、最后总结" class="headerlink" title="四、最后总结"></a>四、最后总结</h3></blockquote>
+<p>递归算法的关键要明确函数的定义，相信这个定义，而不要跳进递归细节。</p>
+<p>写二叉树的算法题，都是基于递归框架的，我们先要搞清楚<code>root</code>节点它自己要做什么，然后根据题目要求选择使用前序，中序，后续的递归框架。</p>
+<p>二叉树题目的难点在于如何通过题目的要求思考出每一个节点需要做什么，这个只能通过多刷题进行练习了。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" title="01-二叉树之常用框架" target="_blank" rel="external">https://xxren8218.github.io/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" title="08-动态规划之详解最长公共子序列系列问题"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+</body>
+</html>

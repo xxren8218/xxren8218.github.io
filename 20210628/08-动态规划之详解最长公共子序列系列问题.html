@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>08-动态规划之详解最长公共子序列系列问题 | X.X.Ren的个人博客</title>
+  <meta name="description" content="动态规划之详解最长公共子序列本文从「最长公共子序列问题」展开，总结三道子序列问题，解这道题仔细讲讲这种子序列问题的套路，你就能感受到这种思维方式了。  一、最长公共子序列 计算最长公共子序列（Longest Common Subsequence，简称 LCS）是一道经典的动态规划题目，大家应该都见过： 给你输入两个字符串s1和s2，请你找出他们俩的最长公共子序列，返回这个子序列的长度。 力扣第 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="08-动态规划之详解最长公共子序列系列问题">
+<meta property="og:url" content="https://xxren8218.github.io/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="动态规划之详解最长公共子序列本文从「最长公共子序列问题」展开，总结三道子序列问题，解这道题仔细讲讲这种子序列问题的套路，你就能感受到这种思维方式了。  一、最长公共子序列 计算最长公共子序列（Longest Common Subsequence，简称 LCS）是一道经典的动态规划题目，大家应该都见过： 给你输入两个字符串s1和s2，请你找出他们俩的最长公共子序列，返回这个子序列的长度。 力扣第 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220432.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220447.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220502.jpg">
+<meta property="og:image" content="https://mmbiz.qpic.cn/sz_mmbiz_png/gibkIz0MVqdFj04Aic9zfP6rnHdGicfrafh6dgl5pUnutqNCqlEVtJHCYqNnwwiae3tR8ENPRF3PBzUWPJ7Nl4RWBQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/sz_mmbiz_png/gibkIz0MVqdFj04Aic9zfP6rnHdGicfrafhJl197b0zVcibXdfJNOEIAqWh9qHS9z1IjGwsXVcibKKPZI25URoWNWYA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220518.PNG">
+<meta property="article:published_time" content="2021-06-28T14:02:58.000Z">
+<meta property="article:modified_time" content="2021-06-28T14:05:45.721Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220432.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren8218.github.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">38</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 13.9px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%B3%95/" style="font-size: 13.1px; color: #fff">二分法</a> <a href="/tags/%E4%BC%AA%E5%A4%B4%E8%8A%82%E7%82%B9/" style="font-size: 13px; color: #fff">伪头节点</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.2px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.1px; color: #fff">其他</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" style="font-size: 13px; color: #fff">内置函数</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px; color: #fff">动态规划</a> <a href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" style="font-size: 13px; color: #fff">单调栈</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13.5px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 13.4px; color: #fff">哈希表</a> <a href="/tags/%E5%A4%9A%E6%8C%87%E9%92%88/" style="font-size: 13.4px; color: #fff">多指针</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 13.1px; color: #fff">字符串</a> <a href="/tags/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/" style="font-size: 13px; color: #fff">归并排序</a> <a href="/tags/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" style="font-size: 13.1px; color: #fff">快慢指针</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/" style="font-size: 13px; color: #fff">快速幂</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.3px; color: #fff">排序</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">推荐系统基础</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 13.3px; color: #fff">数学</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13.7px; color: #fff">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.1px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.8px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.1px; color: #fff">机器学习基础实战</a> <a href="/tags/%E6%9F%A5%E6%89%BE/" style="font-size: 13px; color: #fff">查找</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px; color: #fff">栈</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 13px; color: #fff">滑动窗口</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E5%88%97%E8%A1%A8/" style="font-size: 13.1px; color: #fff">辅助列表</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E6%A0%88/" style="font-size: 13.1px; color: #fff">辅助栈</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/" style="font-size: 13px; color: #fff">辅助素组</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13.3px; color: #fff">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13.6px; color: #fff">链表</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="01-二叉树之常用框架" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" class="title">01-二叉树之常用框架</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-28T14:07:14.000Z" itemprop="datePublished">2021-06-28 22:07:14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="08-动态规划之详解最长公共子序列系列问题" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" class="title">08-动态规划之详解最长公共子序列系列问题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-28T14:02:58.000Z" itemprop="datePublished">2021-06-28 22:02:58</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210626/23-%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%BA%A7%E5%93%81%E4%B8%8E%E4%BA%92%E8%81%94%E7%BD%91%E4%BA%A7%E5%93%81%E7%BB%93%E5%90%88.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="23-大数据产品与互联网产品结合" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210626/23-%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%BA%A7%E5%93%81%E4%B8%8E%E4%BA%92%E8%81%94%E7%BD%91%E4%BA%A7%E5%93%81%E7%BB%93%E5%90%88.html" class="title">23-大数据产品与互联网产品结合</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-25T16:53:04.000Z" itemprop="datePublished">2021-06-26 00:53:04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210626/22-hadoop%E6%A6%82%E5%BF%B5%E6%89%A9%E5%B1%95%E2%80%94%E2%80%94%E7%94%9F%E6%80%81%E4%B8%8EHDFS%E7%9A%84%E8%AF%BB%E5%86%99%E7%AD%89.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="22-hadoop概念扩展——生态与HDFS的读写等" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210626/22-hadoop%E6%A6%82%E5%BF%B5%E6%89%A9%E5%B1%95%E2%80%94%E2%80%94%E7%94%9F%E6%80%81%E4%B8%8EHDFS%E7%9A%84%E8%AF%BB%E5%86%99%E7%AD%89.html" class="title">22-hadoop概念扩展——生态与HDFS的读写等</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-25T16:43:34.000Z" itemprop="datePublished">2021-06-26 00:43:34</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210626/07-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E5%AD%90%E5%BA%8F%E5%88%97%E8%A7%A3%E9%A2%98%E6%A8%A1%E6%9D%BF%E2%80%94%E2%80%94%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E5%BA%8F%E5%88%97.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="07-动态规划之子序列解题模板——最长回文子序列" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210626/07-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E5%AD%90%E5%BA%8F%E5%88%97%E8%A7%A3%E9%A2%98%E6%A8%A1%E6%9D%BF%E2%80%94%E2%80%94%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E5%BA%8F%E5%88%97.html" class="title">07-动态规划之子序列解题模板——最长回文子序列</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-25T16:38:51.000Z" itemprop="datePublished">2021-06-26 00:38:51</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97"><span class="toc-text">动态规划之详解最长公共子序列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97"><span class="toc-text">一、最长公共子序列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%88%A0%E9%99%A4%E6%93%8D%E4%BD%9C"><span class="toc-text">二、字符串的删除操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%9C%80%E5%B0%8F-ASCII-%E5%88%A0%E9%99%A4%E5%92%8C"><span class="toc-text">三、最小 ASCII 删除和</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-08-动态规划之详解最长公共子序列系列问题" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      08-动态规划之详解最长公共子序列系列问题
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" class="article-date">
+        发布于<time datetime="2021-06-28T14:02:58.000Z" itemprop="datePublished">
+            2021-06-28 22:02:58
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" class="article-date">
+        更新于<time datetime="2021-06-28T14:05:45.721Z" itemprop="dateUpdated">
+            2021-06-28 22:05:45
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+  </span>
+
+        
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" class="leancloud_visitors"  data-flag-title="08-动态规划之详解最长公共子序列系列问题">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="动态规划之详解最长公共子序列"><a href="#动态规划之详解最长公共子序列" class="headerlink" title="动态规划之详解最长公共子序列"></a>动态规划之详解最长公共子序列</h2><p><strong>本文从「最长公共子序列问题」展开，总结三道子序列问题</strong>，解这道题仔细讲讲这种子序列问题的套路，你就能感受到这种思维方式了。</p>
+<blockquote>
+<h3 id="一、最长公共子序列"><a href="#一、最长公共子序列" class="headerlink" title="一、最长公共子序列"></a>一、最长公共子序列</h3></blockquote>
+<p>计算最长公共子序列（Longest Common Subsequence，简称 LCS）是一道经典的动态规划题目，大家应该都见过：</p>
+<p>给你输入两个字符串<code>s1</code>和<code>s2</code>，请你找出他们俩的最长公共子序列，返回这个子序列的长度。</p>
+<p>力扣第 1143 题就是这道题，函数签名如下：</p>
+<p>计算最长公共子序列（Longest Common Subsequence，简称 LCS）是一道经典的动态规划题目，大家应该都见过：</p>
+<p>给你输入两个字符串<code>s1</code>和<code>s2</code>，请你找出他们俩的最长公共子序列，返回这个子序列的长度。</p>
+<p>力扣第 1143 题就是这道题，函数签名如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">longestCommonSubsequence</span>(<span class="params">s1, s2</span>):</span></span><br></pre></td></tr></table></figure>
+<p>比如说输入<code>s1 = &quot;zabcde&quot;, s2 = &quot;acez&quot;</code>，它俩的最长公共子序列是<code>lcs = &quot;ace&quot;</code>，长度为 3，所以算法返回 3。</p>
+<p>如果没有做过这道题，一个最简单的暴力算法就是，把<code>s1</code>和<code>s2</code>的所有子序列都穷举出来，然后看看有没有公共的，然后在所有公共子序列里面再寻找一个长度最大的。</p>
+<p>显然，这种思路的复杂度非常高，你要穷举出所有子序列，这个复杂度就是指数级的，肯定不实际。</p>
+<p>正确的思路是不要考虑整个字符串，而是细化到<code>s1</code>和<code>s2</code>的每个字符。前文 子序列解题模板 中总结的一个规律：</p>
+<p><strong>对于两个字符串求子序列的问题，都是用两个指针<code>i</code>和<code>j</code>分别在两个字符串上移动，大概率是动态规划思路</strong>。</p>
+<p>最长公共子序列的问题也可以遵循这个规律，我们可以先写一个<code>dp</code>函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义：计算 s1[i..] 和 s2[j..] 的最长公共子序列长度</span></span><br><span class="line">dp(s1, i, s2, j)</span><br></pre></td></tr></table></figure>
+<p>这个<code>dp</code>函数的定义是：<strong><code>dp(s1, i, s2, j)</code>计算<code>s1[i..]</code>和<code>s2[j..]</code>的最长公共子序列长度</strong>。</p>
+<p>根据这个定义，那么我们想要的答案就是<code>dp(s1, 0, s2, 0)</code>，且 base case 就是<code>i == len(s1)</code>或<code>j == len(s2)</code>时，因为这时候<code>s1[i..]</code>或<code>s2[j..]</code>就相当于空串了，最长公共子序列的长度显然是 0：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">longestCommonSubsequence</span>(<span class="params">s1, s2</span>):</span> </span><br><span class="line">    <span class="keyword">return</span> dp(s1, <span class="number">0</span>, s2, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment"># 主函数 </span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">s1, i, s2, j</span>):</span></span><br><span class="line">    <span class="comment"># base case</span></span><br><span class="line">    <span class="keyword">if</span> (i == <span class="built_in">len</span>(s1) <span class="keyword">or</span> j == <span class="built_in">len</span>(s2):</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p><strong>接下来，咱不要看<code>s1</code>和<code>s2</code>两个字符串，而是要具体到每一个字符，思考每个字符该做什么</strong>。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220432.jpg" alt=""></p>
+<p>我们只看<code>s1[i]</code>和<code>s2[j]</code>，<strong>如果<code>s1[i] == s2[j]</code>，说明这个字符一定在<code>lcs</code>中</strong>：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220447.jpg" alt=""></p>
+<p>这样，就找到了一个<code>lcs</code>中的字符，根据<code>dp</code>函数的定义，我们可以完善一下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义：计算 s1[i..] 和 s2[j..] 的最长公共子序列长度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">s1, i, s2, j</span>):</span></span><br><span class="line">    <span class="keyword">if</span> si[i] == s2[j]:</span><br><span class="line">        <span class="comment"># s1[i] 和 s2[j] 必然在 lcs 中，</span></span><br><span class="line">        <span class="comment"># 加上 s1[i+1..] 和 s2[j+1..] 中的 lcs 长度，就是答案</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> + dp(s1, i + <span class="number">1</span>, s2, j + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p>刚才说的<code>s1[i] == s2[j]</code>的情况，但如果<code>s1[i] != s2[j]</code>，应该怎么办呢？</p>
+<p><strong><code>s1[i] != s2[j]</code>意味着，<code>s1[i]</code>和<code>s2[j]</code>中至少有一个字符不在<code>lcs</code>中</strong>：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220502.jpg" alt=""></p>
+<p>如上图，总共可能有三种情况，我怎么知道具体是那种情况呢？</p>
+<p>其实我们也不知道，那就把这三种情况的答案都算出来，取其中结果最大的那个呗，因为题目让我们算「最长」公共子序列的长度嘛。</p>
+<p>这三种情况的答案怎么算？回想一下我们的<code>dp</code>函数定义，不就是专门为了计算它们而设计的嘛！</p>
+<p>代码可以再进一步：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义：计算 s1[i..] 和 s2[j..] 的最长公共子序列长度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">s1, i, s2, j</span>):</span></span><br><span class="line">    <span class="keyword">if</span> si[i] == s2[j]:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> + dp(s1, i + <span class="number">1</span>, s2, j + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># s1[i] 和 s2[j] 中至少有一个字符不在 lcs 中，</span></span><br><span class="line">        <span class="comment"># 穷举三种情况的结果，取其中的最大结果</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">max</span>(</span><br><span class="line">                    <span class="comment"># 情况一、s1[i] 不在 lcs 中</span></span><br><span class="line">                    dp(s1, i + <span class="number">1</span>, s2, j),</span><br><span class="line">                    <span class="comment"># 情况二、s2[j] 不在 lcs 中</span></span><br><span class="line">                    dp(s1, i, s2, j + <span class="number">1</span>),</span><br><span class="line">                    <span class="comment"># 情况三、都不在 lcs 中</span></span><br><span class="line">                    dp(s1, i + <span class="number">1</span>, s2, j + <span class="number">1</span>)</span><br><span class="line">        		  )</span><br></pre></td></tr></table></figure>
+<p>这里就已经非常接近我们的最终答案了，<strong>还有一个小的优化，情况三「<code>s1[i]</code>和<code>s2[j]</code>都不在 lcs 中」其实可以直接忽略</strong>。</p>
+<p>因为我们在求最大值嘛，情况三在计算<code>s1[i+1..]</code>和<code>s2[j+1..]</code>的<code>lcs</code>长度，这个长度肯定是小于等于情况二<code>s1[i..]</code>和<code>s2[j+1..]</code>中的<code>lcs</code>长度的，因为<code>s1[i+1..]</code>比<code>s1[i..]</code>短嘛，那从这里面算出的<code>lcs</code>当然也不可能更长嘛。</p>
+<p>同理，情况三的结果肯定也小于等于情况一。<strong>说白了，情况三被情况一和情况二包含了</strong>，所以我们可以直接忽略掉情况三，完整代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">longestCommonSubsequence</span>(<span class="params">s1, s2</span>):</span></span><br><span class="line">    m, n = <span class="built_in">len</span>(s1), <span class="built_in">len</span>(s2)</span><br><span class="line">    <span class="comment"># 备忘录值为 -1 代表未曾计算</span></span><br><span class="line">    memo = [[-<span class="number">1</span>] * n <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(m)]  </span><br><span class="line">        </span><br><span class="line">    <span class="comment"># 计算 s1[0..] 和 s2[0..] 的 lcs 长度</span></span><br><span class="line">    <span class="keyword">return</span> dp(s1, <span class="number">0</span>, s2, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义：计算 s1[i..] 和 s2[j..] 的最长公共子序列长度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">s1, i, s2, j</span>):</span></span><br><span class="line">    <span class="comment"># base case</span></span><br><span class="line">    <span class="keyword">if</span> i == <span class="built_in">len</span>(s1) <span class="keyword">or</span> j == <span class="built_in">len</span>(s2):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment"># 如果之前计算过，则直接返回备忘录中的答案</span></span><br><span class="line">    <span class="keyword">if</span> memo[i][j] != -<span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> memo[i][j]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 根据 s1[i] 和 s2[j] 的情况做选择</span></span><br><span class="line">    <span class="keyword">if</span> s1[i] == s2[j]:</span><br><span class="line">        <span class="comment"># s1[i] 和 s2[j] 必然在 lcs 中</span></span><br><span class="line">        memo[i][j] = <span class="number">1</span> + dp(s1, i + <span class="number">1</span>, s2, j + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># s1[i] 和 s2[j] 至少有一个不在 lcs 中</span></span><br><span class="line">        memo[i][j] = <span class="built_in">max</span>(</span><br><span class="line">     			       	dp(s1, i + <span class="number">1</span>, s2, j),</span><br><span class="line">            			dp(s1, i, s2, j + <span class="number">1</span>)</span><br><span class="line">        				)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> memo[i][j]</span><br></pre></td></tr></table></figure>
+<p>以上思路完全就是按照我们之前的 <code>动态规划详解</code> 的框架来的，应该是很容易理解的。至于为什么要加<code>memo</code>备忘录，，这里再简单重复一下，首先抽象出我们核心<code>dp</code>函数的递归框架：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params"><span class="built_in">int</span> i, <span class="built_in">int</span> j</span>):</span></span><br><span class="line">    dp(i + <span class="number">1</span>, j + <span class="number">1</span>)   <span class="comment">#1</span></span><br><span class="line">    dp(i, j + <span class="number">1</span>)       <span class="comment">#2</span></span><br><span class="line">    dp(i + <span class="number">1</span>, j)       <span class="comment">#3</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>你看，假设我想从<code>dp(i, j)</code>转移到<code>dp(i+1, j+1)</code>，有不止一种方式，可以直接走<code>#1</code>，也可以走<code>#2 -&gt; #3</code>，也可以走<code>#3 -&gt; #2</code>。</p>
+<p>这就是重叠子问题，如果我们不用<code>memo</code>备忘录消除子问题，那么<code>dp(i+1, j+1)</code>就会被多次计算，这是没有必要的。</p>
+<p>至此，最长公共子序列问题就完全解决了，用的是自顶向下带备忘录的动态规划思路。</p>
+<p>下面，来看两道和最长公共子序列相似的两道题目。</p>
+<blockquote>
+<h3 id="二、字符串的删除操作"><a href="#二、字符串的删除操作" class="headerlink" title="二、字符串的删除操作"></a>二、字符串的删除操作</h3></blockquote>
+<p>这是力扣第 583 题「两个字符串的删除操作」，看下题目：</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/gibkIz0MVqdFj04Aic9zfP6rnHdGicfrafh6dgl5pUnutqNCqlEVtJHCYqNnwwiae3tR8ENPRF3PBzUWPJ7Nl4RWBQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p>函数签名如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">minDistance</span>(<span class="params">s1, s2</span>):</span></span><br></pre></td></tr></table></figure>
+<p>题目让我们计算将两个字符串变得相同的最少删除次数，那我们可以思考一下，最后这两个字符串会被删成什么样子？</p>
+<p>删除的结果不就是它俩的最长公共子序列嘛！</p>
+<p>那么，要计算删除的次数，就可以通过最长公共子序列的长度推导出来：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">minDistance</span>(<span class="params">s1, s2</span>):</span></span><br><span class="line">    m, n = <span class="built_in">len</span>(s1), <span class="built_in">len</span>(s2)</span><br><span class="line">    <span class="comment"># 复用前文计算 lcs 长度的函数</span></span><br><span class="line">    lcs = longestCommonSubsequence(s1, s2)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> m - lcs + n - lcs;</span><br></pre></td></tr></table></figure>
+<p><strong>完整代码如下：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.memo = <span class="literal">None</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">minDistance</span>(<span class="params">self, s1, s2</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type s1: str</span></span><br><span class="line"><span class="string">        :type s2: str</span></span><br><span class="line"><span class="string">        :rtype: int</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        m, n = <span class="built_in">len</span>(s1), <span class="built_in">len</span>(s2)</span><br><span class="line">        <span class="comment"># 备忘录值为 -1 代表未曾计算</span></span><br><span class="line">        self.memo = [[-<span class="number">1</span>] * n <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(m)]  </span><br><span class="line">            </span><br><span class="line">        <span class="comment"># 计算 s1[0..] 和 s2[0..] 的 lcs 长度</span></span><br><span class="line">        lcs = self.dp(s1, <span class="number">0</span>, s2, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> m - lcs + n - lcs</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 定义：计算 s1[i..] 和 s2[j..] 的最长公共子序列长度</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">self, s1, i, s2, j</span>):</span></span><br><span class="line">        <span class="comment"># base case</span></span><br><span class="line">        <span class="keyword">if</span> i == <span class="built_in">len</span>(s1) <span class="keyword">or</span> j == <span class="built_in">len</span>(s2):</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    </span><br><span class="line">        <span class="comment"># 如果之前计算过，则直接返回备忘录中的答案</span></span><br><span class="line">        <span class="keyword">if</span> self.memo[i][j] != -<span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> self.memo[i][j]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 根据 s1[i] 和 s2[j] 的情况做选择</span></span><br><span class="line">        <span class="keyword">if</span> s1[i] == s2[j]:</span><br><span class="line">            <span class="comment"># s1[i] 和 s2[j] 必然在 lcs 中</span></span><br><span class="line">            self.memo[i][j] = <span class="number">1</span> + self.dp(s1, i + <span class="number">1</span>, s2, j + <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># s1[i] 和 s2[j] 至少有一个不在 lcs 中</span></span><br><span class="line">            self.memo[i][j] = <span class="built_in">max</span>(</span><br><span class="line">                            self.dp(s1, i + <span class="number">1</span>, s2, j),</span><br><span class="line">                            self.dp(s1, i, s2, j + <span class="number">1</span>)</span><br><span class="line">                            )</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> self.memo[i][j]</span><br></pre></td></tr></table></figure>
+<p>这道题就解决了！</p>
+<blockquote>
+<h3 id="三、最小-ASCII-删除和"><a href="#三、最小-ASCII-删除和" class="headerlink" title="三、最小 ASCII 删除和"></a>三、最小 ASCII 删除和</h3></blockquote>
+<p>这是力扣第 712 题，看下题目：</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/gibkIz0MVqdFj04Aic9zfP6rnHdGicfrafhJl197b0zVcibXdfJNOEIAqWh9qHS9z1IjGwsXVcibKKPZI25URoWNWYA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p>这道题，和上一道题非常类似，这回不问我们删除的字符个数了，问我们删除的字符的 ASCII 码加起来是多少。</p>
+<p>那就不能直接复用计算最长公共子序列的函数了，但是可以依照之前的思路，<strong>稍微修改 base case 和状态转移部分即可直接写出解法代码</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">minimumDeleteSum</span>(<span class="params">s1, s2</span>):</span></span><br><span class="line">    m, n = <span class="built_in">len</span>(s1), <span class="built_in">len</span>(s2)</span><br><span class="line">    <span class="comment"># 备忘录值为 -1 代表未曾计算</span></span><br><span class="line">	memo = [[-<span class="number">1</span>] * n <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(m)]  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dp(s1, <span class="number">0</span>, s2, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义：将 s1[i..] 和 s2[j..] 删除成相同字符串，</span></span><br><span class="line"><span class="comment"># 最小的 ASCII 码之和为 dp(s1, i, s2, j)。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dp</span>(<span class="params">s1, i, s2, j</span>):</span></span><br><span class="line">    res = <span class="number">0</span></span><br><span class="line">    <span class="comment"># base case</span></span><br><span class="line">    <span class="keyword">if</span> i == <span class="built_in">len</span>(s1):</span><br><span class="line">        <span class="comment"># 如果 s1 到头了，那么 s2 剩下的都得删除</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(j, <span class="built_in">len</span>(s2)):</span><br><span class="line">            res += <span class="built_in">ord</span>(s2[j])</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> j == <span class="built_in">len</span>(s2):</span><br><span class="line">        <span class="comment"># 如果 s2 到头了，那么 s1 剩下的都得删除</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(i, <span class="built_in">len</span>(s1)):</span><br><span class="line">            res += <span class="built_in">ord</span>(s1[i])</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> memo[i][j] != -<span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> memo[i][j]</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> s1[i] == s2[j]:</span><br><span class="line">        <span class="comment"># s1[i] 和 s2[j] 都是在 lcs 中的，不用删除</span></span><br><span class="line">        memo[i][j] = dp(s1, i + <span class="number">1</span>, s2, j + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># s1[i] 和 s2[j] 至少有一个不在 lcs 中，删一个</span></span><br><span class="line">        memo[i][j] = <span class="built_in">min</span>(</span><br><span class="line">            <span class="built_in">ord</span>(s1[i]) + dp(s1, i + <span class="number">1</span>, s2, j),</span><br><span class="line">            <span class="built_in">ord</span>(s2[j]) + dp(s1, i, s2, j + <span class="number">1</span>)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> memo[i][j]</span><br></pre></td></tr></table></figure>
+<p>base case 有一定区别，计算<code>lcs</code>长度时，如果一个字符串为空，那么<code>lcs</code>长度必然是 0；但是这道题如果一个字符串为空，另一个字符串必然要被全部删除，所以需要计算另一个字符串所有字符的 ASCII 码之和。</p>
+<p>关于状态转移，当<code>s1[i]</code>和<code>s2[j]</code>相同时不需要删除，不同时需要删除，所以可以利用<code>dp</code>函数计算两种情况，得出最优的结果。其他的大同小异，就不具体展开了。</p>
+<p>也可以这样：思路一样：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210628220518.PNG" alt=""></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">minimumDeleteSum</span>(<span class="params">self, s1, s2</span>):</span></span><br><span class="line">        dp = [[<span class="number">0</span>] * (<span class="built_in">len</span>(s2) + <span class="number">1</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(s1) + <span class="number">1</span>)]</span><br><span class="line">		</span><br><span class="line">        <span class="comment"># 确定table的初始条件。</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(s1) - <span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">            dp[i][<span class="built_in">len</span>(s2)] = dp[i+<span class="number">1</span>][<span class="built_in">len</span>(s2)] + <span class="built_in">ord</span>(s1[i])</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(s2) - <span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">            dp[<span class="built_in">len</span>(s1)][j] = dp[<span class="built_in">len</span>(s1)][j+<span class="number">1</span>] + <span class="built_in">ord</span>(s2[j])</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(s1) - <span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(s2) - <span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">                <span class="keyword">if</span> s1[i] == s2[j]:</span><br><span class="line">                    dp[i][j] = dp[i+<span class="number">1</span>][j+<span class="number">1</span>]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    dp[i][j] = <span class="built_in">min</span>(dp[i+<span class="number">1</span>][j] + <span class="built_in">ord</span>(s1[i]),</span><br><span class="line">                                   dp[i][j+<span class="number">1</span>] + <span class="built_in">ord</span>(s2[j]))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> dp[<span class="number">0</span>][<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<p>至此，三道子序列问题就解决完了，关键在于将问题细化到字符，根据每两个字符是否相同来判断他们是否在结果子序列中，从而避免了对所有子序列进行穷举。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" title="08-动态规划之详解最长公共子序列系列问题" target="_blank" rel="external">https://xxren8218.github.io/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/20210628/01-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6.html" title="01-二叉树之常用框架"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/20210626/23-%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%BA%A7%E5%93%81%E4%B8%8E%E4%BA%92%E8%81%94%E7%BD%91%E4%BA%A7%E5%93%81%E7%BB%93%E5%90%88.html" title="23-大数据产品与互联网产品结合"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+</body>
+</html>
