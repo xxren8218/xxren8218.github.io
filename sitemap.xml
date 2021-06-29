@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://xxren8218.github.io/20210630/25-Sqoop%E6%A6%82%E8%BF%B0.html</loc>
+    
+    <lastmod>2021-06-29</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://xxren8218.github.io/20210629/02-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E6%B7%B1%E5%BA%A6%E9%81%8D%E5%8E%86%E6%80%9D%E6%83%B3%E8%AE%AD%E7%BB%83.html</loc>
     
     <lastmod>2021-06-29</lastmod>
@@ -765,14 +772,14 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/links/index.html</loc>
+    <loc>https://xxren8218.github.io/categories/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/categories/index.html</loc>
+    <loc>https://xxren8218.github.io/repository/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     
@@ -786,7 +793,7 @@
   </url>
   
   <url>
-    <loc>https://xxren8218.github.io/repository/index.html</loc>
+    <loc>https://xxren8218.github.io/links/index.html</loc>
     
     <lastmod>2021-02-28</lastmod>
     

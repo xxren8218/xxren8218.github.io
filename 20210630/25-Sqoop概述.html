@@ -17,19 +17,24 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>X.X.Ren的个人博客</title>
-  <meta name="description" content="自学计算机的经历">
-<meta property="og:type" content="website">
-<meta property="og:title" content="X.X.Ren">
-<meta property="og:url" content="https://xxren8218.github.io/page/9/index.html">
+  <title>25-Sqoop概述 | X.X.Ren的个人博客</title>
+  <meta name="description" content="Sqoop1 Sqoop概述 什么是Sqoop  Sqoop 是一款进行数据传输的工具, 可在hadoop 的 hdfs 和关系型数据库之间传输数据 可以使用Sqoop把数据从MySQL 或 Oracle导入到hdfs中, 也可以把数据从hdfs导入到MySQL或Oracle中 Sqoop可自动执行数据传输的大部分过程, 使用MapReduce导入和导出数据，提供并行操作和容错   为什么要使用s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="25-Sqoop概述">
+<meta property="og:url" content="https://xxren8218.github.io/20210630/25-Sqoop%E6%A6%82%E8%BF%B0.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="自学计算机的经历">
+<meta property="og:description" content="Sqoop1 Sqoop概述 什么是Sqoop  Sqoop 是一款进行数据传输的工具, 可在hadoop 的 hdfs 和关系型数据库之间传输数据 可以使用Sqoop把数据从MySQL 或 Oracle导入到hdfs中, 也可以把数据从hdfs导入到MySQL或Oracle中 Sqoop可自动执行数据传输的大部分过程, 使用MapReduce导入和导出数据，提供并行操作和容错   为什么要使用s">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210630005225.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210630005303.png">
+<meta property="article:published_time" content="2021-06-29T16:51:29.000Z">
+<meta property="article:modified_time" content="2021-06-29T16:53:26.362Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="python">
+<meta property="article:tag" content="推荐系统基础">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210630005225.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/page/9/index.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210630/25-Sqoop%E6%A6%82%E8%BF%B0.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -39,6 +44,8 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
   
   
   
@@ -373,569 +380,293 @@
 </aside>
 
   
-  <main class="main" role="main">
   
-  <div class="content article-list">
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%AD%A9%E5%AD%90%E4%BB%AC%E7%9A%84%E6%B8%B8%E6%88%8F%EF%BC%88%E5%9C%86%E5%9C%88%E4%B8%AD%E6%9C%80%E5%90%8E%E5%89%A9%E4%B8%8B%E7%9A%84%E6%95%B0%EF%BC%89.html">剑指Offer（四十六）：孩子们的游戏（圆圈中最后剩下的数）</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%AD%A9%E5%AD%90%E4%BB%AC%E7%9A%84%E6%B8%B8%E6%88%8F%EF%BC%88%E5%9C%86%E5%9C%88%E4%B8%AD%E6%9C%80%E5%90%8E%E5%89%A9%E4%B8%8B%E7%9A%84%E6%95%B0%EF%BC%89.html" class="article-date">
-        发布于<time datetime="2021-05-10T12:16:29.000Z" itemprop="datePublished">
-            2021-05-10 20:16:29
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%AD%A9%E5%AD%90%E4%BB%AC%E7%9A%84%E6%B8%B8%E6%88%8F%EF%BC%88%E5%9C%86%E5%9C%88%E4%B8%AD%E6%9C%80%E5%90%8E%E5%89%A9%E4%B8%8B%E7%9A%84%E6%95%B0%EF%BC%89.html" class="article-date">
-        更新于<time datetime="2021-05-18T09:50:10.479Z" itemprop="dateUpdated">
-            2021-05-18 17:50:10
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" rel="tag">双指针</a>, <a class="article-tag-link-link" href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag">数学</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E5%85%AD%EF%BC%89%EF%BC%9A%E5%AD%A9%E5%AD%90%E4%BB%AC%E7%9A%84%E6%B8%B8%E6%88%8F%EF%BC%88%E5%9C%86%E5%9C%88%E4%B8%AD%E6%9C%80%E5%90%8E%E5%89%A9%E4%B8%8B%E7%9A%84%E6%95%B0%EF%BC%89.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%BA%94%EF%BC%89%EF%BC%9A%E6%89%91%E5%85%8B%E7%89%8C%E9%A1%BA%E5%AD%90.html">剑指Offer（四十五）：扑克牌顺子</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%BA%94%EF%BC%89%EF%BC%9A%E6%89%91%E5%85%8B%E7%89%8C%E9%A1%BA%E5%AD%90.html" class="article-date">
-        发布于<time datetime="2021-05-10T12:01:26.000Z" itemprop="datePublished">
-            2021-05-10 20:01:26
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%BA%94%EF%BC%89%EF%BC%9A%E6%89%91%E5%85%8B%E7%89%8C%E9%A1%BA%E5%AD%90.html" class="article-date">
-        更新于<time datetime="2021-05-18T09:51:17.509Z" itemprop="dateUpdated">
-            2021-05-18 17:51:17
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210510/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%BA%94%EF%BC%89%EF%BC%9A%E6%89%91%E5%85%8B%E7%89%8C%E9%A1%BA%E5%AD%90.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%BA%8C%EF%BC%89%EF%BC%9A%E5%92%8C%E4%B8%BAS%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97.html">剑指Offer（四十二）：和为S的两个数字</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%BA%8C%EF%BC%89%EF%BC%9A%E5%92%8C%E4%B8%BAS%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97.html" class="article-date">
-        发布于<time datetime="2021-05-08T10:27:38.000Z" itemprop="datePublished">
-            2021-05-08 18:27:38
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%BA%8C%EF%BC%89%EF%BC%9A%E5%92%8C%E4%B8%BAS%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97.html" class="article-date">
-        更新于<time datetime="2021-05-18T10:02:43.253Z" itemprop="dateUpdated">
-            2021-05-18 18:02:43
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" rel="tag">双指针</a>, <a class="article-tag-link-link" href="/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%BA%8C%EF%BC%89%EF%BC%9A%E5%92%8C%E4%B8%BAS%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%B8%80%EF%BC%89%EF%BC%9A%E5%92%8C%E4%B8%BAS%E7%9A%84%E8%BF%9E%E7%BB%AD%E6%AD%A3%E6%95%B0%E5%BA%8F%E5%88%97.html">剑指Offer（四十一）：和为S的连续正数序列</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%B8%80%EF%BC%89%EF%BC%9A%E5%92%8C%E4%B8%BAS%E7%9A%84%E8%BF%9E%E7%BB%AD%E6%AD%A3%E6%95%B0%E5%BA%8F%E5%88%97.html" class="article-date">
-        发布于<time datetime="2021-05-08T10:23:27.000Z" itemprop="datePublished">
-            2021-05-08 18:23:27
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%B8%80%EF%BC%89%EF%BC%9A%E5%92%8C%E4%B8%BAS%E7%9A%84%E8%BF%9E%E7%BB%AD%E6%AD%A3%E6%95%B0%E5%BA%8F%E5%88%97.html" class="article-date">
-        更新于<time datetime="2021-05-19T16:52:30.026Z" itemprop="dateUpdated">
-            2021-05-20 00:52:30
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" rel="tag">双指针</a>, <a class="article-tag-link-link" href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" rel="tag">滑动窗口</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%9B%9B%E5%8D%81%E4%B8%80%EF%BC%89%EF%BC%9A%E5%92%8C%E4%B8%BAS%E7%9A%84%E8%BF%9E%E7%BB%AD%E6%AD%A3%E6%95%B0%E5%BA%8F%E5%88%97.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%B8%89%E5%8D%81%E4%B8%89%EF%BC%89%EF%BC%9A%E4%B8%91%E6%95%B0.html">剑指Offer（三十三）：丑数</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%B8%89%E5%8D%81%E4%B8%89%EF%BC%89%EF%BC%9A%E4%B8%91%E6%95%B0.html" class="article-date">
-        发布于<time datetime="2021-05-08T10:02:57.000Z" itemprop="datePublished">
-            2021-05-08 18:02:57
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%B8%89%E5%8D%81%E4%B8%89%EF%BC%89%EF%BC%9A%E4%B8%91%E6%95%B0.html" class="article-date">
-        更新于<time datetime="2021-05-24T10:57:58.561Z" itemprop="dateUpdated">
-            2021-05-24 18:57:58
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E5%A4%9A%E6%8C%87%E9%92%88/" rel="tag">多指针</a>, <a class="article-tag-link-link" href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag">数学</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%B8%89%E5%8D%81%E4%B8%89%EF%BC%89%EF%BC%9A%E4%B8%91%E6%95%B0.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%B8%89%E5%8D%81%E4%B8%80%EF%BC%89%EF%BC%9A%E6%95%B4%E6%95%B0%E4%B8%AD1%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%EF%BC%88%E4%BB%8E1%E5%88%B0n%E6%95%B4%E6%95%B0%E4%B8%AD1%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%EF%BC%89.html">剑指Offer（三十一）：整数中1出现的次数（从1到n整数中1出现的次数）</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%B8%89%E5%8D%81%E4%B8%80%EF%BC%89%EF%BC%9A%E6%95%B4%E6%95%B0%E4%B8%AD1%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%EF%BC%88%E4%BB%8E1%E5%88%B0n%E6%95%B4%E6%95%B0%E4%B8%AD1%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%EF%BC%89.html" class="article-date">
-        发布于<time datetime="2021-05-08T09:36:53.000Z" itemprop="datePublished">
-            2021-05-08 17:36:53
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%B8%89%E5%8D%81%E4%B8%80%EF%BC%89%EF%BC%9A%E6%95%B4%E6%95%B0%E4%B8%AD1%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%EF%BC%88%E4%BB%8E1%E5%88%B0n%E6%95%B4%E6%95%B0%E4%B8%AD1%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%EF%BC%89.html" class="article-date">
-        更新于<time datetime="2021-05-19T16:54:23.442Z" itemprop="dateUpdated">
-            2021-05-20 00:54:23
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag">数学</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%B8%89%E5%8D%81%E4%B8%80%EF%BC%89%EF%BC%9A%E6%95%B4%E6%95%B0%E4%B8%AD1%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%EF%BC%88%E4%BB%8E1%E5%88%B0n%E6%95%B4%E6%95%B0%E4%B8%AD1%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%EF%BC%89.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B9%9D%EF%BC%89%EF%BC%9A%E6%9C%80%E5%B0%8F%E7%9A%84K%E4%B8%AA%E6%95%B0.html">剑指Offer（二十九）：最小的K个数</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B9%9D%EF%BC%89%EF%BC%9A%E6%9C%80%E5%B0%8F%E7%9A%84K%E4%B8%AA%E6%95%B0.html" class="article-date">
-        发布于<time datetime="2021-05-08T09:28:55.000Z" itemprop="datePublished">
-            2021-05-08 17:28:55
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B9%9D%EF%BC%89%EF%BC%9A%E6%9C%80%E5%B0%8F%E7%9A%84K%E4%B8%AA%E6%95%B0.html" class="article-date">
-        更新于<time datetime="2021-05-15T12:28:02.747Z" itemprop="dateUpdated">
-            2021-05-15 20:28:02
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a>, <a class="article-tag-link-link" href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" rel="tag">最小堆</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210508/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B9%9D%EF%BC%89%EF%BC%9A%E6%9C%80%E5%B0%8F%E7%9A%84K%E4%B8%AA%E6%95%B0.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210429/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%9F%BA%E7%A1%80.html">贝叶斯基础</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210429/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%9F%BA%E7%A1%80.html" class="article-date">
-        发布于<time datetime="2021-04-29T15:52:24.000Z" itemprop="datePublished">
-            2021-04-29 23:52:24
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210429/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%9F%BA%E7%A1%80.html" class="article-date">
-        更新于<time datetime="2021-04-29T15:54:44.328Z" itemprop="dateUpdated">
-            2021-04-29 23:54:44
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag">机器学习基础</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210429/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%9F%BA%E7%A1%80.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html">决策树基础</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html" class="article-date">
-        发布于<time datetime="2021-04-29T15:45:59.000Z" itemprop="datePublished">
-            2021-04-29 23:45:59
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html" class="article-date">
-        更新于<time datetime="2021-04-29T15:50:48.301Z" itemprop="dateUpdated">
-            2021-04-29 23:50:48
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag">机器学习基础</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210429/%E5%86%B3%E7%AD%96%E6%A0%91.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-     <h1 itemprop="name">
-
-
-	 <a class="article-title" href="/20210418/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98.html">逻辑回归实战--信用卡诈骗检测</a>
-    </h1>
-  
-
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar"></i>
-    <a href="/20210418/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98.html" class="article-date">
-        发布于<time datetime="2021-04-17T17:26:48.000Z" itemprop="datePublished">
-            2021-04-18 01:26:48
-        </time>
-    </a>
-</span>
-
-<span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-    <a href="/20210418/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98.html" class="article-date">
-        更新于<time datetime="2021-04-17T18:53:58.904Z" itemprop="dateUpdated">
-            2021-04-18 02:53:58
-        </time>
-    </a>
-</span>
-
-
-    
-  <span class="article-category">
-    <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" rel="tag">机器学习基础实战</a>
-  </span>
-
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210418/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98.html#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-  </div>
-
-  
-    
-    <nav class="bar bar-footer clearfix" data-stick-bottom>
-        <div class="bar-inner">
-        <ul class="pager pull-left">
-            
-            <li class="prev">
-                <a href="/page/8/">
-                    <i class="icon icon-angle-left"></i>
-                    上一页
-                </a>
-            </li>
-            
-            
-            <li class="next">
-                <a href="/page/10/">
-                    下一页
-                    <i class="icon icon-angle-right"></i>
-                </a>
-            </li>
-            
-        </ul>
-        <div class="total-article bar-right">第 9 页, 共 11 页</div>
-        </div>
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sqoop"><span class="toc-text">Sqoop</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Sqoop%E6%A6%82%E8%BF%B0"><span class="toc-text">1 Sqoop概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Sqoop%E5%AE%89%E8%A3%85"><span class="toc-text">2 Sqoop安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BD%BF%E7%94%A8Sqoop%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%E5%88%B0hdfs%E4%B8%AD"><span class="toc-text">3 使用Sqoop导入数据到hdfs中</span></a></li></ol></li></ol>
     </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-25-Sqoop概述" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
- 
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      25-Sqoop概述
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210630/25-Sqoop%E6%A6%82%E8%BF%B0.html" class="article-date">
+        发布于<time datetime="2021-06-29T16:51:29.000Z" itemprop="datePublished">
+            2021-06-30 00:51:29
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210630/25-Sqoop%E6%A6%82%E8%BF%B0.html" class="article-date">
+        更新于<time datetime="2021-06-29T16:53:26.362Z" itemprop="dateUpdated">
+            2021-06-30 00:53:26
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" rel="tag">推荐系统基础</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210630/25-Sqoop%E6%A6%82%E8%BF%B0.html" class="leancloud_visitors"  data-flag-title="25-Sqoop概述">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210630/25-Sqoop%E6%A6%82%E8%BF%B0.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="Sqoop"><a href="#Sqoop" class="headerlink" title="Sqoop"></a>Sqoop</h2><h3 id="1-Sqoop概述"><a href="#1-Sqoop概述" class="headerlink" title="1 Sqoop概述"></a>1 Sqoop概述</h3><ul>
+<li><p>什么是Sqoop</p>
+<ul>
+<li>Sqoop 是一款进行数据传输的工具, 可在hadoop 的 hdfs 和关系型数据库之间传输数据</li>
+<li>可以使用Sqoop把数据从MySQL 或 Oracle导入到hdfs中, 也可以把数据从hdfs导入到MySQL或Oracle中</li>
+<li>Sqoop可自动执行数据传输的大部分过程, 使用MapReduce导入和导出数据，提供并行操作和容错</li>
+</ul>
+</li>
+<li><p>为什么要使用sqoop?</p>
+<ul>
+<li>快速实现Hadoop(HDFS/hive/hbase)与mysql/Oracle等关系型数据库之间的数据传递</li>
+<li>Sqoop提供多种数据传输方式</li>
+</ul>
+</li>
+<li><p>Sqoop原理</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210630005225.png" alt=""></p>
+</li>
+</ul>
+<h3 id="2-Sqoop安装"><a href="#2-Sqoop安装" class="headerlink" title="2 Sqoop安装"></a>2 Sqoop安装</h3><ul>
+<li><p>下载安装包<a target="_blank" rel="noopener" href="http://archive.cloudera.com/cdh5/cdh/5/sqoop-1.4.6-cdh5.7.0.tar.gz">url</a> </p>
+</li>
+<li><p>解压到centos中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf &#x2F;home&#x2F;hadoop&#x2F;software&#x2F;sqoop-1.4.6-cdh5.7.0.tar.gz  -C ~&#x2F;app&#x2F;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置环境变量</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bash_profile</span><br><span class="line">export SQOOP_HOME=/home/hadoop/app/sqoop-1.4.6-cdh5.7.0</span><br><span class="line">export PATH=$SQOOP_HOME/bin:$PATH</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>激活环境变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~&#x2F;.bash_profile</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>到 $SQOOP_HOME/conf 目录下 配置sqoop_env.sh</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cp sqoop-env-template.sh sqoop-env.sh</span><br><span class="line">vi sqoop-env.sh</span><br><span class="line"><span class="meta">#</span><span class="bash">在sqoop_env.sh中</span></span><br><span class="line">export HADOOP_COMMON_HOME=/home/hadoop/app/hadoop-2.6.0-cdh5.7.0/</span><br><span class="line">export HADOOP_MAPRED_HOME=/home/hadoop/app/hadoop-2.6.0-cdh5.7.0/</span><br><span class="line">export HIVE_HOME=/home/hadoop/app/hive-1.1.0-cdh5.7.0/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>拷贝 mysql驱动到$SQOOP_HOME/lib目录下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /home/hadoop/app/hive-1.1.0-cdh5.7.0/lib/mysql-connector-java-5.1.47.jar /home/hadoop/app/sqoop-1.4.6-cdh5.7.0/lib/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试sqoop环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqoop-version</span><br></pre></td></tr></table></figure>
+<p>看到如下输出 说明sqoop安装成功</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Sqoop 1.4.6-cdh5.7.0</span><br><span class="line">git commit id</span><br><span class="line">Compiled by jenkins on ******</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后进入到MySQL的Docker环境中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -ti mysql bash</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="3-使用Sqoop导入数据到hdfs中"><a href="#3-使用Sqoop导入数据到hdfs中" class="headerlink" title="3 使用Sqoop导入数据到hdfs中"></a>3 使用Sqoop导入数据到hdfs中</h3><ul>
+<li><p>准备mysql数据</p>
+<p>建表语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">table</span> u(id <span class="type">int</span> <span class="keyword">PRIMARY</span> KEY AUTO_INCREMENT,fname <span class="type">varchar</span>(<span class="number">20</span>),lname <span class="type">varchar</span>(<span class="number">20</span>));</span><br></pre></td></tr></table></figure>
+<p>插入数据</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> u3 (fname, lname) <span class="keyword">values</span>(<span class="string">&#x27;George&#x27;</span>,<span class="string">&#x27;washington&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> u3 (fname, lname) <span class="keyword">values</span>(<span class="string">&#x27;George&#x27;</span>,<span class="string">&#x27;bush&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> u3 (fname, lname) <span class="keyword">values</span>(<span class="string">&#x27;Bill&#x27;</span>,<span class="string">&#x27;clinton&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> u3 (fname, lname) <span class="keyword">values</span>(<span class="string">&#x27;Bill&#x27;</span>,<span class="string">&#x27;gates&#x27;</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Sqoop导入命令介绍</p>
+<ul>
+<li>命令语法: sqoop import (控制参数) (导入参数)</li>
+<li>命令元素: 导入操作, 数据源, 访问方式, 导入控制, 目标地址 </li>
+<li>命令理解: 数据从哪里来, 有什么控制, 到哪里去</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sqoop import --connect jdbc:mysql://127.0.0.1:3306/test --username root --password root\!123A --table u -m 1 </span><br><span class="line"><span class="meta">#</span><span class="bash"> -m 表示用几个MR任务执行，前提是文件小于128M，否则拆成多个block</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>添加—target-dir 指定hdfs上数据存放的目录</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqoop import --connect jdbc:mysql://localhost:3306/test --username root --password root!123A --table u --target-dir /tmp/u1 -m 1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>导入可能出现的问题 </p>
+</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210630005303.png" alt=""></p>
+<p>​    解决 上传java-json.jar到$SQOOP_HOME/lib目录下</p>
+<ul>
+<li><p>默认数据上传到hdfs中如下路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;user&#x2F;当前linux用户名&#x2F;mysql表名&#x2F;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过hive 建立外表导入数据到hive</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> u4(</span><br><span class="line">    id <span class="type">INT</span>,</span><br><span class="line">    fname STRING,</span><br><span class="line">    lname STRING</span><br><span class="line">)</span><br><span class="line"><span class="type">ROW</span> FORMAT delimited fields terminated <span class="keyword">by</span> <span class="string">&#x27;,&#x27;</span> </span><br><span class="line">LOCATION <span class="string">&#x27;/user/hadoop/u/&#x27;</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>也可能出现断开连接的情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive --service metastore&amp;  # 加上&amp;表示在后台跑。</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210630/25-Sqoop%E6%A6%82%E8%BF%B0.html" title="25-Sqoop概述" target="_blank" rel="external">https://xxren8218.github.io/20210630/25-Sqoop%E6%A6%82%E8%BF%B0.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/20210629/02-%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8B%E6%B7%B1%E5%BA%A6%E9%81%8D%E5%8E%86%E6%80%9D%E6%83%B3%E8%AE%AD%E7%BB%83.html" title="02_二叉树之深度遍历思想训练"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 </main>
 
   <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
@@ -1001,6 +732,33 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
    
 
 
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
 
 
 
