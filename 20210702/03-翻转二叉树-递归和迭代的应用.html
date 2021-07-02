@@ -17,21 +17,25 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>力扣（一）：两数之和 | X.X.Ren的个人博客</title>
-  <meta name="description" content="1.题目给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 的那 两个 整数，并返回它们的数组下标。 你可以假设每种输入只会对应一个答案。但是，数组中同一个元素在答案里不能重复出现。 你可以按任意顺序返回答案。 2.思路1方法一：暴力枚举思路及算法 最容易想到的方法是枚举数组中的每一个数 x，寻找数组中是否存在 target - x。 当我们使用遍历整个数组">
+  <title>03_翻转二叉树--递归和迭代的应用 | X.X.Ren的个人博客</title>
+  <meta name="description" content="03_翻转二叉树—递归和迭代的应用 226.翻转二叉树   这道题目是非常经典的题目，也是比较简单的题目（至少一看就会）。 但正是因为这道题太简单，一看就会，一些同学都没有抓住其本质，稀里糊涂的就把这道题目过了。 如果做过这道题的同学也建议认真看完，相信一定有所收获！ 一、思路我们之前介绍的都是各种方式遍历二叉树，这次要翻转了，感觉还是有点懵逼。 这得怎么翻转呢？ 如果要从整个树来看，翻转还真的挺">
 <meta property="og:type" content="article">
-<meta property="og:title" content="力扣（一）：两数之和">
-<meta property="og:url" content="https://xxren8218.github.io/20210518/%E5%8A%9B%E6%89%A3%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html">
+<meta property="og:title" content="03_翻转二叉树--递归和迭代的应用">
+<meta property="og:url" content="https://xxren8218.github.io/20210702/03-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91-%E9%80%92%E5%BD%92%E5%92%8C%E8%BF%AD%E4%BB%A3%E7%9A%84%E5%BA%94%E7%94%A8.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="1.题目给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 的那 两个 整数，并返回它们的数组下标。 你可以假设每种输入只会对应一个答案。但是，数组中同一个元素在答案里不能重复出现。 你可以按任意顺序返回答案。 2.思路1方法一：暴力枚举思路及算法 最容易想到的方法是枚举数组中的每一个数 x，寻找数组中是否存在 target - x。 当我们使用遍历整个数组">
+<meta property="og:description" content="03_翻转二叉树—递归和迭代的应用 226.翻转二叉树   这道题目是非常经典的题目，也是比较简单的题目（至少一看就会）。 但正是因为这道题太简单，一看就会，一些同学都没有抓住其本质，稀里糊涂的就把这道题目过了。 如果做过这道题的同学也建议认真看完，相信一定有所收获！ 一、思路我们之前介绍的都是各种方式遍历二叉树，这次要翻转了，感觉还是有点懵逼。 这得怎么翻转呢？ 如果要从整个树来看，翻转还真的挺">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-05-18T10:00:40.000Z">
-<meta property="article:modified_time" content="2021-05-18T10:01:48.267Z">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210702181715.PNG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210702181727.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210702181742.gif">
+<meta property="article:published_time" content="2021-07-02T10:16:14.000Z">
+<meta property="article:modified_time" content="2021-07-02T10:17:52.748Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="哈希表">
+<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210702181715.PNG">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/20210518/%E5%8A%9B%E6%89%A3%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210702/03-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91-%E9%80%92%E5%BD%92%E5%92%8C%E8%BF%AD%E4%BB%A3%E7%9A%84%E5%BA%94%E7%94%A8.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -382,21 +386,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%A2%98%E7%9B%AE"><span class="toc-text">1.题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%80%9D%E8%B7%AF1"><span class="toc-text">2.思路1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81"><span class="toc-text">3.代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF2"><span class="toc-text">思路2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#03-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91%E2%80%94%E9%80%92%E5%BD%92%E5%92%8C%E8%BF%AD%E4%BB%A3%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-text">03_翻转二叉树—递归和迭代的应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%80%9D%E8%B7%AF"><span class="toc-text">一、思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%80%92%E5%BD%92%E6%B3%95"><span class="toc-text">二、递归法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%BF%AD%E4%BB%A3%E6%B3%95"><span class="toc-text">三、迭代法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E9%81%8D%E5%8E%86"><span class="toc-text">1.深度优先遍历</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E9%81%8D%E5%8E%86"><span class="toc-text">2.广度优先遍历</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-text">四、总结</span></a></li></ol></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-力扣（一）：两数之和" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-03-翻转二叉树-递归和迭代的应用" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      力扣（一）：两数之和
+      03_翻转二叉树--递归和迭代的应用
     </h1>
   
 
@@ -405,18 +409,18 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar"></i>
-    <a href="/20210518/%E5%8A%9B%E6%89%A3%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html" class="article-date">
-        发布于<time datetime="2021-05-18T10:00:40.000Z" itemprop="datePublished">
-            2021-05-18 18:00:40
+    <a href="/20210702/03-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91-%E9%80%92%E5%BD%92%E5%92%8C%E8%BF%AD%E4%BB%A3%E7%9A%84%E5%BA%94%E7%94%A8.html" class="article-date">
+        发布于<time datetime="2021-07-02T10:16:14.000Z" itemprop="datePublished">
+            2021-07-02 18:16:14
         </time>
     </a>
 </span>
 
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-    <a href="/20210518/%E5%8A%9B%E6%89%A3%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html" class="article-date">
-        更新于<time datetime="2021-05-18T10:01:48.267Z" itemprop="dateUpdated">
-            2021-05-18 18:01:48
+    <a href="/20210702/03-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91-%E9%80%92%E5%BD%92%E5%92%8C%E8%BF%AD%E4%BB%A3%E7%9A%84%E5%BA%94%E7%94%A8.html" class="article-date">
+        更新于<time datetime="2021-07-02T10:17:52.748Z" itemprop="dateUpdated">
+            2021-07-02 18:17:52
         </time>
     </a>
 </span>
@@ -425,24 +429,19 @@
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a>
+    <a class="article-category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
   </span>
 
         
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" rel="tag">哈希表</a>
-  </span>
-
 
         
 
 	<span class="article-read hidden-xs">
     	<i class="icon icon-eye-fill" aria-hidden="true"></i>
-    	<span id="/20210518/%E5%8A%9B%E6%89%A3%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html" class="leancloud_visitors"  data-flag-title="力扣（一）：两数之和">0</span>
+    	<span id="/20210702/03-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91-%E9%80%92%E5%BD%92%E5%92%8C%E8%BF%AD%E4%BB%A3%E7%9A%84%E5%BA%94%E7%94%A8.html" class="leancloud_visitors"  data-flag-title="03_翻转二叉树--递归和迭代的应用">0</span>
     </span>
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210518/%E5%8A%9B%E6%89%A3%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210702/03-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91-%E9%80%92%E5%BD%92%E5%92%8C%E8%BF%AD%E4%BB%A3%E7%9A%84%E5%BA%94%E7%94%A8.html#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -451,18 +450,49 @@
 	</div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h2 id="1-题目"><a href="#1-题目" class="headerlink" title="1.题目"></a>1.题目</h2><p>给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 的那 两个 整数，并返回它们的数组下标。</p>
-<p>你可以假设每种输入只会对应一个答案。但是，数组中同一个元素在答案里不能重复出现。</p>
-<p>你可以按任意顺序返回答案。</p>
-<h2 id="2-思路1"><a href="#2-思路1" class="headerlink" title="2.思路1"></a>2.思路1</h2><p>方法一：暴力枚举<br>思路及算法</p>
-<p>最容易想到的方法是枚举数组中的每一个数 x，寻找数组中是否存在 target - x。</p>
-<p>当我们使用遍历整个数组的方式寻找 target - x 时，需要注意到每一个位于 x 之前的元素都已经和 x 匹配过，因此不需要再进行匹配。而每一个元素不能被使用两次，所以我们只需要在 x 后面的元素中寻找 target - x。</p>
-<h2 id="3-代码"><a href="#3-代码" class="headerlink" title="3.代码"></a>3.代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">twoSum</span>(<span class="params">self, nums: List[<span class="built_in">int</span>], target: <span class="built_in">int</span></span>) -&gt; List[int]:</span></span><br><span class="line">        n = <span class="built_in">len</span>(nums)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i + <span class="number">1</span>, n):</span><br><span class="line">                <span class="keyword">if</span> nums[i] + nums[j] == target:</span><br><span class="line">                    <span class="keyword">return</span> [i, j]</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> []</span><br></pre></td></tr></table></figure>
-<h2 id="思路2"><a href="#思路2" class="headerlink" title="思路2"></a>思路2</h2><p>方法二：哈希表<br>思路及算法</p>
-<p>注意到方法一的时间复杂度较高的原因是寻找 target - x 的时间复杂度过高。因此，我们需要一种更优秀的方法，能够快速寻找数组中是否存在目标元素。如果存在，我们需要找出它的索引。</p>
-<p>使用哈希表，可以将寻找 target - x 的时间复杂度降低到从 O(N) 降低到 O(1)。</p>
-<p>这样我们创建一个哈希表，对于每一个 x，我们首先查询哈希表中是否存在 target - x，然后将 x 插入到哈希表中，即可保证不会让 x 和自己匹配。</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">twoSum</span>(<span class="params">self, nums: List[<span class="built_in">int</span>], target: <span class="built_in">int</span></span>) -&gt; List[int]:</span></span><br><span class="line">        hashtable = <span class="built_in">dict</span>()</span><br><span class="line">        <span class="keyword">for</span> i, num <span class="keyword">in</span> <span class="built_in">enumerate</span>(nums): </span><br><span class="line">            <span class="keyword">if</span> target - num <span class="keyword">in</span> hashtable:</span><br><span class="line">                <span class="keyword">return</span> [hashtable[target - num], i]</span><br><span class="line">            hashtable[nums[i]] = i</span><br><span class="line">        <span class="keyword">return</span> []</span><br></pre></td></tr></table></figure>
+        <h2 id="03-翻转二叉树—递归和迭代的应用"><a href="#03-翻转二叉树—递归和迭代的应用" class="headerlink" title="03_翻转二叉树—递归和迭代的应用"></a>03_翻转二叉树—递归和迭代的应用</h2><ul>
+<li>226.翻转二叉树</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210702181715.PNG" alt=""></p>
+<p>这道题目是非常经典的题目，也是比较简单的题目（至少一看就会）。</p>
+<p>但正是因为这道题太简单，一看就会，一些同学都没有抓住其本质，稀里糊涂的就把这道题目过了。</p>
+<p>如果做过这道题的同学也建议认真看完，相信一定有所收获！</p>
+<h3 id="一、思路"><a href="#一、思路" class="headerlink" title="一、思路"></a>一、思路</h3><p>我们之前介绍的都是各种方式遍历二叉树，这次要翻转了，感觉还是有点懵逼。</p>
+<p>这得怎么翻转呢？</p>
+<p>如果要从整个树来看，翻转还真的挺复杂，整个树以中间线进行翻转，如图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210702181727.png" alt=""></p>
+<p>可以发现想要翻转它，其实就把每一个节点的左右孩子交换一下（注意孩子下面的节点是一起交换的）就可以了。</p>
+<p>关键在于遍历顺序，前中后序应该选哪一种遍历顺序？（一些同学这道题都过了，但是不知道自己用的是什么顺序）</p>
+<p>遍历的过程中去翻转每一个节点的左右孩子就可以达到整体翻转的效果。</p>
+<p><strong>「注意只要把每一个节点的左右孩子翻转一下，就可以达到整体翻转的效果」</strong></p>
+<p><strong>「这道题目使用前序遍历和后序遍历都可以，唯独中序遍历不行，因为中序遍历会把某些节点的左右孩子翻转了两次！建议拿纸画一画，就理解了」</strong></p>
+<p>那么层序遍历可以不可以呢？<strong>「依然可以的！只要把每一个节点的左右孩子翻转一下的遍历方式都是可以的！」</strong></p>
+<h3 id="二、递归法"><a href="#二、递归法" class="headerlink" title="二、递归法"></a>二、递归法</h3><p>我们下文以前序遍历为例，通过动画来看一下翻转的过程:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210702181742.gif" alt=""></p>
+<p>我们来看一下递归三部曲：</p>
+<p>1.确定递归函数的参数和返回值</p>
+<p>参数就是要传入节点的指针，不需要其他参数了，通常此时定下来主要参数，如果在写递归的逻辑中发现还需要其他参数的时候，随时补充。</p>
+<p>返回值的话其实也不需要，但是题目中给出的要返回root节点的指针，可以直接使用题目定义好的函数，所以就函数的返回类型为<code>TreeNode</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">invertTree</span>(<span class="params">self, root: TreeNode</span>) -&gt; TreeNode:</span></span><br></pre></td></tr></table></figure>
+<p>2.确定终止条件:</p>
+<p>当前节点为空的时候，就返回</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> root: <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<p>3.确定单层递归的逻辑</p>
+<p>因为是先前序遍历，所以先进行交换左右孩子节点，然后反转左子树，反转右子树。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root.left, root.right = root.right, root.left</span><br><span class="line"></span><br><span class="line"><span class="comment"># tmp = root.left</span></span><br><span class="line"><span class="comment"># root.left = root.right</span></span><br><span class="line"><span class="comment"># root.right = tmp</span></span><br><span class="line"></span><br><span class="line">invertTree(root.left)</span><br><span class="line">invertTree(root.right)</span><br></pre></td></tr></table></figure>
+<p>基于这递归三步法，代码基本写完，代码如下（前序）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"># class TreeNode(object):</span></span><br><span class="line"><span class="comment">#     def __init__(self, val=0, left=None, right=None):</span></span><br><span class="line"><span class="comment">#         self.val = val</span></span><br><span class="line"><span class="comment">#         self.left = left</span></span><br><span class="line"><span class="comment">#         self.right = right</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">invertTree</span>(<span class="params">self, root</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type root: TreeNode</span></span><br><span class="line"><span class="string">        :rtype: TreeNode</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">None</span>: <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 前序遍历</span></span><br><span class="line">        root.left, root.right = root.right, root.left</span><br><span class="line"></span><br><span class="line">        self.invertTree(root.left)</span><br><span class="line">        self.invertTree(root.right)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> root</span><br></pre></td></tr></table></figure>
+<h3 id="三、迭代法"><a href="#三、迭代法" class="headerlink" title="三、迭代法"></a>三、迭代法</h3><h4 id="1-深度优先遍历"><a href="#1-深度优先遍历" class="headerlink" title="1.深度优先遍历"></a>1.深度优先遍历</h4><p>可以很轻松的切出如下迭代法（前序）的代码：只需稍作修改即可。将添加值的操作改为变化左右</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"># class TreeNode(object):</span></span><br><span class="line"><span class="comment">#     def __init__(self, val=0, left=None, right=None):</span></span><br><span class="line"><span class="comment">#         self.val = val</span></span><br><span class="line"><span class="comment">#         self.left = left</span></span><br><span class="line"><span class="comment">#         self.right = right</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">invertTree</span>(<span class="params">self, root</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type root: TreeNode</span></span><br><span class="line"><span class="string">        :rtype: TreeNode</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> root: <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        stack = [root]</span><br><span class="line">        <span class="keyword">while</span> stack:</span><br><span class="line">            node = stack.pop()</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> node:</span><br><span class="line">            	<span class="comment">### 若不为空，将node的左右孩子调换。</span></span><br><span class="line">                node.left, node.right = node.right, node.left</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment"># 若为空，结束本次循环（他没有左右孩子）</span></span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 将右左孩子分别添加进stack中，因为是栈,所以先处理的是左</span></span><br><span class="line">            stack.append(node.right)</span><br><span class="line">            stack.append(node.left)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> root</span><br></pre></td></tr></table></figure>
+<h4 id="2-广度优先遍历"><a href="#2-广度优先遍历" class="headerlink" title="2.广度优先遍历"></a>2.广度优先遍历</h4><p>广度优先遍历也是比较容易的：只需要添加一行——处理队列的节点的代码改变即可。直接上代码！</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"># class TreeNode(object):</span></span><br><span class="line"><span class="comment">#     def __init__(self, val=0, left=None, right=None):</span></span><br><span class="line"><span class="comment">#         self.val = val</span></span><br><span class="line"><span class="comment">#         self.left = left</span></span><br><span class="line"><span class="comment">#         self.right = right</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">invertTree</span>(<span class="params">self, root</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type root: TreeNode</span></span><br><span class="line"><span class="string">        :rtype: TreeNode</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> root: <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        queue = [root]</span><br><span class="line">        <span class="keyword">while</span> queue:</span><br><span class="line">            cur_node = queue.pop(<span class="number">0</span>)</span><br><span class="line">			<span class="comment">## 只需要添加这一行就行了！</span></span><br><span class="line">            cur_node.left, cur_node.right = cur_node.right, cur_node.left</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> cur_node.left:</span><br><span class="line">                queue.append(cur_node.left)</span><br><span class="line">            <span class="keyword">if</span> cur_node.right:</span><br><span class="line">                queue.append(cur_node.right)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> root</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<h3 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h3></blockquote>
+<p>针对二叉树的问题，解题之前一定要想清楚究竟是前中后序遍历，还是层序遍历。</p>
+<p><strong>「二叉树解题的大忌就是自己稀里糊涂的过了（因为这道题相对简单），但是也不知道自己是怎么遍历的。」</strong></p>
+<p>这也是造成了二叉树的题目“一看就会，一写就废”的原因。</p>
+<p><strong>针对翻转二叉树，我给出了一种递归，三种迭代（一种深度优先遍历，一种层序遍历）的写法，都是之前我们讲过的写法，融汇贯通一下而已。</strong></p>
+
       
     </div>
     <div class="article-footer">
@@ -471,7 +501,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://xxren8218.github.io/20210518/%E5%8A%9B%E6%89%A3%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html" title="力扣（一）：两数之和" target="_blank" rel="external">https://xxren8218.github.io/20210518/%E5%8A%9B%E6%89%A3%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html</a>
+      <a href="https://xxren8218.github.io/20210702/03-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91-%E9%80%92%E5%BD%92%E5%92%8C%E8%BF%AD%E4%BB%A3%E7%9A%84%E5%BA%94%E7%94%A8.html" title="03_翻转二叉树--递归和迭代的应用" target="_blank" rel="external">https://xxren8218.github.io/20210702/03-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91-%E9%80%92%E5%BD%92%E5%92%8C%E8%BF%AD%E4%BB%A3%E7%9A%84%E5%BA%94%E7%94%A8.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -517,13 +547,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html" title="EM算法应用——GMM聚类"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/20210517/%E5%89%91%E6%8C%87Offer%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89%EF%BC%9A%E5%8C%85%E5%90%ABmin%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88.html" title="剑指Offer（二十）：包含min函数的栈"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/20210702/00-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%862.html" title="00_二叉树的层序遍历2"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
