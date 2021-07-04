@@ -17,19 +17,25 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>分类: 动态规划 | X.X.Ren的个人博客</title>
-  <meta name="description" content="自学计算机的经历">
-<meta property="og:type" content="website">
-<meta property="og:title" content="X.X.Ren">
-<meta property="og:url" content="https://xxren8218.github.io/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/index.html">
+  <title>06-二叉树的最小深度 | X.X.Ren的个人博客</title>
+  <meta name="description" content="二叉树的最小深度 111.二叉树的最小深度   直觉上好像和求最大深度差不多，其实还是差不少的。 遍历顺序上依然是后序遍历（因为要比较递归返回之后的结果），但在处理中间节点的逻辑上，最大深度很容易理解，最小深度可有一个误区，如图：  这就重新审题了，题目中说的是：「最小深度是从根节点到最近叶子节点的最短路径上的节点数量。」，注意是「叶子节点」。 什么是叶子节点，左右孩子都为空的节点才是叶子节点！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="06-二叉树的最小深度">
+<meta property="og:url" content="https://xxren8218.github.io/20210704/06-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="自学计算机的经历">
+<meta property="og:description" content="二叉树的最小深度 111.二叉树的最小深度   直觉上好像和求最大深度差不多，其实还是差不少的。 遍历顺序上依然是后序遍历（因为要比较递归返回之后的结果），但在处理中间节点的逻辑上，最大深度很容易理解，最小深度可有一个误区，如图：  这就重新审题了，题目中说的是：「最小深度是从根节点到最近叶子节点的最短路径上的节点数量。」，注意是「叶子节点」。 什么是叶子节点，左右孩子都为空的节点才是叶子节点！">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210704213732.PNG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210704213744.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210704213744.png">
+<meta property="article:published_time" content="2021-07-04T13:36:56.000Z">
+<meta property="article:modified_time" content="2021-07-04T13:38:02.041Z">
 <meta property="article:author" content="任晓雄">
 <meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210704213732.PNG">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/index.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210704/06-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -39,6 +45,8 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
   
   
   
@@ -373,123 +381,250 @@
 </aside>
 
   
-  <main class="main" role="main">
-  <article class="content article article-categories article-type-list" itemscope="">
-    <header class="article-header">
-      <h1 itemprop="name" class="hidden-xs">分类: 动态规划</h1>
-      <p class="hidden-xs">共 8 篇文章</p>
-      <nav role="navigation" id="nav-main" class="okayNav">
-        <ul>
-          <li><a href="/categories">全部</a></li>
-          
-          <li><a href="/categories/二叉树/">二叉树</a></li>
-          
-          <li><a href="/categories/机器学习/">机器学习</a></li>
-          
-          <li><a href="/categories/动态规划/">动态规划</a></li>
-          
-          <li><a href="/categories/机器学习/大数据的lambda架构/">大数据的lambda架构</a></li>
-          
-          <li><a href="/categories/python/">python</a></li>
-          
-          <li><a href="/categories/二分查找/">二分查找</a></li>
-          
-          <li><a href="/categories/传统算法/">传统算法</a></li>
-          
-          <li><a href="/categories/Linux/">Linux</a></li>
-          
-          <li><a href="/categories/机器学习基础实战/">机器学习基础实战</a></li>
-          
-        </ul>
-      </nav>
-    </header>
-    <!-- /header -->
-    <div class="article-body">
-      <div class="panel panel-default b-no">
-    <div class="panel-heading" role="tab">
-        <h4 class="panel-title">
-            <a data-toggle="collapse" href="#collapse动态规划" aria-expanded="true">
-              <i class="icon icon-folder text-active"></i><i class="icon icon-folder-open text"></i>
-              动态规划
-            </a>
-            <small class="text-muted">(Total 8 articles)</small>
-        </h4>
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6"><span class="toc-text">二叉树的最小深度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%80%92%E5%BD%92%E6%B3%95"><span class="toc-text">1.递归法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%BF%AD%E4%BB%A3%E6%B3%95"><span class="toc-text">2. 迭代法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-06-二叉树的最小深度" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      06-二叉树的最小深度
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210704/06-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.html" class="article-date">
+        发布于<time datetime="2021-07-04T13:36:56.000Z" itemprop="datePublished">
+            2021-07-04 21:36:56
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210704/06-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.html" class="article-date">
+        更新于<time datetime="2021-07-04T13:38:02.041Z" itemprop="dateUpdated">
+            2021-07-04 21:38:02
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+  </span>
+
+        
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210704/06-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.html" class="leancloud_visitors"  data-flag-title="06-二叉树的最小深度">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210704/06-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
     </div>
-    <div id="collapse动态规划" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading动态规划">
-        <div class="panel-body">
-            <div class="collection">
-              
-                
-<a href="/20210628/08-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E8%AF%A6%E8%A7%A3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97%E7%B3%BB%E5%88%97%E9%97%AE%E9%A2%98.html" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-06-28T14:02:58.000Z" itemprop="datePublished">2021-06-28 22:02:58</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 08-动态规划之详解最长公共子序列系列问题
-</a>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="二叉树的最小深度"><a href="#二叉树的最小深度" class="headerlink" title="二叉树的最小深度"></a>二叉树的最小深度</h2><ul>
+<li>111.二叉树的最小深度</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210704213732.PNG" alt=""></p>
+<p>直觉上好像和求最大深度差不多，其实还是差不少的。</p>
+<p>遍历顺序上依然是后序遍历（因为要比较递归返回之后的结果），但在处理中间节点的逻辑上，最大深度很容易理解，最小深度可有一个误区，如图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210704213744.png" alt=""></p>
+<p>这就重新审题了，题目中说的是：<strong>「最小深度是从根节点到最近叶子节点的最短路径上的节点数量。」</strong>，注意是<strong>「叶子节点」</strong>。</p>
+<p>什么是叶子节点，左右孩子都为空的节点才是叶子节点！</p>
+<h4 id="1-递归法"><a href="#1-递归法" class="headerlink" title="1.递归法"></a>1.递归法</h4><p>来来来，一起递归三部曲：</p>
+<ol>
+<li>确定递归函数的参数和返回值</li>
+</ol>
+<p>参数为要传入的二叉树根节点。</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getDepth</span>(<span class="params">node</span>):</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>确定终止条件</li>
+</ol>
+<p>终止条件也是遇到空节点返回0，表示当前节点的高度为0。</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> node: <span class="keyword">return</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>确定单层递归的逻辑</li>
+</ol>
+<p>这块和求最大深度可就不一样了，一些同学可能会写如下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">leftDepth = getDepth(node.left)</span><br><span class="line">rightDepth = getDepth(node.right)</span><br><span class="line">result = <span class="number">1</span> + <span class="built_in">min</span>(leftDepth, rightDepth)</span><br><span class="line"><span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+<p>这个代码就犯了此图中的误区：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210704213744.png" alt=""></p>
+<p>如果这么求的话，没有左孩子的分支会算为最短深度。</p>
+<p>所以，如果左子树为空，右子树不为空，说明最小深度是 1 + 右子树的深度。</p>
+<p>反之，右子树为空，左子树不为空，最小深度是 1 + 左子树的深度。最后如果左右子树都不为空，返回左右子树深度最小值 + 1 。</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">leftDepth = getDepth(node.left)    <span class="comment"># 左</span></span><br><span class="line">rightDepth = getDepth(node.right)  <span class="comment"># 右</span></span><br><span class="line">                                   <span class="comment"># 中</span></span><br><span class="line"><span class="comment"># 当一个左子树为空，右不为空，这时并不是最低点</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> node.left <span class="keyword">and</span> node.right: </span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> + rightDepth</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当一个右子树为空，左不为空，这时并不是最低点</span></span><br><span class="line"><span class="keyword">if</span> node.left <span class="keyword">and</span> <span class="keyword">not</span> node.right: </span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> + leftDepth</span><br><span class="line">result = <span class="number">1</span> + <span class="built_in">min</span>(leftDepth, rightDepth)  </span><br><span class="line"><span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+<p>遍历的顺序为后序（左右中），可以看出：<strong>「求二叉树的最小深度和求二叉树的最大深度的差别主要在于处理左右孩子不为空的逻辑。」</strong></p>
+<p>整体递归代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"># class TreeNode(object):</span></span><br><span class="line"><span class="comment">#     def __init__(self, val=0, left=None, right=None):</span></span><br><span class="line"><span class="comment">#         self.val = val</span></span><br><span class="line"><span class="comment">#         self.left = left</span></span><br><span class="line"><span class="comment">#         self.right = right</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">minDepth</span>(<span class="params">self, root</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type root: TreeNode</span></span><br><span class="line"><span class="string">        :rtype: int</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> root: <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">return</span> self.getDepth(root)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getDepth</span>(<span class="params">self, node</span>):</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node: <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        leftDpeth = self.getDepth(node.left)</span><br><span class="line">        rightDepth = self.getDepth(node.right)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node.left <span class="keyword">and</span> node.right:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span> + rightDepth</span><br><span class="line">        <span class="keyword">if</span> node.left <span class="keyword">and</span> <span class="keyword">not</span> node.right:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span> + leftDpeth</span><br><span class="line">        result = <span class="number">1</span> + <span class="built_in">min</span>(leftDpeth, rightDepth)</span><br><span class="line">        <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+<h4 id="2-迭代法"><a href="#2-迭代法" class="headerlink" title="2. 迭代法"></a>2. 迭代法</h4><p>按照层序遍历的方法很好解决：直接套模板。用res来记录结果，每进入一层res加1，当左右孩子都为空的时候，说明为最小深度，直接返回结果即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"># class TreeNode(object):</span></span><br><span class="line"><span class="comment">#     def __init__(self, val=0, left=None, right=None):</span></span><br><span class="line"><span class="comment">#         self.val = val</span></span><br><span class="line"><span class="comment">#         self.left = left</span></span><br><span class="line"><span class="comment">#         self.right = right</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">minDepth</span>(<span class="params">self, root</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type root: TreeNode</span></span><br><span class="line"><span class="string">        :rtype: int</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> root: <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        queue = [root]</span><br><span class="line">        res = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> queue:</span><br><span class="line">            res += <span class="number">1</span></span><br><span class="line">            <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(queue)):</span><br><span class="line">                cur_node = queue.pop(<span class="number">0</span>)</span><br><span class="line">                <span class="keyword">if</span> cur_node.left:</span><br><span class="line">                    queue.append(cur_node.left)</span><br><span class="line">                <span class="keyword">if</span> cur_node.right:</span><br><span class="line">                    queue.append(cur_node.right)</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> cur_node.left <span class="keyword">and</span> <span class="keyword">not</span> cur_node.right:</span><br><span class="line">                    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+<blockquote>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3></blockquote>
+<p>最大深度与最小深度也不过如此嘛！可以用【递归法】和【迭代法分别实现】！</p>
 
-
-              
-                
-<a href="/20210626/07-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E5%AD%90%E5%BA%8F%E5%88%97%E8%A7%A3%E9%A2%98%E6%A8%A1%E6%9D%BF%E2%80%94%E2%80%94%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E5%BA%8F%E5%88%97.html" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-06-25T16:38:51.000Z" itemprop="datePublished">2021-06-26 00:38:51</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 07-动态规划之子序列解题模板——最长回文子序列
-</a>
-
-
-              
-                
-<a href="/20210626/06-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97.html" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-06-25T16:35:11.000Z" itemprop="datePublished">2021-06-26 00:35:11</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 06-动态规划之最长公共子序列
-</a>
-
-
-              
-                
-<a href="/20210625/05-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B%E8%BF%9B%E9%98%B6%E7%89%88.html" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-06-24T16:36:48.000Z" itemprop="datePublished">2021-06-25 00:36:48</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 05-动态规划之高楼扔鸡蛋进阶版
-</a>
-
-
-              
-                
-<a href="/20210622/04-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E9%AB%98%E6%A5%BC%E6%89%94%E9%B8%A1%E8%9B%8B.html" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-06-22T10:24:57.000Z" itemprop="datePublished">2021-06-22 18:24:57</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 04-动态规划之高楼扔鸡蛋
-</a>
-
-
-              
-                
-<a href="/20210621/03-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B-KMP-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3.html" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-06-21T10:05:59.000Z" itemprop="datePublished">2021-06-21 18:05:59</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 03-动态规划之 KMP 算法详解
-</a>
-
-
-              
-                
-<a href="/20210615/02-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%E4%B9%8B%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.html" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-06-15T10:28:49.000Z" itemprop="datePublished">2021-06-15 18:28:49</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 02-动态规划设计之最长递增子序列
-</a>
-
-
-              
-                
-<a href="/20210611/01-%E5%88%9D%E8%AF%86%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92.html" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-06-11T10:41:34.000Z" itemprop="datePublished">2021-06-11 18:41:34</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 01-初识动态规划
-</a>
-
-
-              
-            </div>
-        </div>
+      
     </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210704/06-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.html" title="06-二叉树的最小深度" target="_blank" rel="external">https://xxren8218.github.io/20210704/06-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren8218.github.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren8218.github.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
 </div>
+
+
     </div>
   </article>
-   
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/20210704/05-%E4%BA%8C%EF%BC%88N%EF%BC%89%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.html" title="05-二（N）叉树的最大深度"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 </main>
 
   <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
@@ -551,6 +686,37 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
 
 
 
