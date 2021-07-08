@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品 | X.X.Ren的个人博客</title>
+  <meta name="description" content="根据用户行为数据创建ALS模型并召回商品 打开HDFS，Hadoop下的sbin目录下的.&#x2F;start-dfs.sh 打开Spark,  Spark下的sbin目录下的.&#x2F;start-master.sh -h 192.168.19.2 Spark下的sbin目录下的.&#x2F;start-slave.sh spark:&#x2F;&#x2F;192.168.19.2:7077 可以使用192.168.19.2:8080进行可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品">
+<meta property="og:url" content="https://xxren8218.github.io/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="根据用户行为数据创建ALS模型并召回商品 打开HDFS，Hadoop下的sbin目录下的.&#x2F;start-dfs.sh 打开Spark,  Spark下的sbin目录下的.&#x2F;start-master.sh -h 192.168.19.2 Spark下的sbin目录下的.&#x2F;start-slave.sh spark:&#x2F;&#x2F;192.168.19.2:7077 可以使用192.168.19.2:8080进行可">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210709010230.png">
+<meta property="article:published_time" content="2021-07-08T17:00:30.000Z">
+<meta property="article:modified_time" content="2021-07-08T17:03:25.325Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="推荐系统基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210709010230.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">38</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a><span class="category-list-count">19</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 13.9px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%B3%95/" style="font-size: 13.1px; color: #fff">二分法</a> <a href="/tags/%E4%BC%AA%E5%A4%B4%E8%8A%82%E7%82%B9/" style="font-size: 13px; color: #fff">伪头节点</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.2px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.1px; color: #fff">其他</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" style="font-size: 13px; color: #fff">内置函数</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px; color: #fff">动态规划</a> <a href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" style="font-size: 13px; color: #fff">单调栈</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13.5px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 13.4px; color: #fff">哈希表</a> <a href="/tags/%E5%A4%9A%E6%8C%87%E9%92%88/" style="font-size: 13.4px; color: #fff">多指针</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 13.1px; color: #fff">字符串</a> <a href="/tags/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/" style="font-size: 13px; color: #fff">归并排序</a> <a href="/tags/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" style="font-size: 13.1px; color: #fff">快慢指针</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/" style="font-size: 13px; color: #fff">快速幂</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.3px; color: #fff">排序</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">推荐系统基础</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 13.3px; color: #fff">数学</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13.7px; color: #fff">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.1px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.8px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.1px; color: #fff">机器学习基础实战</a> <a href="/tags/%E6%9F%A5%E6%89%BE/" style="font-size: 13px; color: #fff">查找</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px; color: #fff">栈</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 13px; color: #fff">滑动窗口</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E5%88%97%E8%A1%A8/" style="font-size: 13.1px; color: #fff">辅助列表</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E6%A0%88/" style="font-size: 13.1px; color: #fff">辅助栈</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/" style="font-size: 13px; color: #fff">辅助素组</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13.3px; color: #fff">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13.6px; color: #fff">链表</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">51</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" class="title">02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-08T17:00:30.000Z" itemprop="datePublished">2021-07-09 01:00:30</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210708/01%E2%80%94%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E4%B8%AA%E6%80%A7%E5%8C%96%E7%94%B5%E5%95%86%E5%B9%BF%E5%91%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="01-推荐系统实战之个性化电商广告推荐系统介绍" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210708/01%E2%80%94%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E4%B8%AA%E6%80%A7%E5%8C%96%E7%94%B5%E5%95%86%E5%B9%BF%E5%91%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D.html" class="title">01-推荐系统实战之个性化电商广告推荐系统介绍</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-07T17:10:24.000Z" itemprop="datePublished">2021-07-08 01:10:24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210707/33-Spark-Streaming%E7%9A%84%E7%8A%B6%E6%80%81%E6%93%8D%E4%BD%9C.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="33-Spark Streaming的状态操作" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210707/33-Spark-Streaming%E7%9A%84%E7%8A%B6%E6%80%81%E6%93%8D%E4%BD%9C.html" class="title">33-Spark Streaming的状态操作</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-06T16:39:56.000Z" itemprop="datePublished">2021-07-07 00:39:56</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210706/11-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B7%A6%E4%B8%8B%E8%A7%92%E7%9A%84%E5%80%BC.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="11-二叉树的左下角的值" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210706/11-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B7%A6%E4%B8%8B%E8%A7%92%E7%9A%84%E5%80%BC.html" class="title">11-二叉树的左下角的值</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-06T14:01:31.000Z" itemprop="datePublished">2021-07-06 22:01:31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210706/10-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B7%A6%E5%8F%B6%E5%AD%90%E4%B9%8B%E5%92%8C.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="10-二叉树的左叶子之和" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210706/10-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B7%A6%E5%8F%B6%E5%AD%90%E4%B9%8B%E5%92%8C.html" class="title">10-二叉树的左叶子之和</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-06T14:00:10.000Z" itemprop="datePublished">2021-07-06 22:00:10</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81"><span class="toc-text">根据用户行为数据创建ALS模型并召回商品</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0-%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E6%8B%86%E5%88%86"><span class="toc-text">0. 用户行为数据拆分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A2%84%E5%A4%84%E7%90%86behavior-log%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-text">1. 预处理behavior_log数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E5%AF%B9%E7%B1%BB%E7%9B%AE%E5%81%8F%E5%A5%BD%E6%89%93%E5%88%86%E8%AE%AD%E7%BB%83ALS%E6%A8%A1%E5%9E%8B"><span class="toc-text">2. 根据用户对类目偏好打分训练ALS模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E5%AF%B9%E5%93%81%E7%89%8C%E5%81%8F%E5%A5%BD%E6%89%93%E5%88%86%E8%AE%AD%E7%BB%83ALS%E6%A8%A1%E5%9E%8B-%E4%B8%8E%E4%B8%8A%E9%9D%A2%E7%9A%84%E5%A5%97%E8%B7%AF%E4%B8%80%E6%A0%B7"><span class="toc-text">3. 根据用户对品牌偏好打分训练ALS模型(与上面的套路一样)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%B0%8F%E7%BB%93"><span class="toc-text">4.小结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#spark-%E8%AE%AD%E7%BB%83-ALS-%E6%A8%A1%E5%9E%8B"><span class="toc-text">spark 训练 ALS 模型</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" class="article-date">
+        发布于<time datetime="2021-07-08T17:00:30.000Z" itemprop="datePublished">
+            2021-07-09 01:00:30
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" class="article-date">
+        更新于<time datetime="2021-07-08T17:03:25.325Z" itemprop="dateUpdated">
+            2021-07-09 01:03:25
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" rel="tag">推荐系统基础</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" class="leancloud_visitors"  data-flag-title="02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="根据用户行为数据创建ALS模型并召回商品"><a href="#根据用户行为数据创建ALS模型并召回商品" class="headerlink" title="根据用户行为数据创建ALS模型并召回商品"></a>根据用户行为数据创建ALS模型并召回商品</h2><ul>
+<li>打开HDFS，Hadoop下的sbin目录下的./start-dfs.sh</li>
+<li>打开Spark, <ul>
+<li>Spark下的sbin目录下的./start-master.sh -h 192.168.19.2</li>
+<li>Spark下的sbin目录下的./start-slave.sh spark://192.168.19.2:7077</li>
+<li>可以使用192.168.19.2:8080进行可视化查看</li>
+</ul>
+</li>
+<li>进入虚拟环境 workon 虚拟环境名字（有所需的工具包：如jupyter notebook）<ul>
+<li>jupyter notebook —ip 0.0.0.0</li>
+</ul>
+</li>
+</ul>
+<h3 id="0-用户行为数据拆分"><a href="#0-用户行为数据拆分" class="headerlink" title="0. 用户行为数据拆分"></a>0. 用户行为数据拆分</h3><ul>
+<li><p>海量数据处理应该怎么办？2T数据的处理，不至于在Excel中处理吧。</p>
+<ul>
+<li>这里说一个面试题：给你2T的邮箱数据，如何去重排序？</li>
+<li>外排序：分成多块，去重排序，然后再合并。</li>
+</ul>
+</li>
+<li><p>方便练习可以对数据做拆分处理</p>
+<ul>
+<li>pandas的数据分批读取  chunk 厚厚的一块 相当大的数量或部分</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">reader = pd.read_csv(<span class="string">&#x27;behavior_log.csv&#x27;</span>,chunksize=<span class="number">100</span>,iterator=<span class="literal">True</span>) </span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">chunksize  一次数据读多少条。</span></span><br><span class="line"><span class="string">iterator   是否返回可迭代对象。</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">count = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> chunk <span class="keyword">in</span> reader:</span><br><span class="line">    count += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> count == <span class="number">1</span>:</span><br><span class="line">        chunk.to_csv(<span class="string">&#x27;test4.csv&#x27;</span>,index = <span class="literal">False</span>)</span><br><span class="line">        <span class="comment"># index = False 去掉自动添加行索引。保留列索引</span></span><br><span class="line">    <span class="keyword">elif</span> count &gt; <span class="number">1</span> <span class="keyword">and</span> count &lt; <span class="number">1000</span>:</span><br><span class="line">        chunk.to_csv(<span class="string">&#x27;test4.csv&#x27;</span>,index = <span class="literal">False</span>, mode = <span class="string">&#x27;a&#x27;</span>, header = <span class="literal">False</span>)</span><br><span class="line">        <span class="comment"># mode = ‘a’ 表示追加模式，去掉自动添加行索引，去掉列索引。</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">pd.read_csv(<span class="string">&#x27;test4.csv&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="1-预处理behavior-log数据集"><a href="#1-预处理behavior-log数据集" class="headerlink" title="1. 预处理behavior_log数据集"></a>1. 预处理behavior_log数据集</h3><p>创建Spark的连接，通过SparkSQL将数据加载进来，进行简单分析。</p>
+<ul>
+<li>创建spark session</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="comment"># 配置spark driver和pyspark运行时，所使用的python解释器路径</span></span><br><span class="line">PYSPARK_PYTHON = <span class="string">&quot;/home/hadoop/miniconda3/envs/datapy365spark23/bin/python&quot;</span></span><br><span class="line">JAVA_HOME=<span class="string">&#x27;/home/hadoop/app/jdk1.8.0_191&#x27;</span></span><br><span class="line"><span class="comment"># 当存在多个版本时，不指定很可能会导致出错</span></span><br><span class="line">os.environ[<span class="string">&quot;PYSPARK_PYTHON&quot;</span>] = PYSPARK_PYTHON</span><br><span class="line">os.environ[<span class="string">&quot;PYSPARK_DRIVER_PYTHON&quot;</span>] = PYSPARK_PYTHON</span><br><span class="line">os.environ[<span class="string">&#x27;JAVA_HOME&#x27;</span>]=JAVA_HOME</span><br><span class="line"><span class="comment"># spark配置信息</span></span><br><span class="line"><span class="keyword">from</span> pyspark <span class="keyword">import</span> SparkConf</span><br><span class="line"><span class="keyword">from</span> pyspark.sql <span class="keyword">import</span> SparkSession</span><br><span class="line"></span><br><span class="line">SPARK_APP_NAME = <span class="string">&quot;preprocessingBehaviorLog&quot;</span></span><br><span class="line">SPARK_URL = <span class="string">&quot;spark://192.168.19.2:7077&quot;</span></span><br><span class="line"></span><br><span class="line">conf = SparkConf()    <span class="comment"># 创建spark config对象</span></span><br><span class="line">config = (</span><br><span class="line">	(<span class="string">&quot;spark.app.name&quot;</span>, SPARK_APP_NAME),    <span class="comment"># 设置启动的spark的app名称，没有提供，将随机产生一个名称</span></span><br><span class="line">	(<span class="string">&quot;spark.executor.memory&quot;</span>, <span class="string">&quot;6g&quot;</span>),    <span class="comment"># 设置该app启动时占用的内存用量，默认1g</span></span><br><span class="line">	(<span class="string">&quot;spark.master&quot;</span>, SPARK_URL),    <span class="comment"># spark master的地址</span></span><br><span class="line">    (<span class="string">&quot;spark.executor.cores&quot;</span>, <span class="string">&quot;4&quot;</span>),    <span class="comment"># 设置spark executor使用的CPU核心数</span></span><br><span class="line">    <span class="comment"># 以下三项配置，可以控制执行器数量</span></span><br><span class="line"><span class="comment">#     (&quot;spark.dynamicAllocation.enabled&quot;, True),</span></span><br><span class="line"><span class="comment">#     (&quot;spark.dynamicAllocation.initialExecutors&quot;, 1),    # 1个执行器</span></span><br><span class="line"><span class="comment">#     (&quot;spark.shuffle.service.enabled&quot;, True)</span></span><br><span class="line"><span class="comment"># 	(&#x27;spark.sql.pivotMaxValues&#x27;, &#x27;99999&#x27;),  # 当需要pivot DF，且值很多时，需要修改，默认是10000</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># 查看更详细配置及说明：https://spark.apache.org/docs/latest/configuration.html</span></span><br><span class="line"></span><br><span class="line">conf.setAll(config)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 利用config对象，创建spark session</span></span><br><span class="line">spark = SparkSession.builder.config(conf=conf).getOrCreate()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>从hdfs中加载csv文件为DataFrame</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从hdfs加载CSV文件为DataFrame</span></span><br><span class="line">df = spark.read.csv(<span class="string">&quot;hdfs://localhost:9000/datasets/behavior_log.csv&quot;</span>, header=<span class="literal">True</span>)</span><br><span class="line">df.show()    <span class="comment"># 查看dataframe，默认显示前20条</span></span><br><span class="line"><span class="comment"># 大致查看一下数据类型</span></span><br><span class="line">df.printSchema()    <span class="comment"># 打印当前dataframe的结构</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">+------+----------+----+-----+------+</span><br><span class="line">|  user|time_stamp|btag| cate| brand|</span><br><span class="line">+------+----------+----+-----+------+</span><br><span class="line">|558157|1493741625|  pv| 6250| 91286|</span><br><span class="line">|558157|1493741626|  pv| 6250| 91286|</span><br><span class="line">|558157|1493741627|  pv| 6250| 91286|</span><br><span class="line">|728690|1493776998|  pv|11800| 62353|</span><br><span class="line">|332634|1493809895|  pv| 1101|365477|</span><br><span class="line">|857237|1493816945|  pv| 1043|110616|</span><br><span class="line">|619381|1493774638|  pv|  385|428950|</span><br><span class="line">|467042|1493772641|  pv| 8237|301299|</span><br><span class="line">|467042|1493772644|  pv| 8237|301299|</span><br><span class="line">|991528|1493780710|  pv| 7270|274795|</span><br><span class="line">|991528|1493780712|  pv| 7270|274795|</span><br><span class="line">|991528|1493780712|  pv| 7270|274795|</span><br><span class="line">|991528|1493780712|  pv| 7270|274795|</span><br><span class="line">|991528|1493780714|  pv| 7270|274795|</span><br><span class="line">|991528|1493780765|  pv| 7270|274795|</span><br><span class="line">|991528|1493780714|  pv| 7270|274795|</span><br><span class="line">|991528|1493780765|  pv| 7270|274795|</span><br><span class="line">|991528|1493780764|  pv| 7270|274795|</span><br><span class="line">|991528|1493780633|  pv| 7270|274795|</span><br><span class="line">|991528|1493780764|  pv| 7270|274795|</span><br><span class="line">+------+----------+----+-----+------+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br><span class="line">root</span><br><span class="line"> |-- user: string (nullable = true)</span><br><span class="line"> |-- time_stamp: string (nullable = true)</span><br><span class="line"> |-- btag: string (nullable = true)</span><br><span class="line"> |-- cate: string (nullable = true)</span><br><span class="line"> |-- brand: string (nullable = true)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>从hdfs加载数据为dataframe，并设置结构—schema </li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StructType, StructField, StringType, IntegerType, LongType</span><br><span class="line"><span class="comment"># 构建结构对象</span></span><br><span class="line">schema = StructType([</span><br><span class="line">    StructField(<span class="string">&quot;userId&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;timestamp&quot;</span>, LongType()),</span><br><span class="line">    StructField(<span class="string">&quot;btag&quot;</span>, StringType()),</span><br><span class="line">    StructField(<span class="string">&quot;cateId&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;brandId&quot;</span>, IntegerType())</span><br><span class="line">])</span><br><span class="line"><span class="comment"># 从hdfs加载数据为dataframe，并设置结构</span></span><br><span class="line">behavior_log_df = spark.read.csv(<span class="string">&quot;hdfs://localhost:8020/datasets/behavior_log.csv&quot;</span>, header=<span class="literal">True</span>, schema=schema)</span><br><span class="line">behavior_log_df.show()</span><br><span class="line">behavior_log_df.count() </span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">+------+----------+----+------+-------+</span><br><span class="line">|userId| timestamp|btag|cateId|brandId|</span><br><span class="line">+------+----------+----+------+-------+</span><br><span class="line">|558157|1493741625|  pv|  6250|  91286|</span><br><span class="line">|558157|1493741626|  pv|  6250|  91286|</span><br><span class="line">|558157|1493741627|  pv|  6250|  91286|</span><br><span class="line">|728690|1493776998|  pv| 11800|  62353|</span><br><span class="line">|332634|1493809895|  pv|  1101| 365477|</span><br><span class="line">|857237|1493816945|  pv|  1043| 110616|</span><br><span class="line">|619381|1493774638|  pv|   385| 428950|</span><br><span class="line">|467042|1493772641|  pv|  8237| 301299|</span><br><span class="line">|467042|1493772644|  pv|  8237| 301299|</span><br><span class="line">|991528|1493780710|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780712|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780712|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780712|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780714|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780765|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780714|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780765|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780764|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780633|  pv|  7270| 274795|</span><br><span class="line">|991528|1493780764|  pv|  7270| 274795|</span><br><span class="line">+------+----------+----+------+-------+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br><span class="line">root</span><br><span class="line"> |-- userId: integer (nullable = true)</span><br><span class="line"> |-- timestamp: long (nullable = true)</span><br><span class="line"> |-- btag: string (nullable = true)</span><br><span class="line"> |-- cateId: integer (nullable = true)</span><br><span class="line"> |-- brandId: integer (nullable = true)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>分析数据集字段的类型和格式<ul>
+<li>查看是否有空值</li>
+<li>查看每列数据的类型</li>
+<li>查看每列数据的类别情况</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&quot;查看userId的数据情况：&quot;</span>, behavior_log_df.groupBy(<span class="string">&quot;userId&quot;</span>).count().count()) <span class="comment"># 第一个count是将相同的用户放在同一组内。，再count数数。</span></span><br><span class="line"><span class="comment"># 约113w用户</span></span><br><span class="line"><span class="comment">#注意：behavior_log_df.groupBy(&quot;userId&quot;).count()  返回的是一个dataframe，这里的count计算的是每一个分组的个数，但当前还没有进行计算</span></span><br><span class="line"><span class="comment"># 当调用df.count()时才开始进行计算，这里的count计算的是dataframe的条目数，也就是共有多少个分组</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">查看user的数据情况： 1136340</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&quot;查看btag的数据情况：&quot;</span>, behavior_log_df.groupBy(<span class="string">&quot;btag&quot;</span>).count().collect())    <span class="comment"># collect会把计算结果全部加载到内存，谨慎使用</span></span><br><span class="line"><span class="comment"># 只有四种类型数据：pv、fav、cart、buy</span></span><br><span class="line"><span class="comment"># 这里由于类型只有四个，所以直接使用collect，把数据全部加载出来</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">查看btag的数据情况： [Row(btag=&#x27;buy&#x27;, count=9115919), Row(btag=&#x27;fav&#x27;, count=9301837), Row(btag=&#x27;cart&#x27;, count=15946033), Row(btag=&#x27;pv&#x27;, count=688904345)]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&quot;查看cateId的数据情况：&quot;</span>, behavior_log_df.groupBy(<span class="string">&quot;cateId&quot;</span>).count().count())</span><br><span class="line"><span class="comment"># 约12968类别id</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">查看cateId的数据情况： 12968</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&quot;查看brandId的数据情况：&quot;</span>, behavior_log_df.groupBy(<span class="string">&quot;brandId&quot;</span>).count().count())</span><br><span class="line"><span class="comment"># 约460561品牌id</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">查看brandId的数据情况： 460561</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&quot;判断数据是否有空值：&quot;</span>, behavior_log_df.count(), behavior_log_df.dropna().count())</span><br><span class="line"><span class="comment"># 约7亿条目723268134 723268134</span></span><br><span class="line"><span class="comment"># 本数据集无空值条目，可放心处理</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">判断数据是否有空值： 723268134 723268134</span><br></pre></td></tr></table></figure>
+<ul>
+<li>pivot透视操作，把某列里的字段值转换成行并进行聚合运算(pyspark.sql.GroupedData.pivot)<ul>
+<li>如果透视的字段中的不同属性值超过10000个，则需要设置spark.sql.pivotMaxValues，否则计算过程中会出现错误。<a target="_blank" rel="noopener" href="https://spark.apache.org/docs/latest/api/python/pyspark.sql.html?highlight=pivot#pyspark.sql.GroupedData.pivot">文档介绍</a>。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 统计每个用户对各类商品的pv、fav、cart、buy数量</span></span><br><span class="line">cate_count_df = behavior_log_df.groupBy(behavior_log_df.userId, behavior_log_df.cateId).pivot(<span class="string">&quot;btag&quot;</span>,[<span class="string">&quot;pv&quot;</span>,<span class="string">&quot;fav&quot;</span>,<span class="string">&quot;cart&quot;</span>,<span class="string">&quot;buy&quot;</span>]).count() <span class="comment"># 默认按照字典排序的，想要按重要程度排序，在里面穿值。此处已经传了。[&quot;pv&quot;,&quot;fav&quot;,&quot;cart&quot;,&quot;buy&quot;]</span></span><br><span class="line">cate_count_df.printSchema()    <span class="comment"># 此时还没有开始计算</span></span><br></pre></td></tr></table></figure>
+<p>显示效果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">root</span><br><span class="line"> |-- userId: integer (nullable = true)</span><br><span class="line"> |-- cateId: integer (nullable = true)</span><br><span class="line"> |-- pv: long (nullable = true)</span><br><span class="line"> |-- fav: long (nullable = true)</span><br><span class="line"> |-- cart: long (nullable = true)</span><br><span class="line"> |-- buy: long (nullable = true)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>统计每个用户对各个品牌的pv、fav、cart、buy数量并保存结果</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 统计每个用户对各个品牌的pv、fav、cart、buy数量</span></span><br><span class="line">brand_count_df = behavior_log_df.groupBy(behavior_log_df.userId, behavior_log_df.brandId).pivot(<span class="string">&quot;btag&quot;</span>,[<span class="string">&quot;pv&quot;</span>,<span class="string">&quot;fav&quot;</span>,<span class="string">&quot;cart&quot;</span>,<span class="string">&quot;buy&quot;</span>]).count()</span><br><span class="line"><span class="comment"># brand_count_df.show()    # 同上</span></span><br><span class="line"><span class="comment"># 113w * 46w</span></span><br><span class="line"><span class="comment"># 由于运算时间比较长，所以这里先将结果存储起来，供后续其他操作使用</span></span><br><span class="line"><span class="comment"># 写入数据时才开始计算</span></span><br><span class="line">cate_count_df.write.csv(<span class="string">&quot;hdfs://localhost:9000/preprocessing_dataset/cate_count.csv&quot;</span>, header=<span class="literal">True</span>)</span><br><span class="line">brand_count_df.write.csv(<span class="string">&quot;hdfs://localhost:9000/preprocessing_dataset/brand_count.csv&quot;</span>, header=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="2-根据用户对类目偏好打分训练ALS模型"><a href="#2-根据用户对类目偏好打分训练ALS模型" class="headerlink" title="2. 根据用户对类目偏好打分训练ALS模型"></a>2. 根据用户对类目偏好打分训练ALS模型</h3><ul>
+<li>根据您统计的次数 + 打分规则 ==&gt; 偏好打分数据集 ==&gt; ALS模型</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># spark ml的模型训练是基于内存的，如果数据过大，内存空间小，迭代次数过多的化，可能会造成内存溢出，报错</span></span><br><span class="line"><span class="comment"># 设置Checkpoint的话，会把所有数据落盘，这样如果异常退出，下次重启后，可以接着上次的训练节点继续运行</span></span><br><span class="line"><span class="comment"># 但该方法其实指标不治本，因为无法防止内存溢出，所以还是会报错</span></span><br><span class="line"><span class="comment"># 如果数据量大，应考虑的是增加内存、或限制迭代次数和训练数据量级等</span></span><br><span class="line">spark.sparkContext.setCheckpointDir(<span class="string">&quot;/checkPoint/&quot;</span>)</span><br><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StructType, StructField, StringType, IntegerType, LongType, FloatType</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建结构对象</span></span><br><span class="line">schema = StructType([</span><br><span class="line">    StructField(<span class="string">&quot;userId&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;cateId&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;pv&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;fav&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;cart&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;buy&quot;</span>, IntegerType())</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从hdfs加载CSV文件</span></span><br><span class="line">cate_count_df = spark.read.csv(<span class="string">&quot;hdfs://localhost:9000/preprocessing_dataset/cate_count.csv&quot;</span>, header=<span class="literal">True</span>, schema=schema)</span><br><span class="line">cate_count_df.printSchema()</span><br><span class="line">cate_count_df.first()    <span class="comment"># 第一行数据</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root</span><br><span class="line"> |-- userId: integer (nullable = true)</span><br><span class="line"> |-- cateId: integer (nullable = true)</span><br><span class="line"> |-- pv: integer (nullable = true)</span><br><span class="line"> |-- fav: integer (nullable = true)</span><br><span class="line"> |-- cart: integer (nullable = true)</span><br><span class="line"> |-- buy: integer (nullable = true)</span><br><span class="line"></span><br><span class="line">Row(userId=1061650, cateId=4520, pv=2326, fav=None, cart=53, buy=None)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>处理每一行数据：r表示row对象</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_row</span>(<span class="params">r</span>):</span></span><br><span class="line">    <span class="comment"># 处理每一行数据：r表示row对象</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 偏好评分规则：</span></span><br><span class="line">	<span class="comment">#     m: 用户对应的行为次数</span></span><br><span class="line">    <span class="comment">#     该偏好权重比例，次数上限仅供参考，具体数值应根据产品业务场景权衡</span></span><br><span class="line">	<span class="comment">#     pv: if m&lt;=20: score=0.2*m; else score=4</span></span><br><span class="line">	<span class="comment">#     fav: if m&lt;=20: score=0.4*m; else score=8</span></span><br><span class="line">	<span class="comment">#     cart: if m&lt;=20: score=0.6*m; else score=12</span></span><br><span class="line">	<span class="comment">#     buy: if m&lt;=20: score=1*m; else score=20</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 注意这里要全部设为浮点数，spark运算时对类型比较敏感，要保持数据类型都一致</span></span><br><span class="line">	pv_count = r.pv <span class="keyword">if</span> r.pv <span class="keyword">else</span> <span class="number">0.0</span></span><br><span class="line">	fav_count = r.fav <span class="keyword">if</span> r.fav <span class="keyword">else</span> <span class="number">0.0</span></span><br><span class="line">	cart_count = r.cart <span class="keyword">if</span> r.cart <span class="keyword">else</span> <span class="number">0.0</span></span><br><span class="line">	buy_count = r.buy <span class="keyword">if</span> r.buy <span class="keyword">else</span> <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line">	pv_score = <span class="number">0.2</span>*pv_count <span class="keyword">if</span> pv_count&lt;=<span class="number">20</span> <span class="keyword">else</span> <span class="number">4.0</span></span><br><span class="line">	fav_score = <span class="number">0.4</span>*fav_count <span class="keyword">if</span> fav_count&lt;=<span class="number">20</span> <span class="keyword">else</span> <span class="number">8.0</span></span><br><span class="line">	cart_score = <span class="number">0.6</span>*cart_count <span class="keyword">if</span> cart_count&lt;=<span class="number">20</span> <span class="keyword">else</span> <span class="number">12.0</span></span><br><span class="line">	buy_score = <span class="number">1.0</span>*buy_count <span class="keyword">if</span> buy_count&lt;=<span class="number">20</span> <span class="keyword">else</span> <span class="number">20.0</span></span><br><span class="line"></span><br><span class="line">	rating = pv_score + fav_score + cart_score + buy_score</span><br><span class="line">	<span class="comment"># 返回用户ID、分类ID、用户对分类的偏好打分</span></span><br><span class="line">	<span class="keyword">return</span> r.userId, r.cateId, rating</span><br></pre></td></tr></table></figure>
+<ul>
+<li>返回一个PythonRDD类型</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回一个PythonRDD类型，此时还没开始计算</span></span><br><span class="line"><span class="comment"># 先转化为RDD再进行map，一条数据一条数据算。虽然DF也可以用UDF，但是麻烦！处理好好再转为DF</span></span><br><span class="line"><span class="comment"># 并不是所有的RDD都能转为DF，必须有结构的才行。Schema才可以。此处可以是因为，他就是DF转过去的。</span></span><br><span class="line">cate_count_df.rdd.<span class="built_in">map</span>(process_row).toDF([<span class="string">&quot;userId&quot;</span>, <span class="string">&quot;cateId&quot;</span>, <span class="string">&quot;rating&quot;</span>])</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DataFrame[userId: bigint, cateId: bigint, rating: double]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>用户对商品类别的打分数据</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用户对商品类别的打分数据</span></span><br><span class="line"><span class="comment"># map返回的结果是rdd类型，需要调用toDF方法转换为Dataframe</span></span><br><span class="line">cate_rating_df = cate_count_df.rdd.<span class="built_in">map</span>(process_row).toDF([<span class="string">&quot;userId&quot;</span>, <span class="string">&quot;cateId&quot;</span>, <span class="string">&quot;rating&quot;</span>])</span><br><span class="line"><span class="comment"># 注意：toDF不是每个rdd都有的方法，仅局限于此处的rdd</span></span><br><span class="line"><span class="comment"># 可通过该方法获得 user-cate-matrix</span></span><br><span class="line"><span class="comment"># 但由于cateId字段过多，这里运算量比很大，机器内存要求很高才能执行，否则无法完成任务</span></span><br><span class="line"><span class="comment"># 请谨慎使用</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 但好在我们训练ALS模型时，不需要转换为user-cate-matrix，所以这里可以不用运行</span></span><br><span class="line"><span class="comment"># cate_rating_df.groupBy(&quot;userId&quot;).povit(&quot;cateId&quot;).min(&quot;rating&quot;)</span></span><br><span class="line"><span class="comment"># 用户对类别的偏好打分数据</span></span><br><span class="line">cate_rating_df</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DataFrame[userId: bigint, cateId: bigint, rating: double]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通常如果USER-ITEM打分数据应该是通过一下方式进行处理转换为USER-ITEM-MATRIX</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210709010230.png" alt=""></p>
+<p><strong>但这里我们将使用的Spark的ALS模型进行CF推荐，因此注意这里数据输入不需要提前转换为矩阵，直接是 USER-ITEM-RATE的数据</strong></p>
+<ul>
+<li><p>基于Spark的ALS隐因子模型进行CF评分预测</p>
+<ul>
+<li><p>ALS的意思是交替最小二乘法（Alternating Least Squares），是Spark2.*中加入的进行基于模型的协同过滤（model-based CF）的推荐系统算法。</p>
+<p>同SVD，它也是一种矩阵分解技术，对数据进行降维处理。</p>
+</li>
+<li><p>详细使用方法：<a target="_blank" rel="noopener" href="https://spark.apache.org/docs/2.2.2/api/python/pyspark.ml.html?highlight=vectors#module-pyspark.ml.recommendation">pyspark.ml.recommendation.ALS</a></p>
+</li>
+<li><p><strong>注意：由于数据量巨大，因此这里也不考虑基于内存的CF算法</strong></p>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/mooba/p/6539142.html">为什么Spark中只有ALS</a></p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用pyspark中的ALS矩阵分解方法实现CF评分预测</span></span><br><span class="line"><span class="comment"># 文档地址：https://spark.apache.org/docs/2.2.2/api/python/pyspark.ml.html?highlight=vectors#module-pyspark.ml.recommendation</span></span><br><span class="line"><span class="keyword">from</span> pyspark.ml.recommendation <span class="keyword">import</span> ALS   <span class="comment"># ml：dataframe， mllib：rdd</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 利用打分数据，训练ALS模型</span></span><br><span class="line">als = ALS(userCol=<span class="string">&#x27;userId&#x27;</span>, itemCol=<span class="string">&#x27;cateId&#x27;</span>, ratingCol=<span class="string">&#x27;rating&#x27;</span>, checkpointInterval=<span class="number">5</span>)   <span class="comment"># 训练五步缓存一次。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 此处训练时间较长</span></span><br><span class="line">model = als.fit(cate_rating_df)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>模型训练好后，调用方法进行使用，<a target="_blank" rel="noopener" href="https://spark.apache.org/docs/2.2.2/api/python/pyspark.ml.html?highlight=alsmodel#pyspark.ml.recommendation.ALSModel">具体API查看</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># model.recommendForAllUsers(N) 给所有用户推荐TOP-N个物品</span></span><br><span class="line">ret = model.recommendForAllUsers(<span class="number">3</span>)</span><br><span class="line"><span class="comment"># 由于是给所有用户进行推荐，此处运算时间也较长</span></span><br><span class="line">ret.show()</span><br><span class="line"><span class="comment"># 推荐结果存放在recommendations列中，</span></span><br><span class="line">ret.select(<span class="string">&quot;recommendations&quot;</span>).show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">+------+--------------------+</span><br><span class="line">|userId|     recommendations|</span><br><span class="line">+------+--------------------+</span><br><span class="line">|   148|[[3347, 12.547271...|</span><br><span class="line">|   463|[[1610, 9.250818]...|</span><br><span class="line">|   471|[[1610, 10.246621...|</span><br><span class="line">|   496|[[1610, 5.162216]...|</span><br><span class="line">|   833|[[5607, 9.065482]...|</span><br><span class="line">|  1088|[[104, 6.886987],...|</span><br><span class="line">|  1238|[[5631, 14.51981]...|</span><br><span class="line">|  1342|[[5720, 10.89842]...|</span><br><span class="line">|  1580|[[5731, 8.466453]...|</span><br><span class="line">|  1591|[[1610, 12.835257...|</span><br><span class="line">|  1645|[[1610, 11.968531...|</span><br><span class="line">|  1829|[[1610, 17.576496...|</span><br><span class="line">|  1959|[[1610, 8.353473]...|</span><br><span class="line">|  2122|[[1610, 12.652732...|</span><br><span class="line">|  2142|[[1610, 12.48068]...|</span><br><span class="line">|  2366|[[1610, 11.904813...|</span><br><span class="line">|  2659|[[5607, 11.699315...|</span><br><span class="line">|  2866|[[1610, 7.752719]...|</span><br><span class="line">|  3175|[[3347, 2.3429515...|</span><br><span class="line">|  3749|[[1610, 3.641833]...|</span><br><span class="line">+------+--------------------+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br><span class="line">+--------------------+</span><br><span class="line">|     recommendations|</span><br><span class="line">+--------------------+</span><br><span class="line">|[[3347, 12.547271...|</span><br><span class="line">|[[1610, 9.250818]...|</span><br><span class="line">|[[1610, 10.246621...|</span><br><span class="line">|[[1610, 5.162216]...|</span><br><span class="line">|[[5607, 9.065482]...|</span><br><span class="line">|[[104, 6.886987],...|</span><br><span class="line">|[[5631, 14.51981]...|</span><br><span class="line">|[[5720, 10.89842]...|</span><br><span class="line">|[[5731, 8.466453]...|</span><br><span class="line">|[[1610, 12.835257...|</span><br><span class="line">|[[1610, 11.968531...|</span><br><span class="line">|[[1610, 17.576496...|</span><br><span class="line">|[[1610, 8.353473]...|</span><br><span class="line">|[[1610, 12.652732...|</span><br><span class="line">|[[1610, 12.48068]...|</span><br><span class="line">|[[1610, 11.904813...|</span><br><span class="line">|[[5607, 11.699315...|</span><br><span class="line">|[[1610, 7.752719]...|</span><br><span class="line">|[[3347, 2.3429515...|</span><br><span class="line">|[[1610, 3.641833]...|</span><br><span class="line">+--------------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<ul>
+<li>model.recommendForUserSubset 给部分用户推荐TOP-N个物品</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意：recommendForUserSubset API，2.2.2版本中无法使用</span></span><br><span class="line">dataset = spark.createDataFrame([[<span class="number">1</span>],[<span class="number">2</span>],[<span class="number">3</span>]])</span><br><span class="line"><span class="comment"># 若不指定行索引，会有个默认的&#x27;_1&#x27;,将其改为&#x27;userId&#x27;</span></span><br><span class="line">dataset = dataset.withColumnRenamed(<span class="string">&quot;_1&quot;</span>, <span class="string">&quot;userId&quot;</span>) </span><br><span class="line"><span class="comment"># 指定用户 推荐物品 参数1 要给哪些用户推荐（用户id的dataframe） 参数2 给这些用户推荐几个物品</span></span><br><span class="line">ret = model.recommendForUserSubset(dataset, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 只给部分用推荐，运算时间短</span></span><br><span class="line">ret.show()</span><br><span class="line">ret.collect()    <span class="comment"># 注意： collect会将所有数据加载到内存，慎用</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+------+--------------------+</span><br><span class="line">|userId|     recommendations|</span><br><span class="line">+------+--------------------+</span><br><span class="line">|     1|[[1610, 25.4989],...|</span><br><span class="line">|     3|[[5607, 13.665942...|</span><br><span class="line">|     2|[[5579, 5.9051886...|</span><br><span class="line">+------+--------------------+</span><br><span class="line"></span><br><span class="line">[Row(userId=1, recommendations=[Row(cateId=1610, rating=25.498899459838867), Row(cateId=5737, rating=24.901548385620117), Row(cateId=3347, rating=20.736785888671875)]),</span><br><span class="line"> Row(userId=3, recommendations=[Row(cateId=5607, rating=13.665942192077637), Row(cateId=1610, rating=11.770171165466309), Row(cateId=3347, rating=10.35690689086914)]),</span><br><span class="line"> Row(userId=2, recommendations=[Row(cateId=5579, rating=5.90518856048584), Row(cateId=2447, rating=5.624575138092041), Row(cateId=5690, rating=5.2555742263793945)])]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>transform中提供userId和cateId可以对打分进行预测，利用打分结果排序后</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># transform中提供userId和cateId可以对打分进行预测，利用打分结果排序后，同样可以实现TOP-N的推荐</span></span><br><span class="line">model.transform</span><br><span class="line"><span class="comment"># 将模型进行存储</span></span><br><span class="line">model.save(<span class="string">&quot;hdfs://localhost:8020/models/userCateRatingALSModel.obj&quot;</span>)</span><br><span class="line"><span class="comment"># 测试存储的模型</span></span><br><span class="line"><span class="keyword">from</span> pyspark.ml.recommendation <span class="keyword">import</span> ALSModel</span><br><span class="line"><span class="comment"># 从hdfs加载之前存储的模型</span></span><br><span class="line">als_model = ALSModel.load(<span class="string">&quot;hdfs://localhost:8020/models/userCateRatingALSModel.obj&quot;</span>)</span><br><span class="line"><span class="comment"># model.recommendForAllUsers(N) 给用户推荐TOP-N个物品</span></span><br><span class="line">result = als_model.recommendForAllUsers(<span class="number">3</span>)</span><br><span class="line">result.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+------+--------------------+</span><br><span class="line">|userId|     recommendations|</span><br><span class="line">+------+--------------------+</span><br><span class="line">|   148|[[3347, 12.547271...|</span><br><span class="line">|   463|[[1610, 9.250818]...|</span><br><span class="line">|   471|[[1610, 10.246621...|</span><br><span class="line">|   496|[[1610, 5.162216]...|</span><br><span class="line">|   833|[[5607, 9.065482]...|</span><br><span class="line">|  1088|[[104, 6.886987],...|</span><br><span class="line">|  1238|[[5631, 14.51981]...|</span><br><span class="line">|  1342|[[5720, 10.89842]...|</span><br><span class="line">|  1580|[[5731, 8.466453]...|</span><br><span class="line">|  1591|[[1610, 12.835257...|</span><br><span class="line">|  1645|[[1610, 11.968531...|</span><br><span class="line">|  1829|[[1610, 17.576496...|</span><br><span class="line">|  1959|[[1610, 8.353473]...|</span><br><span class="line">|  2122|[[1610, 12.652732...|</span><br><span class="line">|  2142|[[1610, 12.48068]...|</span><br><span class="line">|  2366|[[1610, 11.904813...|</span><br><span class="line">|  2659|[[5607, 11.699315...|</span><br><span class="line">|  2866|[[1610, 7.752719]...|</span><br><span class="line">|  3175|[[3347, 2.3429515...|</span><br><span class="line">|  3749|[[1610, 3.641833]...|</span><br><span class="line">+------+--------------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<ul>
+<li>召回到redis</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis</span><br><span class="line">host = <span class="string">&quot;192.168.19.8&quot;</span></span><br><span class="line">port = <span class="number">6379</span>    </span><br><span class="line"><span class="comment"># 召回到redis</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recall_cate_by_cf</span>(<span class="params">partition</span>):</span></span><br><span class="line">    <span class="comment"># 建立redis 连接池</span></span><br><span class="line">    pool = redis.ConnectionPool(host=host, port=port)</span><br><span class="line">    <span class="comment"># 建立redis客户端</span></span><br><span class="line">    client = redis.Redis(connection_pool=pool)</span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> partition:</span><br><span class="line">        client.hset(<span class="string">&quot;recall_cate&quot;</span>, row.userId, [i.cateId <span class="keyword">for</span> i <span class="keyword">in</span> row.recommendations])</span><br><span class="line"><span class="comment"># 对每个分片的数据进行处理 #mapPartition Transformation   map（一条一条走，和数据库建立链接耗时间）  而此处的partation是多块走，transformer的操作（）</span></span><br><span class="line"><span class="comment"># foreachPartition Action操作             foreachRDD       一块一块的走。是action的操作（一块召回一次）</span></span><br><span class="line">result.foreachPartition(recall_cate_by_cf)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意：这里这是召回的是用户最感兴趣的n个类别</span></span><br><span class="line"><span class="comment"># 总的条目数，查看redis中总的条目数是否一致</span></span><br><span class="line">result.count()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1136340</span><br></pre></td></tr></table></figure>
+<h3 id="3-根据用户对品牌偏好打分训练ALS模型-与上面的套路一样"><a href="#3-根据用户对品牌偏好打分训练ALS模型-与上面的套路一样" class="headerlink" title="3. 根据用户对品牌偏好打分训练ALS模型(与上面的套路一样)"></a>3. 根据用户对品牌偏好打分训练ALS模型(与上面的套路一样)</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StructType, StructField, StringType, IntegerType</span><br><span class="line"></span><br><span class="line">schema = StructType([</span><br><span class="line">    StructField(<span class="string">&quot;userId&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;brandId&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;pv&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;fav&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;cart&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;buy&quot;</span>, IntegerType())</span><br><span class="line">])</span><br><span class="line"><span class="comment"># 从hdfs加载预处理好的品牌的统计数据</span></span><br><span class="line">brand_count_df = spark.read.csv(<span class="string">&quot;hdfs://localhost:8020/preprocessing_dataset/brand_count.csv&quot;</span>, header=<span class="literal">True</span>, schema=schema)</span><br><span class="line"><span class="comment"># brand_count_df.show()</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_row</span>(<span class="params">r</span>):</span></span><br><span class="line">    <span class="comment"># 处理每一行数据：r表示row对象</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 偏好评分规则：</span></span><br><span class="line">	<span class="comment">#     m: 用户对应的行为次数</span></span><br><span class="line">    <span class="comment">#     该偏好权重比例，次数上限仅供参考，具体数值应根据产品业务场景权衡</span></span><br><span class="line">	<span class="comment">#     pv: if m&lt;=20: score=0.2*m; else score=4</span></span><br><span class="line">	<span class="comment">#     fav: if m&lt;=20: score=0.4*m; else score=8</span></span><br><span class="line">	<span class="comment">#     cart: if m&lt;=20: score=0.6*m; else score=12</span></span><br><span class="line">	<span class="comment">#     buy: if m&lt;=20: score=1*m; else score=20</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 注意这里要全部设为浮点数，spark运算时对类型比较敏感，要保持数据类型都一致</span></span><br><span class="line">	pv_count = r.pv <span class="keyword">if</span> r.pv <span class="keyword">else</span> <span class="number">0.0</span></span><br><span class="line">	fav_count = r.fav <span class="keyword">if</span> r.fav <span class="keyword">else</span> <span class="number">0.0</span></span><br><span class="line">	cart_count = r.cart <span class="keyword">if</span> r.cart <span class="keyword">else</span> <span class="number">0.0</span></span><br><span class="line">	buy_count = r.buy <span class="keyword">if</span> r.buy <span class="keyword">else</span> <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line">	pv_score = <span class="number">0.2</span>*pv_count <span class="keyword">if</span> pv_count&lt;=<span class="number">20</span> <span class="keyword">else</span> <span class="number">4.0</span></span><br><span class="line">	fav_score = <span class="number">0.4</span>*fav_count <span class="keyword">if</span> fav_count&lt;=<span class="number">20</span> <span class="keyword">else</span> <span class="number">8.0</span></span><br><span class="line">	cart_score = <span class="number">0.6</span>*cart_count <span class="keyword">if</span> cart_count&lt;=<span class="number">20</span> <span class="keyword">else</span> <span class="number">12.0</span></span><br><span class="line">	buy_score = <span class="number">1.0</span>*buy_count <span class="keyword">if</span> buy_count&lt;=<span class="number">20</span> <span class="keyword">else</span> <span class="number">20.0</span></span><br><span class="line"></span><br><span class="line">	rating = pv_score + fav_score + cart_score + buy_score</span><br><span class="line">	<span class="comment"># 返回用户ID、品牌ID、用户对品牌的偏好打分</span></span><br><span class="line">	<span class="keyword">return</span> r.userId, r.brandId, rating</span><br><span class="line"><span class="comment"># 用户对品牌的打分数据</span></span><br><span class="line">brand_rating_df = brand_count_df.rdd.<span class="built_in">map</span>(process_row).toDF([<span class="string">&quot;userId&quot;</span>, <span class="string">&quot;brandId&quot;</span>, <span class="string">&quot;rating&quot;</span>])</span><br><span class="line"><span class="comment"># brand_rating_df.show()</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>基于Spark的ALS隐因子模型进行CF评分预测</p>
+<ul>
+<li><p>ALS的意思是交替最小二乘法（Alternating Least Squares），是Spark中进行基于模型的协同过滤（model-based CF）的推荐系统算法，也是目前Spark内唯一一个推荐算法。</p>
+<p>同SVD，它也是一种矩阵分解技术，但理论上，ALS在海量数据的处理上要优于SVD。</p>
+<p>更多了解：<a target="_blank" rel="noopener" href="https://spark.apache.org/docs/latest/api/python/pyspark.ml.html?highlight=vectors#module-pyspark.ml.recommendation">pyspark.ml.recommendation.ALS</a></p>
+<p>注意：由于数据量巨大，因此这里不考虑基于内存的CF算法</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/mooba/p/6539142.html">为什么Spark中只有ALS</a></p>
+</li>
+</ul>
+</li>
+<li><p>使用pyspark中的ALS矩阵分解方法实现CF评分预测</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用pyspark中的ALS矩阵分解方法实现CF评分预测</span></span><br><span class="line"><span class="comment"># 文档地址：https://spark.apache.org/docs/latest/api/python/pyspark.ml.html?highlight=vectors#module-pyspark.ml.recommendation</span></span><br><span class="line"><span class="keyword">from</span> pyspark.ml.recommendation <span class="keyword">import</span> ALS</span><br><span class="line"></span><br><span class="line">als = ALS(userCol=<span class="string">&#x27;userId&#x27;</span>, itemCol=<span class="string">&#x27;brandId&#x27;</span>, ratingCol=<span class="string">&#x27;rating&#x27;</span>, checkpointInterval=<span class="number">2</span>)</span><br><span class="line"><span class="comment"># 利用打分数据，训练ALS模型</span></span><br><span class="line"><span class="comment"># 此处训练时间较长</span></span><br><span class="line">model = als.fit(brand_rating_df)</span><br><span class="line"><span class="comment"># model.recommendForAllUsers(N) 给用户推荐TOP-N个物品</span></span><br><span class="line">model.recommendForAllUsers(<span class="number">3</span>).show()</span><br><span class="line"><span class="comment"># 将模型进行存储</span></span><br><span class="line">model.save(<span class="string">&quot;hdfs://localhost:9000/models/userBrandRatingModel.obj&quot;</span>)</span><br><span class="line"><span class="comment"># 测试存储的模型</span></span><br><span class="line"><span class="keyword">from</span> pyspark.ml.recommendation <span class="keyword">import</span> ALSModel</span><br><span class="line"><span class="comment"># 从hdfs加载模型</span></span><br><span class="line">my_model = ALSModel.load(<span class="string">&quot;hdfs://localhost:9000/models/userBrandRatingModel.obj&quot;</span>)</span><br><span class="line">my_model</span><br><span class="line"><span class="comment"># model.recommendForAllUsers(N) 给用户推荐TOP-N个物品</span></span><br><span class="line">my_model.recommendForAllUsers(<span class="number">3</span>).first()</span><br></pre></td></tr></table></figure>
+<h3 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h3><h3 id="spark-训练-ALS-模型"><a href="#spark-训练-ALS-模型" class="headerlink" title="spark 训练 ALS 模型"></a>spark 训练 ALS 模型</h3><ul>
+<li><p>spark 机器学习相关的库</p>
+<ul>
+<li>spark MLlib<ul>
+<li>最早开发的</li>
+<li><strong>基于RDD 的api</strong></li>
+<li>目前已经停止维护了 （从2.3开始停止维护）</li>
+<li>还可以使用</li>
+</ul>
+</li>
+<li>spark ML<ul>
+<li>目前在更新的是这个库</li>
+<li><strong>基于dataframe</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>ALS 模型训练</p>
+<ul>
+<li><p>spark ML的库中封装了 协同过滤的 ALS模型</p>
+</li>
+<li><p>from pyspark.ml.recommendation import ALS</p>
+</li>
+<li><p>需要准备一个dataframe 包含 用户id 物品id 用户-物品评分 这三列，利用这三列数据就可以使用spark ALS模块训练ALS模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.ml.recommendation <span class="keyword">import</span> ALS</span><br><span class="line">als = ALS(userCol = <span class="string">&#x27;userId&#x27;</span>,itemCol=<span class="string">&#x27;cateId&#x27;</span>,ratingCol = <span class="string">&#x27;rating&#x27;</span>,checkpointInterval = <span class="number">5</span>)</span><br><span class="line">model = als.fit(dataframe)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>训练出模型之后就可以为用户召回物品</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">model.recommendForAllUsers(<span class="number">3</span>)</span><br><span class="line"><span class="comment">#为指定用户推荐物品</span></span><br><span class="line">dataset = spark.createDataFrame([[<span class="number">1</span>],[<span class="number">2</span>],[<span class="number">3</span>]])</span><br><span class="line">dataset = dataset.withColumnRenamed(<span class="string">&quot;_1&quot;</span>, <span class="string">&quot;userId&quot;</span>)</span><br><span class="line">ret = model.recommendForUserSubset(dataset, <span class="number">3</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" title="02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品" target="_blank" rel="external">https://xxren8218.github.io/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren888.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren888.gitee.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/20210708/01%E2%80%94%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E4%B8%AA%E6%80%A7%E5%8C%96%E7%94%B5%E5%95%86%E5%B9%BF%E5%91%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D.html" title="01-推荐系统实战之个性化电商广告推荐系统介绍"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+</body>
+</html>
