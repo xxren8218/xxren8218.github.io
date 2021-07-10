@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>36-离线推荐处理&amp;实时推荐 | X.X.Ren的个人博客</title>
+  <meta name="description" content="离线推荐数据缓存 &amp; 实时推荐1.1 离线数据缓存之离线召回集 这里主要是利用我们前面训练的ALS模型进行协同过滤召回，但是注意，我们ALS模型召回的是用户最感兴趣的类别，而我们需要的是用户可能感兴趣的广告的集合，因此我们还需要根据召回的类别匹配出对应的广告。 所以这里我们除了需要我们训练的ALS模型以外，还需要有一个广告和类别的对应关系。   1234567891011121314151">
+<meta property="og:type" content="article">
+<meta property="og:title" content="36-离线推荐处理&amp;实时推荐">
+<meta property="og:url" content="https://xxren8218.github.io/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="离线推荐数据缓存 &amp; 实时推荐1.1 离线数据缓存之离线召回集 这里主要是利用我们前面训练的ALS模型进行协同过滤召回，但是注意，我们ALS模型召回的是用户最感兴趣的类别，而我们需要的是用户可能感兴趣的广告的集合，因此我们还需要根据召回的类别匹配出对应的广告。 所以这里我们除了需要我们训练的ALS模型以外，还需要有一个广告和类别的对应关系。   1234567891011121314151">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-10T14:50:29.000Z">
+<meta property="article:modified_time" content="2021-07-10T14:51:29.256Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="推荐系统基础">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">38</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">53</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a><span class="category-list-count">22</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 13.9px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%B3%95/" style="font-size: 13.1px; color: #fff">二分法</a> <a href="/tags/%E4%BC%AA%E5%A4%B4%E8%8A%82%E7%82%B9/" style="font-size: 13px; color: #fff">伪头节点</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.2px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.1px; color: #fff">其他</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" style="font-size: 13px; color: #fff">内置函数</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px; color: #fff">动态规划</a> <a href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" style="font-size: 13px; color: #fff">单调栈</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13.5px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 13.4px; color: #fff">哈希表</a> <a href="/tags/%E5%A4%9A%E6%8C%87%E9%92%88/" style="font-size: 13.4px; color: #fff">多指针</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 13.1px; color: #fff">字符串</a> <a href="/tags/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/" style="font-size: 13px; color: #fff">归并排序</a> <a href="/tags/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" style="font-size: 13.1px; color: #fff">快慢指针</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/" style="font-size: 13px; color: #fff">快速幂</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.3px; color: #fff">排序</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">推荐系统基础</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 13.3px; color: #fff">数学</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13.7px; color: #fff">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.1px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.8px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.1px; color: #fff">机器学习基础实战</a> <a href="/tags/%E6%9F%A5%E6%89%BE/" style="font-size: 13px; color: #fff">查找</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px; color: #fff">栈</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 13px; color: #fff">滑动窗口</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E5%88%97%E8%A1%A8/" style="font-size: 13.1px; color: #fff">辅助列表</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E6%A0%88/" style="font-size: 13.1px; color: #fff">辅助栈</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/" style="font-size: 13px; color: #fff">辅助素组</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13.3px; color: #fff">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13.6px; color: #fff">链表</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">51</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="36-离线推荐处理&amp;实时推荐" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html" class="title">36-离线推荐处理&amp;实时推荐</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-10T14:50:29.000Z" itemprop="datePublished">2021-07-10 22:50:29</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210710/35-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-LR-%E5%AE%9E%E7%8E%B0CTR%E9%A2%84%E4%BC%B0.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="35-逻辑回归(LR)实现CTR预估" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210710/35-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-LR-%E5%AE%9E%E7%8E%B0CTR%E9%A2%84%E4%BC%B0.html" class="title">35-逻辑回归(LR)实现CTR预估</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-10T14:49:27.000Z" itemprop="datePublished">2021-07-10 22:49:27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="34-CTR预估数据准备" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="title">34-CTR预估数据准备</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-10T14:47:02.000Z" itemprop="datePublished">2021-07-10 22:47:02</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210709/12-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="12-二叉树的路径问题汇总" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210709/12-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB.html" class="title">12-二叉树的路径问题汇总</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-09T13:51:32.000Z" itemprop="datePublished">2021-07-09 21:51:32</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" class="title">02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-08T17:00:30.000Z" itemprop="datePublished">2021-07-09 01:00:30</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E6%95%B0%E6%8D%AE%E7%BC%93%E5%AD%98-amp-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90"><span class="toc-text">离线推荐数据缓存 &amp; 实时推荐</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%A6%BB%E7%BA%BF%E6%95%B0%E6%8D%AE%E7%BC%93%E5%AD%98%E4%B9%8B%E7%A6%BB%E7%BA%BF%E5%8F%AC%E5%9B%9E%E9%9B%86"><span class="toc-text">1.1 离线数据缓存之离线召回集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%A6%BB%E7%BA%BF%E6%95%B0%E6%8D%AE%E7%BC%93%E5%AD%98%E4%B9%8B%E7%A6%BB%E7%BA%BF%E7%89%B9%E5%BE%81"><span class="toc-text">2.1 离线数据缓存之离线特征</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%AE%9E%E6%97%B6%E4%BA%A7%E7%94%9F%E6%8E%A8%E8%8D%90%E7%BB%93%E6%9E%9C"><span class="toc-text">二. 实时产生推荐结果</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%8E%A8%E8%8D%90%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86"><span class="toc-text">2.1 推荐任务处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E6%9C%8D%E5%8A%A1"><span class="toc-text">推荐服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SparkML-%E5%92%8CSparkMLlib-%E5%8C%BA%E5%88%AB"><span class="toc-text">SparkML 和SparkMLlib 区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E5%A4%B1%E5%80%BC%E5%A4%84%E7%90%86"><span class="toc-text">缺失值处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8spark-%E5%A4%84%E7%90%86-onehot"><span class="toc-text">利用spark 处理 onehot</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-36-离线推荐处理-实时推荐" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      36-离线推荐处理&amp;实时推荐
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html" class="article-date">
+        发布于<time datetime="2021-07-10T14:50:29.000Z" itemprop="datePublished">
+            2021-07-10 22:50:29
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html" class="article-date">
+        更新于<time datetime="2021-07-10T14:51:29.256Z" itemprop="dateUpdated">
+            2021-07-10 22:51:29
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" rel="tag">推荐系统基础</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html" class="leancloud_visitors"  data-flag-title="36-离线推荐处理&amp;实时推荐">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="离线推荐数据缓存-amp-实时推荐"><a href="#离线推荐数据缓存-amp-实时推荐" class="headerlink" title="离线推荐数据缓存 &amp; 实时推荐"></a>离线推荐数据缓存 &amp; 实时推荐</h2><h3 id="1-1-离线数据缓存之离线召回集"><a href="#1-1-离线数据缓存之离线召回集" class="headerlink" title="1.1 离线数据缓存之离线召回集"></a>1.1 离线数据缓存之离线召回集</h3><ul>
+<li><p>这里主要是利用我们前面训练的ALS模型进行协同过滤召回，但是注意，我们ALS模型召回的是用户最感兴趣的类别，而我们需要的是用户可能感兴趣的广告的集合，因此我们还需要根据召回的类别匹配出对应的广告。</p>
+<p>所以这里我们除了需要我们训练的ALS模型以外，还需要有一个广告和类别的对应关系。</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从HDFS中加载广告基本信息数据，返回spark dafaframe对象</span></span><br><span class="line">df = spark.read.csv(<span class="string">&quot;hdfs://localhost:8020/csv/ad_feature.csv&quot;</span>, header=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意：由于本数据集中存在NULL字样的数据，无法直接设置schema，只能先将NULL类型的数据处理掉，然后进行类型转换</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StructType, StructField, IntegerType, FloatType</span><br><span class="line"></span><br><span class="line"><span class="comment"># 替换掉NULL字符串，替换掉</span></span><br><span class="line">df = df.replace(<span class="string">&quot;NULL&quot;</span>, <span class="string">&quot;-1&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更改df表结构：更改列类型和列名称</span></span><br><span class="line">ad_feature_df = df.\</span><br><span class="line">    withColumn(<span class="string">&quot;adgroup_id&quot;</span>, df.adgroup_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;adgroup_id&quot;</span>, <span class="string">&quot;adgroupId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;cate_id&quot;</span>, df.cate_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;cate_id&quot;</span>, <span class="string">&quot;cateId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;campaign_id&quot;</span>, df.campaign_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;campaign_id&quot;</span>, <span class="string">&quot;campaignId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;customer&quot;</span>, df.customer.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;customer&quot;</span>, <span class="string">&quot;customerId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;brand&quot;</span>, df.brand.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;brand&quot;</span>, <span class="string">&quot;brandId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;price&quot;</span>, df.price.cast(FloatType()))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里我们只需要adgroupId、和cateId</span></span><br><span class="line">_ = ad_feature_df.select(<span class="string">&quot;adgroupId&quot;</span>, <span class="string">&quot;cateId&quot;</span>)</span><br><span class="line"><span class="comment"># 由于这里数据集其实很少，所以我们再直接转成Pandas dataframe来处理，把数据载入内存</span></span><br><span class="line">pdf = _.toPandas()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 手动释放一些内存</span></span><br><span class="line"><span class="keyword">del</span> df</span><br><span class="line"><span class="keyword">del</span> ad_feature_df</span><br><span class="line"><span class="keyword">del</span> _</span><br><span class="line"><span class="keyword">import</span> gc</span><br><span class="line">gc.collect()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>根据指定的类别找到对应的广告</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">pdf.where(pdf.cateId==<span class="number">11156</span>).dropna().adgroupId <span class="comment"># 举个例子，随便找个cateId看看他的adgroupId都有哪些。</span></span><br><span class="line"></span><br><span class="line">np.random.choice(pdf.where(pdf.cateId==<span class="number">11156</span>).dropna().adgroupId.astype(np.int64), <span class="number">200</span>) <span class="comment"># 在召回的用户感兴趣的类别上随机挑选200个物品。</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">313       138953.0</span><br><span class="line">314       467512.0</span><br><span class="line">1661      140008.0</span><br><span class="line">1666      238772.0</span><br><span class="line">1669      237471.0</span><br><span class="line">1670      238761.0</span><br><span class="line">			...   </span><br><span class="line">843456    352273.0</span><br><span class="line">846728    818681.0</span><br><span class="line">846729    838953.0</span><br><span class="line">846810    845337.0</span><br><span class="line">Name: adgroupId, Length: 731, dtype: float64</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>利用ALS模型进行类别的召回</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 加载als模型，注意必须先有spark上下文管理器，即sparkContext，但这里sparkSession创建后，自动创建了sparkContext</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pyspark.ml.recommendation <span class="keyword">import</span> ALSModel</span><br><span class="line"><span class="comment"># 从hdfs加载之前存储的模型</span></span><br><span class="line">als_model = ALSModel.load(<span class="string">&quot;hdfs://localhost:8020/models/userCateRatingALSModel.obj&quot;</span>)</span><br><span class="line"><span class="comment"># 返回模型中关于用户的所有属性   df:   id   features</span></span><br><span class="line">als_model.userFactors</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DataFrame[id: int, features: array&lt;float&gt;]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">cateId_df = pd.DataFrame(pdf.cateId.unique(),columns=[<span class="string">&quot;cateId&quot;</span>])</span><br><span class="line">cateId_df</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">	cateId</span><br><span class="line">0	1</span><br><span class="line">1	2</span><br><span class="line">2	3</span><br><span class="line">3	4</span><br><span class="line">4	5</span><br><span class="line">5	6</span><br><span class="line">6	7</span><br><span class="line">...	...</span><br><span class="line">6766	12948</span><br><span class="line">6767	12955</span><br><span class="line">6768	12960</span><br><span class="line">6769 rows × 1 columns</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cateId_df.insert(<span class="number">0</span>, <span class="string">&quot;userId&quot;</span>, np.array([<span class="number">8</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6769</span>)]))</span><br><span class="line">cateId_df</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> userId cateId</span><br><span class="line">0	8	1</span><br><span class="line">1	8	2</span><br><span class="line">2	8	3</span><br><span class="line">3	8	4</span><br><span class="line">4	8	5</span><br><span class="line">...	...	...</span><br><span class="line">6766	8	12948</span><br><span class="line">6767	8	12955</span><br><span class="line">6768	8	12960</span><br><span class="line">6769 rows × 2 columns</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>传入 userid、cataId的df，对应预测值进行排序（也可以用之前的recommandForAllusers，这样是为了另外一种ALS的用法）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">als_model.transform(spark.createDataFrame(cateId_df)).sort(<span class="string">&quot;prediction&quot;</span>, ascending=<span class="literal">False</span>).na.drop().show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">+------+------+----------+</span><br><span class="line">|userId|cateId|prediction|</span><br><span class="line">+------+------+----------+</span><br><span class="line">|     8|  7214|  9.917084|</span><br><span class="line">|     8|   877|  7.479664|</span><br><span class="line">|     8|  7266| 7.4762917|</span><br><span class="line">|     8| 10856| 7.3395424|</span><br><span class="line">|     8|  4766|  7.149538|</span><br><span class="line">|     8|  7282| 6.6835284|</span><br><span class="line">|     8|  7270| 6.2145095|</span><br><span class="line">|     8|   201| 6.0623236|</span><br><span class="line">|     8|  4267| 5.9155636|</span><br><span class="line">|     8|  7267|  5.838009|</span><br><span class="line">|     8|  5392| 5.6882005|</span><br><span class="line">|     8|  6261| 5.6804466|</span><br><span class="line">|     8|  6306| 5.2992325|</span><br><span class="line">|     8| 11050|  5.245261|</span><br><span class="line">|     8|  8655| 5.1701374|</span><br><span class="line">|     8|  4610|  5.139578|</span><br><span class="line">|     8|   932|   5.12694|</span><br><span class="line">|     8| 12276| 5.0776596|</span><br><span class="line">|     8|  8071|  4.979195|</span><br><span class="line">|     8|  6580| 4.8523283|</span><br><span class="line">+------+------+----------+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存储用户召回，使用redis第9号数据库，类型：sets类型</span></span><br><span class="line">client = redis.StrictRedis(host=<span class="string">&quot;192.168.199.188&quot;</span>, port=<span class="number">6379</span>, db=<span class="number">9</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> r <span class="keyword">in</span> als_model.userFactors.select(<span class="string">&quot;id&quot;</span>).collect():</span><br><span class="line">    </span><br><span class="line">    userId = r.<span class="built_in">id</span></span><br><span class="line">    </span><br><span class="line">    cateId_df = pd.DataFrame(pdf.cateId.unique(),columns=[<span class="string">&quot;cateId&quot;</span>])</span><br><span class="line">    cateId_df.insert(<span class="number">0</span>, <span class="string">&quot;userId&quot;</span>, np.array([userId <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6769</span>)]))</span><br><span class="line">    ret = <span class="built_in">set</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 利用模型，传入datasets(userId, cateId)，这里控制了userId一样，所以相当于是在求某用户对所有分类的兴趣程度（评分）</span></span><br><span class="line">    cateId_list = als_model.transform(spark.createDataFrame(cateId_df)).sort(<span class="string">&quot;prediction&quot;</span>, ascending=<span class="literal">False</span>).na.drop()</span><br><span class="line">    <span class="comment"># 从前20个分类中选出500个进行召回</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> cateId_list.head(<span class="number">20</span>):</span><br><span class="line">        need = <span class="number">500</span> - <span class="built_in">len</span>(ret)    <span class="comment"># 如果不足500个，那么随机选出need个广告</span></span><br><span class="line">        ret = ret.union(np.random.choice(pdf.where(pdf.cateId==i.cateId).adgroupId.dropna().astype(np.int64), need))</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(ret) &gt;= <span class="number">500</span>:    <span class="comment"># 如果达到500个则退出</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    client.sadd(userId, *ret)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 如果redis所在机器，内存不足，会抛出异常</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-1-离线数据缓存之离线特征"><a href="#2-1-离线数据缓存之离线特征" class="headerlink" title="2.1 离线数据缓存之离线特征"></a>2.1 离线数据缓存之离线特征</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># &quot;pid&quot;, 广告资源位，属于场景特征，也就是说，每一种广告通常是可以防止在多种资源外下的</span></span><br><span class="line"><span class="comment"># 因此这里对于pid，应该是由广告系统发起推荐请求时，向推荐系统明确要推荐的用户是谁，以及对应的资源位，或者说有哪些</span></span><br><span class="line"><span class="comment"># 这样如果有多个资源位，那么每个资源位都会对应相应的一个推荐列表</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 需要进行缓存的特征值</span></span><br><span class="line"></span><br><span class="line">feature_cols_from_ad = [</span><br><span class="line">    <span class="string">&quot;price&quot;</span>    <span class="comment"># 来自广告基本信息中</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户特征</span></span><br><span class="line">feature_cols_from_user = [</span><br><span class="line">    <span class="string">&quot;cms_group_id&quot;</span>,</span><br><span class="line">    <span class="string">&quot;final_gender_code&quot;</span>,</span><br><span class="line">    <span class="string">&quot;age_level&quot;</span>,</span><br><span class="line">    <span class="string">&quot;shopping_level&quot;</span>,</span><br><span class="line">    <span class="string">&quot;occupation&quot;</span>,</span><br><span class="line">    <span class="string">&quot;pvalue_level&quot;</span>,</span><br><span class="line">    <span class="string">&quot;new_user_class_level&quot;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>从HDFS中加载广告基本信息数据</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">_ad_feature_df = spark.read.csv(<span class="string">&quot;hdfs://localhost:9000/datasets/ad_feature.csv&quot;</span>, header=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更改表结构，转换为对应的数据类型</span></span><br><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StructType, StructField, IntegerType, FloatType</span><br><span class="line"></span><br><span class="line"><span class="comment"># 替换掉NULL字符串</span></span><br><span class="line">_ad_feature_df = _ad_feature_df.replace(<span class="string">&quot;NULL&quot;</span>, <span class="string">&quot;-1&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 更改df表结构：更改列类型和列名称</span></span><br><span class="line">ad_feature_df = _ad_feature_df.\</span><br><span class="line">    withColumn(<span class="string">&quot;adgroup_id&quot;</span>, _ad_feature_df.adgroup_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;adgroup_id&quot;</span>, <span class="string">&quot;adgroupId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;cate_id&quot;</span>, _ad_feature_df.cate_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;cate_id&quot;</span>, <span class="string">&quot;cateId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;campaign_id&quot;</span>, _ad_feature_df.campaign_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;campaign_id&quot;</span>, <span class="string">&quot;campaignId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;customer&quot;</span>, _ad_feature_df.customer.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;customer&quot;</span>, <span class="string">&quot;customerId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;brand&quot;</span>, _ad_feature_df.brand.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;brand&quot;</span>, <span class="string">&quot;brandId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;price&quot;</span>, _ad_feature_df.price.cast(FloatType()))</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foreachPartition</span>(<span class="params">partition</span>):</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">import</span> redis</span><br><span class="line">    <span class="keyword">import</span> json</span><br><span class="line">    client = redis.StrictRedis(host=<span class="string">&quot;192.168.199.188&quot;</span>, port=<span class="number">6379</span>, db=<span class="number">10</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> partition:</span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">&quot;price&quot;</span>: r.price</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment"># 转成json字符串再保存，能保证数据再次倒出来时，能有效的转换成python类型</span></span><br><span class="line">        client.hset(<span class="string">&quot;ad_features&quot;</span>, r.adgroupId, json.dumps(data))</span><br><span class="line">        </span><br><span class="line">ad_feature_df.foreachPartition(foreachPartition)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>从HDFS加载用户基本信息数据</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StructType, StructField, StringType, IntegerType, LongType, FloatType</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建表结构schema对象</span></span><br><span class="line">schema = StructType([</span><br><span class="line">    StructField(<span class="string">&quot;userId&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;cms_segid&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;cms_group_id&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;final_gender_code&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;age_level&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;pvalue_level&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;shopping_level&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;occupation&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;new_user_class_level&quot;</span>, IntegerType())</span><br><span class="line">])</span><br><span class="line"><span class="comment"># 利用schema从hdfs加载</span></span><br><span class="line">user_profile_df = spark.read.csv(<span class="string">&quot;hdfs://localhost:8020/csv/user_profile.csv&quot;</span>, header=<span class="literal">True</span>, schema=schema)</span><br><span class="line">user_profile_df</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DataFrame[userId: int, cms_segid: int, cms_group_id: int, final_gender_code: int, age_level: int, pvalue_level: int, shopping_level: int, occupation: int, new_user_class_level: int]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foreachPartition2</span>(<span class="params">partition</span>):</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">import</span> redis</span><br><span class="line">    <span class="keyword">import</span> json</span><br><span class="line">    client = redis.StrictRedis(host=<span class="string">&quot;192.168.199.188&quot;</span>, port=<span class="number">6379</span>, db=<span class="number">10</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> partition:</span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">&quot;cms_group_id&quot;</span>: r.cms_group_id,</span><br><span class="line">            <span class="string">&quot;final_gender_code&quot;</span>: r.final_gender_code,</span><br><span class="line">            <span class="string">&quot;age_level&quot;</span>: r.age_level,</span><br><span class="line">            <span class="string">&quot;shopping_level&quot;</span>: r.shopping_level,</span><br><span class="line">            <span class="string">&quot;occupation&quot;</span>: r.occupation,</span><br><span class="line">            <span class="string">&quot;pvalue_level&quot;</span>: r.pvalue_level,</span><br><span class="line">            <span class="string">&quot;new_user_class_level&quot;</span>: r.new_user_class_level</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment"># 转成json字符串再保存，能保证数据再次倒出来时，能有效的转换成python类型</span></span><br><span class="line">        client.hset(<span class="string">&quot;user_features1&quot;</span>, r.userId, json.dumps(data))</span><br><span class="line">        </span><br><span class="line">user_profile_df.foreachPartition(foreachPartition2)</span><br></pre></td></tr></table></figure>
+<h2 id="二-实时产生推荐结果"><a href="#二-实时产生推荐结果" class="headerlink" title="二. 实时产生推荐结果"></a>二. 实时产生推荐结果</h2><h3 id="2-1-推荐任务处理"><a href="#2-1-推荐任务处理" class="headerlink" title="2.1 推荐任务处理"></a>2.1 推荐任务处理</h3><ul>
+<li>CTR预测模型 + 特征 ==&gt; 预测结果 ==&gt; TOP-N列表</li>
+<li>数据缓存取出之后 还原成对应的onehot编码</li>
+<li>热编码中：”pvalue_level”特征对应关系:</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+------------+----------------------+</span><br><span class="line">|pvalue_level|pl_onehot_feature     |</span><br><span class="line">+------------+----------------------+</span><br><span class="line">|          -1|                   0.0|</span><br><span class="line">|           3|                   3.0|</span><br><span class="line">|           1|                   2.0|</span><br><span class="line">|           2|                   1.0|</span><br><span class="line">+------------+----------------------+</span><br></pre></td></tr></table></figure>
+<ul>
+<li>“new_user_class_level”的特征对应关系：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+--------------------+------------------------+</span><br><span class="line">|new_user_class_level|nucl_onehot_feature     |</span><br><span class="line">+--------------------+------------------------+</span><br><span class="line">|                  -1|                     0.0|</span><br><span class="line">|                   3|                     2.0|</span><br><span class="line">|                   1|                     4.0|</span><br><span class="line">|                   4|                     3.0|</span><br><span class="line">|                   2|                     1.0|</span><br><span class="line">+--------------------+------------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pvalue_level_rela = &#123;-<span class="number">1</span>: <span class="number">0</span>, <span class="number">3</span>:<span class="number">3</span>, <span class="number">1</span>:<span class="number">2</span>, <span class="number">2</span>:<span class="number">1</span>&#125;</span><br><span class="line">new_user_class_level_rela = &#123;-<span class="number">1</span>:<span class="number">0</span>, <span class="number">3</span>:<span class="number">2</span>, <span class="number">1</span>:<span class="number">4</span>, <span class="number">4</span>:<span class="number">3</span>, <span class="number">2</span>:<span class="number">1</span>&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>“cms_group_id”特征对应关系：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">+------------+-------------------------+</span><br><span class="line">|cms_group_id|min(cms_group_id_feature)|</span><br><span class="line">+------------+-------------------------+</span><br><span class="line">|           7|                      9.0|</span><br><span class="line">|          11|                      6.0|</span><br><span class="line">|           3|                      0.0|</span><br><span class="line">|           8|                      8.0|</span><br><span class="line">|           0|                     12.0|</span><br><span class="line">|           5|                      3.0|</span><br><span class="line">|           6|                     10.0|</span><br><span class="line">|           9|                      5.0|</span><br><span class="line">|           1|                      7.0|</span><br><span class="line">|          10|                      4.0|</span><br><span class="line">|           4|                      1.0|</span><br><span class="line">|          12|                     11.0|</span><br><span class="line">|           2|                      2.0|</span><br><span class="line">+------------+-------------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cms_group_id_rela &#x3D; &#123;</span><br><span class="line">    7: 9,</span><br><span class="line">    11: 6,</span><br><span class="line">    3: 0,</span><br><span class="line">    8: 8,</span><br><span class="line">    0: 12,</span><br><span class="line">    5: 3,</span><br><span class="line">    6: 10,</span><br><span class="line">    9: 5,</span><br><span class="line">    1: 7,</span><br><span class="line">    10: 4,</span><br><span class="line">    4: 1,</span><br><span class="line">    12: 11,</span><br><span class="line">    2: 2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>“final_gender_code”特征对应关系：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+-----------------+------------------------------+</span><br><span class="line">|final_gender_code|min(final_gender_code_feature)|</span><br><span class="line">+-----------------+------------------------------+</span><br><span class="line">|                1|                           1.0|</span><br><span class="line">|                2|                           0.0|</span><br><span class="line">+-----------------+------------------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">final_gender_code_rela &#x3D; &#123;1:1, 2:0&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>“age_level”特征对应关系：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+---------+----------------------+</span><br><span class="line">|age_level|min(age_level_feature)|</span><br><span class="line">+---------+----------------------+</span><br><span class="line">|        3|                   0.0|</span><br><span class="line">|        0|                   6.0|</span><br><span class="line">|        5|                   2.0|</span><br><span class="line">|        6|                   5.0|</span><br><span class="line">|        1|                   4.0|</span><br><span class="line">|        4|                   1.0|</span><br><span class="line">|        2|                   3.0|</span><br><span class="line">+---------+----------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">age_level_rela &#x3D; &#123;3:0, 0:6, 5:2, 6:5, 1:4, 4:1, 2:3&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>“shopping_level”特征对应关系：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">|shopping_level|min(shopping_level_feature)|</span><br><span class="line">+--------------+---------------------------+</span><br><span class="line">|             3|                        0.0|</span><br><span class="line">|             1|                        2.0|</span><br><span class="line">|             2|                        1.0|</span><br><span class="line">+--------------+---------------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shopping_level_rela &#x3D; &#123;3:0, 1:2, 2:1&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>“occupation”特征对应关系：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+----------+-----------------------+</span><br><span class="line">|occupation|min(occupation_feature)|</span><br><span class="line">+----------+-----------------------+</span><br><span class="line">|         0|                    0.0|</span><br><span class="line">|         1|                    1.0|</span><br><span class="line">+----------+-----------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">occupation_rela &#x3D; &#123;0:0, 1:1&#125;</span><br><span class="line"></span><br><span class="line">pid_rela &#x3D; &#123;</span><br><span class="line">    &quot;430548_1007&quot;: 0, </span><br><span class="line">    &quot;430549_1007&quot;: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>特征获取</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> pyspark.ml.linalg <span class="keyword">import</span> DenseVector</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_datasets</span>(<span class="params">userId, pid</span>):</span></span><br><span class="line">    client_of_recall = redis.StrictRedis(host=<span class="string">&quot;192.168.199.88&quot;</span>, port=<span class="number">6379</span>, db=<span class="number">9</span>)</span><br><span class="line">    client_of_features = redis.StrictRedis(host=<span class="string">&quot;192.168.199.88&quot;</span>, port=<span class="number">6379</span>, db=<span class="number">10</span>)</span><br><span class="line">    <span class="comment"># 获取用户特征</span></span><br><span class="line">    user_feature = json.loads(client_of_features.hget(<span class="string">&quot;user_features&quot;</span>, userId))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 获取用户召回集</span></span><br><span class="line">    recall_sets = client_of_recall.smembers(userId)</span><br><span class="line">    </span><br><span class="line">    result = []</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 遍历召回集</span></span><br><span class="line">    <span class="keyword">for</span> adgroupId <span class="keyword">in</span> recall_sets:</span><br><span class="line">        adgroupId = <span class="built_in">int</span>(adgroupId)</span><br><span class="line">        <span class="comment"># 获取该广告的特征值</span></span><br><span class="line">        ad_feature = json.loads(client_of_features.hget(<span class="string">&quot;ad_features&quot;</span>, adgroupId))</span><br><span class="line">        </span><br><span class="line">        features = &#123;&#125;</span><br><span class="line">        features.update(user_feature)</span><br><span class="line">        features.update(ad_feature)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> k,v <span class="keyword">in</span> features.items():</span><br><span class="line">            <span class="keyword">if</span> v <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                features[k] = -<span class="number">1</span></span><br><span class="line"></span><br><span class="line">        features_col = [</span><br><span class="line">            <span class="comment"># 特征值</span></span><br><span class="line">            <span class="string">&quot;price&quot;</span>,</span><br><span class="line">            <span class="string">&quot;cms_group_id&quot;</span>,</span><br><span class="line">            <span class="string">&quot;final_gender_code&quot;</span>,</span><br><span class="line">            <span class="string">&quot;age_level&quot;</span>,</span><br><span class="line">            <span class="string">&quot;shopping_level&quot;</span>,</span><br><span class="line">            <span class="string">&quot;occupation&quot;</span>,</span><br><span class="line">            <span class="string">&quot;pid&quot;</span>, </span><br><span class="line">            <span class="string">&quot;pvalue_level&quot;</span>,</span><br><span class="line">            <span class="string">&quot;new_user_class_level&quot;</span></span><br><span class="line">        ]</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        &quot;cms_group_id&quot;, 类别型特征，约13个分类 ==&gt; 13维</span></span><br><span class="line"><span class="string">        &quot;final_gender_code&quot;, 类别型特征，2个分类 ==&gt; 2维</span></span><br><span class="line"><span class="string">        &quot;age_level&quot;, 类别型特征，7个分类 ==&gt;7维</span></span><br><span class="line"><span class="string">        &quot;shopping_level&quot;, 类别型特征，3个分类 ==&gt; 3维</span></span><br><span class="line"><span class="string">        &quot;occupation&quot;, 类别型特征，2个分类 ==&gt; 2维</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">        price = <span class="built_in">float</span>(features[<span class="string">&quot;price&quot;</span>])</span><br><span class="line"></span><br><span class="line">        pid_value = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)]<span class="comment">#[0,0]</span></span><br><span class="line">        cms_group_id_value = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">13</span>)]</span><br><span class="line">        final_gender_code_value = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)]</span><br><span class="line">        age_level_value = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>)]</span><br><span class="line">        shopping_level_value = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>)]</span><br><span class="line">        occupation_value = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)]</span><br><span class="line">        pvalue_level_value = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>)]</span><br><span class="line">        new_user_class_level_value = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>)]</span><br><span class="line"></span><br><span class="line">        pid_value[pid_rela[pid]] = <span class="number">1</span></span><br><span class="line">        cms_group_id_value[cms_group_id_rela[<span class="built_in">int</span>(features[<span class="string">&quot;cms_group_id&quot;</span>])]] = <span class="number">1</span></span><br><span class="line">        final_gender_code_value[final_gender_code_rela[<span class="built_in">int</span>(features[<span class="string">&quot;final_gender_code&quot;</span>])]] = <span class="number">1</span></span><br><span class="line">        age_level_value[age_level_rela[<span class="built_in">int</span>(features[<span class="string">&quot;age_level&quot;</span>])]] = <span class="number">1</span></span><br><span class="line">        shopping_level_value[shopping_level_rela[<span class="built_in">int</span>(features[<span class="string">&quot;shopping_level&quot;</span>])]] = <span class="number">1</span></span><br><span class="line">        occupation_value[occupation_rela[<span class="built_in">int</span>(features[<span class="string">&quot;occupation&quot;</span>])]] = <span class="number">1</span></span><br><span class="line">        pvalue_level_value[pvalue_level_rela[<span class="built_in">int</span>(features[<span class="string">&quot;pvalue_level&quot;</span>])]] = <span class="number">1</span></span><br><span class="line">        new_user_class_level_value[new_user_class_level_rela[<span class="built_in">int</span>(features[<span class="string">&quot;new_user_class_level&quot;</span>])]] = <span class="number">1</span></span><br><span class="line"><span class="comment">#         print(pid_value)</span></span><br><span class="line"><span class="comment">#         print(cms_group_id_value)</span></span><br><span class="line"><span class="comment">#         print(final_gender_code_value)</span></span><br><span class="line"><span class="comment">#         print(age_level_value)</span></span><br><span class="line"><span class="comment">#         print(shopping_level_value)</span></span><br><span class="line"><span class="comment">#         print(occupation_value)</span></span><br><span class="line"><span class="comment">#         print(pvalue_level_value)</span></span><br><span class="line"><span class="comment">#         print(new_user_class_level_value)</span></span><br><span class="line">        </span><br><span class="line">        vector = DenseVector([price] + pid_value + cms_group_id_value + final_gender_code_value\</span><br><span class="line">        + age_level_value + shopping_level_value + occupation_value + pvalue_level_value + new_user_class_level_value)</span><br><span class="line">        </span><br><span class="line">        result.append((userId, adgroupId, vector))</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="comment"># create_datasets(88, &quot;430548_1007&quot;)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>载入训练好的模型</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from pyspark.ml.classification import LogisticRegressionModel</span><br><span class="line">CTR_model &#x3D; LogisticRegressionModel.load(&quot;hdfs:&#x2F;&#x2F;localhost:9000&#x2F;models&#x2F;CTRModel_AllOneHot.obj&quot;)</span><br><span class="line">pdf &#x3D; pd.DataFrame(create_datasets(8, &quot;430548_1007&quot;), columns&#x3D;[&quot;userId&quot;, &quot;adgroupId&quot;, &quot;features&quot;])</span><br><span class="line">datasets &#x3D; spark.createDataFrame(pdf)</span><br><span class="line">datasets.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+--------------------+</span><br><span class="line">|userId|adgroupId|            features|</span><br><span class="line">+------+---------+--------------------+</span><br><span class="line">|     8|   445914|[9.89999961853027...|</span><br><span class="line">|     8|   258252|[7.59999990463256...|</span><br><span class="line">|     8|   129682|[8.5,1.0,0.0,1.0,...|</span><br><span class="line">|     8|   763027|[68.0,1.0,0.0,1.0...|</span><br><span class="line">|     8|   292027|[16.0,1.0,0.0,1.0...|</span><br><span class="line">|     8|   430023|[34.2000007629394...|</span><br><span class="line">|     8|   133457|[169.0,1.0,0.0,1....|</span><br><span class="line">|     8|   816999|[5.0,1.0,0.0,1.0,...|</span><br><span class="line">|     8|   221714|[4.80000019073486...|</span><br><span class="line">|     8|   186334|[106.0,1.0,0.0,1....|</span><br><span class="line">|     8|   169717|[2.20000004768371...|</span><br><span class="line">|     8|    31314|[15.8000001907348...|</span><br><span class="line">|     8|   815312|[2.29999995231628...|</span><br><span class="line">|     8|   199445|[5.0,1.0,0.0,1.0,...|</span><br><span class="line">|     8|   746178|[16.7999992370605...|</span><br><span class="line">|     8|   290950|[6.5,1.0,0.0,1.0,...|</span><br><span class="line">|     8|   221585|[18.5,1.0,0.0,1.0...|</span><br><span class="line">|     8|   692672|[47.0,1.0,0.0,1.0...|</span><br><span class="line">|     8|   797982|[33.0,1.0,0.0,1.0...|</span><br><span class="line">|     8|   815219|[2.40000009536743...|</span><br><span class="line">+------+---------+--------------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">prediction &#x3D; CTR_model.transform(datasets).sort(&quot;probability&quot;)</span><br><span class="line">prediction.show()</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+--------------------+--------------------+--------------------+----------+</span><br><span class="line">|userId|adgroupId|            features|       rawPrediction|         probability|prediction|</span><br><span class="line">+------+---------+--------------------+--------------------+--------------------+----------+</span><br><span class="line">|     8|   631204|[19888.0,1.0,0.0,...|[2.69001234046578...|[0.93643471623189...|       0.0|</span><br><span class="line">|     8|   583215|[3750.0,1.0,0.0,1...|[2.69016170680037...|[0.93644360664433...|       0.0|</span><br><span class="line">|     8|   275819|[3280.0,1.0,0.0,1...|[2.69016605691669...|[0.93644386554961...|       0.0|</span><br><span class="line">|     8|   401433|[1200.0,1.0,0.0,1...|[2.69018530849532...|[0.93644501133142...|       0.0|</span><br><span class="line">|     8|    29466|[640.0,1.0,0.0,1....|[2.69019049161265...|[0.93644531980785...|       0.0|</span><br><span class="line">|     8|   173327|[356.0,1.0,0.0,1....|[2.69019312019358...|[0.93644547624893...|       0.0|</span><br><span class="line">|     8|   241402|[269.0,1.0,0.0,1....|[2.69019392542787...|[0.93644552417271...|       0.0|</span><br><span class="line">|     8|   351366|[246.0,1.0,0.0,1....|[2.69019413830591...|[0.93644553684221...|       0.0|</span><br><span class="line">|     8|   229827|[238.0,1.0,0.0,1....|[2.69019421235044...|[0.93644554124900...|       0.0|</span><br><span class="line">|     8|   164807|[228.0,1.0,0.0,1....|[2.69019430490611...|[0.93644554675747...|       0.0|</span><br><span class="line">|     8|   227731|[199.0,1.0,0.0,1....|[2.69019457331754...|[0.93644556273205...|       0.0|</span><br><span class="line">|     8|   265403|[198.0,1.0,0.0,1....|[2.69019458257311...|[0.93644556328290...|       0.0|</span><br><span class="line">|     8|   569939|[188.0,1.0,0.0,1....|[2.69019467512877...|[0.93644556879138...|       0.0|</span><br><span class="line">|     8|   277335|[181.5,1.0,0.0,1....|[2.69019473528996...|[0.93644557237189...|       0.0|</span><br><span class="line">|     8|   575633|[180.0,1.0,0.0,1....|[2.69019474917331...|[0.93644557319816...|       0.0|</span><br><span class="line">|     8|   201867|[179.0,1.0,0.0,1....|[2.69019475842887...|[0.93644557374900...|       0.0|</span><br><span class="line">|     8|    25542|[176.0,1.0,0.0,1....|[2.69019478619557...|[0.93644557540155...|       0.0|</span><br><span class="line">|     8|   133457|[169.0,1.0,0.0,1....|[2.69019485098454...|[0.93644557925748...|       0.0|</span><br><span class="line">|     8|   494224|[169.0,1.0,0.0,1....|[2.69019485098454...|[0.93644557925748...|       0.0|</span><br><span class="line">|     8|   339382|[163.0,1.0,0.0,1....|[2.69019490651794...|[0.93644558256256...|       0.0|</span><br><span class="line">+------+---------+--------------------+--------------------+--------------------+----------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<ul>
+<li>TOP-20</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TOP-20</span></span><br><span class="line">prediction.select(<span class="string">&quot;adgroupId&quot;</span>).head(<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[Row(adgroupId=631204),</span><br><span class="line"> Row(adgroupId=583215),</span><br><span class="line"> Row(adgroupId=275819),</span><br><span class="line"> Row(adgroupId=401433),</span><br><span class="line"> Row(adgroupId=29466),</span><br><span class="line"> Row(adgroupId=173327),</span><br><span class="line"> Row(adgroupId=241402),</span><br><span class="line"> Row(adgroupId=351366),</span><br><span class="line"> Row(adgroupId=229827),</span><br><span class="line"> Row(adgroupId=164807),</span><br><span class="line"> Row(adgroupId=227731),</span><br><span class="line"> Row(adgroupId=265403),</span><br><span class="line"> Row(adgroupId=569939),</span><br><span class="line"> Row(adgroupId=277335),</span><br><span class="line"> Row(adgroupId=575633),</span><br><span class="line"> Row(adgroupId=201867),</span><br><span class="line"> Row(adgroupId=25542),</span><br><span class="line"> Row(adgroupId=133457),</span><br><span class="line"> Row(adgroupId=494224),</span><br><span class="line"> Row(adgroupId=339382)]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[i.adgroupId for i in prediction.select(&quot;adgroupId&quot;).head(20)]</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[631204,</span><br><span class="line"> 583215,</span><br><span class="line"> 275819,</span><br><span class="line"> 401433,</span><br><span class="line"> 29466,</span><br><span class="line"> 173327,</span><br><span class="line"> 241402,</span><br><span class="line"> 351366,</span><br><span class="line"> 229827,</span><br><span class="line"> 164807,</span><br><span class="line"> 227731,</span><br><span class="line"> 265403,</span><br><span class="line"> 569939,</span><br><span class="line"> 277335,</span><br><span class="line"> 575633,</span><br><span class="line"> 201867,</span><br><span class="line"> 25542,</span><br><span class="line"> 133457,</span><br><span class="line"> 494224,</span><br><span class="line"> 339382]</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="推荐服务"><a href="#推荐服务" class="headerlink" title="推荐服务"></a>推荐服务</h3><ul>
+<li>离线推荐<ul>
+<li>先召回对召回结果排序</li>
+<li>为每一个用户都进行召回并排序的过程并且把拍好顺序的结果放到数据库中</li>
+<li>如果需要推荐结果的时候 直接到数据库中按照user_id查询，返回推荐结果</li>
+<li>优点 结构比较简单 推荐服务只需要不断计算，把结果保存到数据库中即可</li>
+<li>缺点 实时性差 如果数据1天不更新 1天之内推荐结果一样的，不能反映用户的实时兴趣 </li>
+</ul>
+</li>
+<li>实时推荐<ul>
+<li>排序的模型加载好</li>
+<li>召回阶段的结果缓存</li>
+<li>所有用户的特征缓存</li>
+<li>所有物品的特征缓存</li>
+<li>把推荐的服务暴露出去（django flask) 需要推荐结果的服务把 用户id 传递过来<ul>
+<li>根据id 找到召回结果</li>
+<li>根据id 找到缓存的用户特征</li>
+<li>根据召回结果的物品id 找到物品的特征</li>
+<li>用户特征+物品特征-》逻辑回归模型 就可以预测点击率</li>
+<li>所有召回的物品的点记率都预测并排序 推荐topN</li>
+<li>实时通过LR模型进行排序的好处<ul>
+<li>随时修改召回集</li>
+<li>随时调整用户的特征</li>
+<li>当用户需要推荐服务的时候，获取到最新的召回集和用户特征 得到最新的排序结果 更能体现出用户的实时兴趣</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>召回（群策群力）</p>
+<ul>
+<li>协同过滤</li>
+<li>基于内容召回</li>
+<li>基于流行度召回</li>
+</ul>
+<p>排序（根据自身特征和物品特征预估）</p>
+<ul>
+<li>LR CTR预估</li>
+</ul>
+<h3 id="SparkML-和SparkMLlib-区别"><a href="#SparkML-和SparkMLlib-区别" class="headerlink" title="SparkML 和SparkMLlib 区别"></a>SparkML 和SparkMLlib 区别</h3><ul>
+<li>spark mllib 基于RDD<ul>
+<li>数据准备 需要创建一个 基于LabeledPoint的RDD</li>
+<li>LabeledPoint（目标，[特征]）</li>
+<li>已经停止更新了 处于维护状态</li>
+</ul>
+</li>
+<li>spark ML 基于dataframe<ul>
+<li>数据准备 需要把所有的特征放到一列中 dataframe还需要有一列是 目标值</li>
+<li>model = lr.setLabelCol(‘affairs’).setFeaturesCol(‘feautures’).fit(trainDF)</li>
+<li>spark ML 与 sklearn更类似</li>
+<li>最新的API放到 spark ML中的</li>
+</ul>
+</li>
+</ul>
+<h3 id="缺失值处理"><a href="#缺失值处理" class="headerlink" title="缺失值处理"></a>缺失值处理</h3><ul>
+<li>分类特征<ul>
+<li>把缺失作为单独的特征处理</li>
+<li>算法预测</li>
+</ul>
+</li>
+<li>连续的特征<ul>
+<li>算法预测</li>
+<li>平均值 默认值 中位数填充</li>
+</ul>
+</li>
+</ul>
+<h3 id="利用spark-处理-onehot"><a href="#利用spark-处理-onehot" class="headerlink" title="利用spark 处理 onehot"></a>利用spark 处理 onehot</h3><ul>
+<li>稀疏向量 大部分维度上的值都是0 sparseVector (向量的维度,[非零元素的索引],[非零元素的值])</li>
+<li>对应的API：stringindexer onehotEncoder pipline </li>
+</ul>
+<p>239146001</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html" title="36-离线推荐处理&amp;实时推荐" target="_blank" rel="external">https://xxren8218.github.io/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren888.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren888.gitee.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/20210710/35-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-LR-%E5%AE%9E%E7%8E%B0CTR%E9%A2%84%E4%BC%B0.html" title="35-逻辑回归(LR)实现CTR预估"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+</body>
+</html>

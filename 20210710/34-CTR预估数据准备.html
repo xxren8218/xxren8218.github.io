@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>34-CTR预估数据准备 | X.X.Ren的个人博客</title>
+  <meta name="description" content="CTR预估数据准备1. 分析并预处理raw_sample数据集1234# 从HDFS中加载样本数据信息df &#x3D; spark.read.csv(&quot;hdfs:&#x2F;&#x2F;localhost:9000&#x2F;datasets&#x2F;raw_sample.csv&quot;, header&#x3D;True)df.show()    # 展示数据，默认前20条df.printSchema() 显示结果: 123456789">
+<meta property="og:type" content="article">
+<meta property="og:title" content="34-CTR预估数据准备">
+<meta property="og:url" content="https://xxren8218.github.io/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html">
+<meta property="og:site_name" content="X.X.Ren">
+<meta property="og:description" content="CTR预估数据准备1. 分析并预处理raw_sample数据集1234# 从HDFS中加载样本数据信息df &#x3D; spark.read.csv(&quot;hdfs:&#x2F;&#x2F;localhost:9000&#x2F;datasets&#x2F;raw_sample.csv&quot;, header&#x3D;True)df.show()    # 展示数据，默认前20条df.printSchema() 显示结果: 123456789">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-10T14:47:02.000Z">
+<meta property="article:modified_time" content="2021-07-10T14:48:51.257Z">
+<meta property="article:author" content="任晓雄">
+<meta property="article:tag" content="推荐系统基础">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://xxren8218.github.io/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html">
+  
+    <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple# 主题颜色 theme-black theme-blue theme-green theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://xxren888.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">任晓雄</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">机器学习 &amp; 人工智能</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 陕西, 西安</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-stackexchange"></i>公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">38</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">53</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a><span class="category-list-count">22</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-tags"></i>标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/python%E5%9F%BA%E7%A1%80/" style="font-size: 13.9px; color: #fff">python基础</a> <a href="/tags/vim/" style="font-size: 13px; color: #fff">vim</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%B3%95/" style="font-size: 13.1px; color: #fff">二分法</a> <a href="/tags/%E4%BC%AA%E5%A4%B4%E8%8A%82%E7%82%B9/" style="font-size: 13px; color: #fff">伪头节点</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.2px; color: #fff">位运算</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.1px; color: #fff">其他</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" style="font-size: 13px; color: #fff">内置函数</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px; color: #fff">动态规划</a> <a href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" style="font-size: 13px; color: #fff">单调栈</a> <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">单调队列</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13.5px; color: #fff">双指针</a> <a href="/tags/%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">双端队列</a> <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" style="font-size: 13.4px; color: #fff">哈希表</a> <a href="/tags/%E5%A4%9A%E6%8C%87%E9%92%88/" style="font-size: 13.4px; color: #fff">多指针</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 13.1px; color: #fff">字符串</a> <a href="/tags/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/" style="font-size: 13px; color: #fff">归并排序</a> <a href="/tags/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" style="font-size: 13.1px; color: #fff">快慢指针</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/" style="font-size: 13px; color: #fff">快速幂</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.3px; color: #fff">排序</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" style="font-size: 14px; color: #fff">推荐系统基础</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 13.3px; color: #fff">数学</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13.7px; color: #fff">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13.1px; color: #fff">最小堆</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" style="font-size: 13.8px; color: #fff">机器学习基础</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" style="font-size: 13.1px; color: #fff">机器学习基础实战</a> <a href="/tags/%E6%9F%A5%E6%89%BE/" style="font-size: 13px; color: #fff">查找</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px; color: #fff">栈</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 13px; color: #fff">滑动窗口</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E5%88%97%E8%A1%A8/" style="font-size: 13.1px; color: #fff">辅助列表</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E6%A0%88/" style="font-size: 13.1px; color: #fff">辅助栈</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E7%B4%A0%E7%BB%84/" style="font-size: 13px; color: #fff">辅助素组</a> <a href="/tags/%E8%BE%85%E5%8A%A9%E9%98%9F%E5%88%97/" style="font-size: 13px; color: #fff">辅助队列</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13.3px; color: #fff">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13.6px; color: #fff">链表</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var everytag=document.getElementsByClassName("widget-body tagcloud")[0].children;
+    for (var i = everytag.length - 1; i >= 0; i--) {
+        var r= Math.floor(Math.random()*255);
+        var g= Math.floor(Math.random()*255);
+        var b= Math.floor(Math.random()*255);
+        everytag[i].style.background = "rgb("+r+","+g+","+b+")";
+    }
+</script>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">51</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-shu-fill"></i>最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="36-离线推荐处理&amp;实时推荐" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210710/36-%E7%A6%BB%E7%BA%BF%E6%8E%A8%E8%8D%90%E5%A4%84%E7%90%86-%E5%AE%9E%E6%97%B6%E6%8E%A8%E8%8D%90.html" class="title">36-离线推荐处理&amp;实时推荐</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-10T14:50:29.000Z" itemprop="datePublished">2021-07-10 22:50:29</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210710/35-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-LR-%E5%AE%9E%E7%8E%B0CTR%E9%A2%84%E4%BC%B0.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="35-逻辑回归(LR)实现CTR预估" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210710/35-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-LR-%E5%AE%9E%E7%8E%B0CTR%E9%A2%84%E4%BC%B0.html" class="title">35-逻辑回归(LR)实现CTR预估</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-10T14:49:27.000Z" itemprop="datePublished">2021-07-10 22:49:27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="34-CTR预估数据准备" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="title">34-CTR预估数据准备</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-10T14:47:02.000Z" itemprop="datePublished">2021-07-10 22:47:02</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210709/12-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="12-二叉树的路径问题汇总" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210709/12-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB.html" class="title">12-二叉树的路径问题汇总</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-09T13:51:32.000Z" itemprop="datePublished">2021-07-09 21:51:32</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210405011431.jpg)" alt="02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><i class="icon icon-angle-right"></i><a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210709/02-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98%E4%B9%8B%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BAALS%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%8F%AC%E5%9B%9E%E5%95%86%E5%93%81.html" class="title">02-推荐系统实战之根据用户行为数据创建ALS模型并召回商品</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-08T17:00:30.000Z" itemprop="datePublished">2021-07-09 01:00:30</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87"><span class="toc-text">CTR预估数据准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%86%E6%9E%90%E5%B9%B6%E9%A2%84%E5%A4%84%E7%90%86raw-sample%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-text">1. 分析并预处理raw_sample数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%88%92%E5%88%86%E8%AE%AD%E7%BB%83%E9%9B%86%E5%92%8C%E6%B5%8B%E8%AF%95%E9%9B%86"><span class="toc-text">2. 划分训练集和测试集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%88%86%E6%9E%90%E5%B9%B6%E9%A2%84%E5%A4%84%E7%90%86ad-feature%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-text">3. 分析并预处理ad_feature数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%88%86%E6%9E%90%E5%B9%B6%E9%A2%84%E5%A4%84%E7%90%86user-profile%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-text">4. 分析并预处理user_profile数据集</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E5%A4%B1%E5%80%BC%E5%A4%84%E7%90%86"><span class="toc-text">缺失值处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97%E9%A2%84%E6%B5%8B%E7%BC%BA%E5%A4%B1%E5%80%BC"><span class="toc-text">利用随机森林预测缺失值</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-34-CTR预估数据准备" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      34-CTR预估数据准备
+    </h1>
+  
+
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar"></i>
+    <a href="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="article-date">
+        发布于<time datetime="2021-07-10T14:47:02.000Z" itemprop="datePublished">
+            2021-07-10 22:47:02
+        </time>
+    </a>
+</span>
+
+<span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+    <a href="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="article-date">
+        更新于<time datetime="2021-07-10T14:48:51.257Z" itemprop="dateUpdated">
+            2021-07-10 22:48:51
+        </time>
+    </a>
+</span>
+
+
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" rel="tag">推荐系统基础</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="leancloud_visitors"  data-flag-title="34-CTR预估数据准备">0</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+	<div style="background-color:#D7BDE2;border:1px solid #D7BDE2;border-radius:10px;padding:5px">
+    		<b>温馨提示</b>：点击页面下方<i style="color:red" class="icon icon-anchor"></i>以展开或折叠目录~
+	</div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="CTR预估数据准备"><a href="#CTR预估数据准备" class="headerlink" title="CTR预估数据准备"></a>CTR预估数据准备</h2><h3 id="1-分析并预处理raw-sample数据集"><a href="#1-分析并预处理raw-sample数据集" class="headerlink" title="1. 分析并预处理raw_sample数据集"></a>1. 分析并预处理raw_sample数据集</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从HDFS中加载样本数据信息</span></span><br><span class="line">df = spark.read.csv(<span class="string">&quot;hdfs://localhost:9000/datasets/raw_sample.csv&quot;</span>, header=<span class="literal">True</span>)</span><br><span class="line">df.show()    <span class="comment"># 展示数据，默认前20条</span></span><br><span class="line">df.printSchema()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">+------+----------+----------+-----------+------+---+</span><br><span class="line">|  user|time_stamp|adgroup_id|        pid|nonclk|clk|</span><br><span class="line">+------+----------+----------+-----------+------+---+</span><br><span class="line">|581738|1494137644|         1|430548_1007|     1|  0|</span><br><span class="line">|449818|1494638778|         3|430548_1007|     1|  0|</span><br><span class="line">|914836|1494650879|         4|430548_1007|     1|  0|</span><br><span class="line">|914836|1494651029|         5|430548_1007|     1|  0|</span><br><span class="line">|399907|1494302958|         8|430548_1007|     1|  0|</span><br><span class="line">|628137|1494524935|         9|430548_1007|     1|  0|</span><br><span class="line">|298139|1494462593|         9|430539_1007|     1|  0|</span><br><span class="line">|775475|1494561036|         9|430548_1007|     1|  0|</span><br><span class="line">|555266|1494307136|        11|430539_1007|     1|  0|</span><br><span class="line">|117840|1494036743|        11|430548_1007|     1|  0|</span><br><span class="line">|739815|1494115387|        11|430539_1007|     1|  0|</span><br><span class="line">|623911|1494625301|        11|430548_1007|     1|  0|</span><br><span class="line">|623911|1494451608|        11|430548_1007|     1|  0|</span><br><span class="line">|421590|1494034144|        11|430548_1007|     1|  0|</span><br><span class="line">|976358|1494156949|        13|430548_1007|     1|  0|</span><br><span class="line">|286630|1494218579|        13|430539_1007|     1|  0|</span><br><span class="line">|286630|1494289247|        13|430539_1007|     1|  0|</span><br><span class="line">|771431|1494153867|        13|430548_1007|     1|  0|</span><br><span class="line">|707120|1494220810|        13|430548_1007|     1|  0|</span><br><span class="line">|530454|1494293746|        13|430548_1007|     1|  0|</span><br><span class="line">+------+----------+----------+-----------+------+---+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br><span class="line">root</span><br><span class="line"> |-- user: string (nullable = true)</span><br><span class="line"> |-- time_stamp: string (nullable = true)</span><br><span class="line"> |-- adgroup_id: string (nullable = true)</span><br><span class="line"> |-- pid: string (nullable = true)</span><br><span class="line"> |-- nonclk: string (nullable = true)</span><br><span class="line"> |-- clk: string (nullable = true)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>分析数据集字段的类型和格式<ul>
+<li>查看是否有空值</li>
+<li>查看每列数据的类型</li>
+<li>查看每列数据的类别情况</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&quot;样本数据集总条目数：&quot;</span>, df.count())</span><br><span class="line"><span class="comment"># 约2600w</span></span><br><span class="line">print(<span class="string">&quot;用户user总数：&quot;</span>, df.groupBy(<span class="string">&quot;user&quot;</span>).count().count())</span><br><span class="line"><span class="comment"># 约 114w，略多余日志数据中用户数</span></span><br><span class="line">print(<span class="string">&quot;广告id adgroup_id总数：&quot;</span>, df.groupBy(<span class="string">&quot;adgroup_id&quot;</span>).count().count())</span><br><span class="line"><span class="comment"># 约85w</span></span><br><span class="line">print(<span class="string">&quot;广告展示位pid情况：&quot;</span>, df.groupBy(<span class="string">&quot;pid&quot;</span>).count().collect())</span><br><span class="line"><span class="comment"># 只有两种广告展示位，占比约为六比四</span></span><br><span class="line">print(<span class="string">&quot;广告点击数据情况clk：&quot;</span>, df.groupBy(<span class="string">&quot;clk&quot;</span>).count().collect())</span><br><span class="line"><span class="comment"># 点和不点比率约： 1:20</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">样本数据集总条目数： 26557961</span><br><span class="line">用户user总数： 1141729</span><br><span class="line">广告id adgroup_id总数： 846811</span><br><span class="line">广告展示位pid情况： [Row(pid=&#x27;430548_1007&#x27;, count=16472898), Row(pid=&#x27;430539_1007&#x27;, count=10085063)]</span><br><span class="line">广告点击数据情况clk： [Row(clk=&#x27;0&#x27;, count=25191905), Row(clk=&#x27;1&#x27;, count=1366056)]</span><br></pre></td></tr></table></figure>
+<p><strong>默认加载进来的schema都是String类型的。修改为我们所需要的格式，并且一些名字给改过来。</strong></p>
+<ul>
+<li>使用dataframe.withColumn更改df列数据结构；使用dataframe.withColumnRenamed更改列名称</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更改表结构，转换为对应的数据类型</span></span><br><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StructType, StructField, IntegerType, FloatType, LongType, StringType</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打印df结构信息</span></span><br><span class="line">df.printSchema()   </span><br><span class="line"><span class="comment"># 更改df表结构：更改列类型和列名称</span></span><br><span class="line">raw_sample_df = df.\</span><br><span class="line">    withColumn(<span class="string">&quot;user&quot;</span>, df.user.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;user&quot;</span>, <span class="string">&quot;userId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;time_stamp&quot;</span>, df.time_stamp.cast(LongType())).withColumnRenamed(<span class="string">&quot;time_stamp&quot;</span>, <span class="string">&quot;timestamp&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;adgroup_id&quot;</span>, df.adgroup_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;adgroup_id&quot;</span>, <span class="string">&quot;adgroupId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;pid&quot;</span>, df.pid.cast(StringType())).\</span><br><span class="line">    withColumn(<span class="string">&quot;nonclk&quot;</span>, df.nonclk.cast(IntegerType())).\</span><br><span class="line">    withColumn(<span class="string">&quot;clk&quot;</span>, df.clk.cast(IntegerType()))</span><br><span class="line">raw_sample_df.printSchema()</span><br><span class="line">raw_sample_df.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">root</span><br><span class="line"> |-- user: string (nullable = true)</span><br><span class="line"> |-- time_stamp: string (nullable = true)</span><br><span class="line"> |-- adgroup_id: string (nullable = true)</span><br><span class="line"> |-- pid: string (nullable = true)</span><br><span class="line"> |-- nonclk: string (nullable = true)</span><br><span class="line"> |-- clk: string (nullable = true)</span><br><span class="line"></span><br><span class="line">root</span><br><span class="line"> |-- userId: integer (nullable = true)</span><br><span class="line"> |-- timestamp: long (nullable = true)</span><br><span class="line"> |-- adgroupId: integer (nullable = true)</span><br><span class="line"> |-- pid: string (nullable = true)</span><br><span class="line"> |-- nonclk: integer (nullable = true)</span><br><span class="line"> |-- clk: integer (nullable = true)</span><br><span class="line"></span><br><span class="line">+------+----------+---------+-----------+------+---+</span><br><span class="line">|userId| timestamp|adgroupId|        pid|nonclk|clk|</span><br><span class="line">+------+----------+---------+-----------+------+---+</span><br><span class="line">|581738|1494137644|        1|430548_1007|     1|  0|</span><br><span class="line">|449818|1494638778|        3|430548_1007|     1|  0|</span><br><span class="line">|914836|1494650879|        4|430548_1007|     1|  0|</span><br><span class="line">|914836|1494651029|        5|430548_1007|     1|  0|</span><br><span class="line">|399907|1494302958|        8|430548_1007|     1|  0|</span><br><span class="line">|628137|1494524935|        9|430548_1007|     1|  0|</span><br><span class="line">|298139|1494462593|        9|430539_1007|     1|  0|</span><br><span class="line">|775475|1494561036|        9|430548_1007|     1|  0|</span><br><span class="line">|555266|1494307136|       11|430539_1007|     1|  0|</span><br><span class="line">|117840|1494036743|       11|430548_1007|     1|  0|</span><br><span class="line">|739815|1494115387|       11|430539_1007|     1|  0|</span><br><span class="line">|623911|1494625301|       11|430548_1007|     1|  0|</span><br><span class="line">|623911|1494451608|       11|430548_1007|     1|  0|</span><br><span class="line">|421590|1494034144|       11|430548_1007|     1|  0|</span><br><span class="line">|976358|1494156949|       13|430548_1007|     1|  0|</span><br><span class="line">|286630|1494218579|       13|430539_1007|     1|  0|</span><br><span class="line">|286630|1494289247|       13|430539_1007|     1|  0|</span><br><span class="line">|771431|1494153867|       13|430548_1007|     1|  0|</span><br><span class="line">|707120|1494220810|       13|430548_1007|     1|  0|</span><br><span class="line">|530454|1494293746|       13|430548_1007|     1|  0|</span><br><span class="line">+------+----------+---------+-----------+------+---+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<p><strong>数据有了，接下来进行特征相关的操作。</strong></p>
+<ul>
+<li><p>特征选取（Feature Selection）</p>
+<ul>
+<li><p>特征选择就是选择那些靠谱的Feature，去掉冗余的Feature，对于搜索广告，Query关键词和广告的匹配程度很重要；但对于展示广告，广告本身的历史表现，往往是最重要的Feature。</p>
+<p>根据经验，该数据集中，只有广告展示位pid对比较重要，且数据不同数据之间的占比约为6:4，因此pid可以作为一个关键特征</p>
+<p>nonclk和clk在这里是作为目标值，不做为特征</p>
+</li>
+</ul>
+</li>
+<li><p>热独编码 OneHotEncode</p>
+<ul>
+<li><p>热独编码是一种经典编码，是使用N位状态寄存器(如0和1)来对N个状态进行编码，每个状态都由他独立的寄存器位，并且在任意时候，其中只有一位有效。</p>
+<p>假设有三组特征，分别表示年龄，城市，设备；</p>
+<p>[“男”, “女”][0,1]</p>
+<p>[“北京”, “上海”, “广州”][0,1,2]</p>
+<p>[“苹果”, “小米”, “华为”, “微软”][0,1,2,3]</p>
+<p>传统变化： 对每一组特征，使用枚举类型，从0开始；</p>
+<p>[“男“，”上海“，”小米“]=[ 0,1,1]</p>
+<p>[“女“，”北京“，”苹果“] =[1,0,0]</p>
+<p>传统变化后的数据不是连续的，而是随机分配的，不容易应用在分类器中</p>
+<p>而经过热独编码，数据会变成稀疏的，方便分类器处理：</p>
+<p>[“男“，”上海“，”小米“]=[ 1,0,0,1,0,0,1,0,0]</p>
+<p>[“女“，”北京“，”苹果“] =[0,1,1,0,0,1,0,0,0]</p>
+<p>这样做保留了特征的多样性，但是也要注意如果数据过于稀疏(样本较少、维度过高)，其效果反而会变差</p>
+</li>
+</ul>
+</li>
+<li><p>Spark中使用热独编码</p>
+<ul>
+<li><p><strong>注意：热编码只能对字符串类型的列数据进行处理</strong></p>
+<p><a target="_blank" rel="noopener" href="https://spark.apache.org/docs/latest/api/python/pyspark.ml.html?highlight=stringindexer#pyspark.ml.feature.StringIndexer">StringIndexer</a>：对指定字符串列数据进行特征处理，如将性别数据“男”、“女”转化为0和1</p>
+<p><a target="_blank" rel="noopener" href="https://spark.apache.org/docs/latest/api/python/pyspark.ml.html?highlight=onehotencoder#pyspark.ml.feature.OneHotEncoder">OneHotEncoder</a>：对特征列数据，进行热编码，通常需结合StringIndexer一起使用</p>
+<p><a target="_blank" rel="noopener" href="https://spark.apache.org/docs/latest/api/python/pyspark.ml.html?highlight=pipeline#pyspark.ml.Pipeline">Pipeline</a>：让数据按顺序依次被处理，将前一次的处理结果作为下一次的输入</p>
+</li>
+</ul>
+</li>
+<li><p>特征处理</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;特征处理&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">pid 资源位。该特征属于分类特征，只有两类取值，因此考虑进行热编码处理即可，分为是否在资源位1、是否在资源位2 两个特征</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">from</span> pyspark.ml.feature <span class="keyword">import</span> OneHotEncoder</span><br><span class="line"><span class="keyword">from</span> pyspark.ml.feature <span class="keyword">import</span> StringIndexer <span class="comment"># 对指定字符串列数据进行特征处理，如将性别数据“男”、“女”转化为0和1</span></span><br><span class="line"><span class="keyword">from</span> pyspark.ml <span class="keyword">import</span> Pipeline</span><br><span class="line"></span><br><span class="line"><span class="comment"># StringIndexer对指定字符串列进行特征处理，利用StringIndexer 把字符串类别转换成 0 1 2 数值类别</span></span><br><span class="line">stringindexer = StringIndexer(inputCol=<span class="string">&#x27;pid&#x27;</span>, outputCol=<span class="string">&#x27;pid_feature&#x27;</span>)</span><br><span class="line">string_model = stringIndexer.fit(raw_sample_df)</span><br><span class="line">stringIndex_result = string_model.transform(raw_sample_df)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对处理出来的特征处理列进行，热独编码，利用OneHotEncoder 在stringIndexer的基础上 获取onehot编码</span></span><br><span class="line">encoder = OneHotEncoder(dropLast=<span class="literal">False</span>, inputCol=<span class="string">&#x27;pid_feature&#x27;</span>, outputCol=<span class="string">&#x27;pid_value&#x27;</span>) <span class="comment"># dropLast=False会把最后一去掉，用其余表示最后一个。</span></span><br><span class="line">result = encoder.transform(stringIndex_result) <span class="comment">#不需要fit，直接transform</span></span><br><span class="line"><span class="comment"># (2,[0],[1.0]) 表示两个维度，第0个维度为 1.0，Spark表示稀疏向量的方式。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 利用管道对每一个数据进行热独编码处理 ——（若处理步骤比较多，可以用pipline减少代码量。）</span></span><br><span class="line">pipeline = Pipeline(stages=[stringindexer, encoder])</span><br><span class="line">pipeline_model = pipeline.fit(raw_sample_df)</span><br><span class="line">new_df = pipeline_model.transform(raw_sample_df)</span><br><span class="line">new_df.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">+------+----------+---------+-----------+------+---+-----------+-------------+</span><br><span class="line">|userId| timestamp|adgroupId|        pid|nonclk|clk|pid_feature|    pid_value|</span><br><span class="line">+------+----------+---------+-----------+------+---+-----------+-------------+</span><br><span class="line">|581738|1494137644|        1|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|449818|1494638778|        3|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|914836|1494650879|        4|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|914836|1494651029|        5|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|399907|1494302958|        8|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|628137|1494524935|        9|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|298139|1494462593|        9|430539_1007|     1|  0|        1.0|(2,[1],[1.0])|</span><br><span class="line">|775475|1494561036|        9|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|555266|1494307136|       11|430539_1007|     1|  0|        1.0|(2,[1],[1.0])|</span><br><span class="line">|117840|1494036743|       11|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|739815|1494115387|       11|430539_1007|     1|  0|        1.0|(2,[1],[1.0])|</span><br><span class="line">|623911|1494625301|       11|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|623911|1494451608|       11|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|421590|1494034144|       11|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|976358|1494156949|       13|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|286630|1494218579|       13|430539_1007|     1|  0|        1.0|(2,[1],[1.0])|</span><br><span class="line">|286630|1494289247|       13|430539_1007|     1|  0|        1.0|(2,[1],[1.0])|</span><br><span class="line">|771431|1494153867|       13|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|707120|1494220810|       13|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|530454|1494293746|       13|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">+------+----------+---------+-----------+------+---+-----------+-------------+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>返回字段pid_value是一个稀疏向量类型数据 <a target="_blank" rel="noopener" href="https://spark.apache.org/docs/latest/api/python/pyspark.ml.html?highlight=sparse#pyspark.ml.linalg.SparseVector">pyspark.ml.linalg.SparseVector</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.ml.linalg <span class="keyword">import</span> SparseVector</span><br><span class="line"><span class="comment"># 参数：维度、索引列表、值列表</span></span><br><span class="line">print(SparseVector(<span class="number">4</span>, [<span class="number">1</span>, <span class="number">3</span>], [<span class="number">3.0</span>, <span class="number">4.0</span>]))</span><br><span class="line">print(SparseVector(<span class="number">4</span>, [<span class="number">1</span>, <span class="number">3</span>], [<span class="number">3.0</span>, <span class="number">4.0</span>]).toArray())</span><br><span class="line">print(<span class="string">&quot;*********&quot;</span>)</span><br><span class="line">print(new_df.select(<span class="string">&quot;pid_value&quot;</span>).first())</span><br><span class="line">print(new_df.select(<span class="string">&quot;pid_value&quot;</span>).first().pid_value.toArray())</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(4,[1,3],[3.0,4.0])</span><br><span class="line">[0. 3. 0. 4.]</span><br><span class="line">*********</span><br><span class="line">Row(pid_value&#x3D;SparseVector(2, &#123;0: 1.0&#125;))</span><br><span class="line">[1. 0.]</span><br></pre></td></tr></table></figure>
+<h3 id="2-划分训练集和测试集"><a href="#2-划分训练集和测试集" class="headerlink" title="2. 划分训练集和测试集"></a>2. 划分训练集和测试集</h3><ul>
+<li>查看最大时间</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new_df.sort(<span class="string">&quot;timestamp&quot;</span>, ascending=<span class="literal">False</span>).show()</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+------+----------+---------+-----------+------+---+-----------+-------------+</span><br><span class="line">|userId| timestamp|adgroupId|        pid|nonclk|clk|pid_feature|    pid_value|</span><br><span class="line">+------+----------+---------+-----------+------+---+-----------+-------------+</span><br><span class="line">|177002|1494691186|   593001|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|243671|1494691186|   600195|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|488527|1494691184|   494312|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|488527|1494691184|   431082|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">| 17054|1494691184|   742741|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">| 17054|1494691184|   756665|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|488527|1494691184|   687854|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|839493|1494691183|   561681|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|704223|1494691183|   624504|430539_1007|     1|  0|        1.0|(2,[1],[1.0])|</span><br><span class="line">|839493|1494691183|   582235|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|704223|1494691183|   675674|430539_1007|     1|  0|        1.0|(2,[1],[1.0])|</span><br><span class="line">|628998|1494691180|   618965|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|674444|1494691179|   427579|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|627200|1494691179|   782038|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|627200|1494691179|   420769|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|674444|1494691179|   588664|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|738335|1494691179|   451004|430539_1007|     1|  0|        1.0|(2,[1],[1.0])|</span><br><span class="line">|627200|1494691179|   817569|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|322244|1494691179|   820018|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">|322244|1494691179|   735220|430548_1007|     1|  0|        0.0|(2,[0],[1.0])|</span><br><span class="line">+------+----------+---------+-----------+------+---+-----------+-------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 本样本数据集共计8天数据</span></span><br><span class="line"><span class="comment"># 前七天为训练数据、最后一天为测试数据</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line">datetime.fromtimestamp(<span class="number">1494691186</span>)</span><br><span class="line">print(<span class="string">&quot;该时间之前的数据为训练样本，该时间以后的数据为测试样本：&quot;</span>, datetime.fromtimestamp(<span class="number">1494691186</span>-<span class="number">24</span>*<span class="number">60</span>*<span class="number">60</span>))</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">datetime.datetime(<span class="number">2017</span>, <span class="number">5</span>, <span class="number">12</span>, <span class="number">23</span>, <span class="number">59</span>, <span class="number">46</span>)</span><br></pre></td></tr></table></figure>
+<p>该时间之前的数据为训练样本，该时间以后的数据为测试样本： 2017-05-12 23:59:46</p>
+<ul>
+<li>训练样本</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练样本：</span></span><br><span class="line">train_sample = raw_sample_df.<span class="built_in">filter</span>(raw_sample_df.timestamp&lt;=(<span class="number">1494691186</span>-<span class="number">24</span>*<span class="number">60</span>*<span class="number">60</span>))</span><br><span class="line">print(<span class="string">&quot;训练样本个数：&quot;</span>)</span><br><span class="line">print(train_sample.count())</span><br><span class="line"><span class="comment"># 测试样本</span></span><br><span class="line">test_sample = raw_sample_df.<span class="built_in">filter</span>(raw_sample_df.timestamp&gt;(<span class="number">1494691186</span>-<span class="number">24</span>*<span class="number">60</span>*<span class="number">60</span>))</span><br><span class="line">print(<span class="string">&quot;测试样本个数：&quot;</span>)</span><br><span class="line">print(test_sample.count())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意：还需要加入广告基本特征和用户基本特征才能做程一份完整的样本数据集</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">训练样本个数：</span><br><span class="line">23249291</span><br><span class="line">测试样本个数：</span><br><span class="line">3308670</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="3-分析并预处理ad-feature数据集"><a href="#3-分析并预处理ad-feature数据集" class="headerlink" title="3. 分析并预处理ad_feature数据集"></a>3. 分析并预处理ad_feature数据集</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从HDFS中加载广告基本信息数据，返回spark dafaframe对象</span></span><br><span class="line">df = spark.read.csv(<span class="string">&quot;hdfs://localhost:9000/datasets/ad_feature.csv&quot;</span>, header=<span class="literal">True</span>)</span><br><span class="line">df.show()    <span class="comment"># 展示数据，默认前20条</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+----------+-------+-----------+--------+------+-----+</span><br><span class="line">|adgroup_id|cate_id|campaign_id|customer| brand|price|</span><br><span class="line">+----------+-------+-----------+--------+------+-----+</span><br><span class="line">|     63133|   6406|      83237|       1| 95471|170.0|</span><br><span class="line">|    313401|   6406|      83237|       1| 87331|199.0|</span><br><span class="line">|    248909|    392|      83237|       1| 32233| 38.0|</span><br><span class="line">|    208458|    392|      83237|       1|174374|139.0|</span><br><span class="line">|    110847|   7211|     135256|       2|145952|32.99|</span><br><span class="line">|    607788|   6261|     387991|       6|207800|199.0|</span><br><span class="line">|    375706|   4520|     387991|       6|  NULL| 99.0|</span><br><span class="line">|     11115|   7213|     139747|       9|186847| 33.0|</span><br><span class="line">|     24484|   7207|     139744|       9|186847| 19.0|</span><br><span class="line">|     28589|   5953|     395195|      13|  NULL|428.0|</span><br><span class="line">|     23236|   5953|     395195|      13|  NULL|368.0|</span><br><span class="line">|    300556|   5953|     395195|      13|  NULL|639.0|</span><br><span class="line">|     92560|   5953|     395195|      13|  NULL|368.0|</span><br><span class="line">|    590965|   4284|      28145|      14|454237|249.0|</span><br><span class="line">|    529913|   4284|      70206|      14|  NULL|249.0|</span><br><span class="line">|    546930|   4284|      28145|      14|  NULL|249.0|</span><br><span class="line">|    639794|   6261|      70206|      14| 37004| 89.9|</span><br><span class="line">|    335413|   4284|      28145|      14|  NULL|249.0|</span><br><span class="line">|    794890|   4284|      70206|      14|454237|249.0|</span><br><span class="line">|    684020|   6261|      70206|      14| 37004| 99.0|</span><br><span class="line">+----------+-------+-----------+--------+------+-----+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意：由于本数据集中存在NULL字样的数据，无法直接设置schema，只能先将NULL类型的数据处理掉，然后进行类型转换</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StructType, StructField, IntegerType, FloatType</span><br><span class="line"></span><br><span class="line"><span class="comment"># 替换掉NULL字符串，替换掉</span></span><br><span class="line">df = df.replace(<span class="string">&quot;NULL&quot;</span>, <span class="string">&quot;-1&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打印df结构信息</span></span><br><span class="line">df.printSchema()   </span><br><span class="line"><span class="comment"># 更改df表结构：更改列类型和列名称</span></span><br><span class="line">ad_feature_df = df.\</span><br><span class="line">    withColumn(<span class="string">&quot;adgroup_id&quot;</span>, df.adgroup_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;adgroup_id&quot;</span>, <span class="string">&quot;adgroupId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;cate_id&quot;</span>, df.cate_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;cate_id&quot;</span>, <span class="string">&quot;cateId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;campaign_id&quot;</span>, df.campaign_id.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;campaign_id&quot;</span>, <span class="string">&quot;campaignId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;customer&quot;</span>, df.customer.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;customer&quot;</span>, <span class="string">&quot;customerId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;brand&quot;</span>, df.brand.cast(IntegerType())).withColumnRenamed(<span class="string">&quot;brand&quot;</span>, <span class="string">&quot;brandId&quot;</span>).\</span><br><span class="line">    withColumn(<span class="string">&quot;price&quot;</span>, df.price.cast(FloatType()))</span><br><span class="line">ad_feature_df.printSchema()</span><br><span class="line">ad_feature_df.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">root</span><br><span class="line"> |-- adgroup_id: string (nullable = true)</span><br><span class="line"> |-- cate_id: string (nullable = true)</span><br><span class="line"> |-- campaign_id: string (nullable = true)</span><br><span class="line"> |-- customer: string (nullable = true)</span><br><span class="line"> |-- brand: string (nullable = true)</span><br><span class="line"> |-- price: string (nullable = true)</span><br><span class="line"></span><br><span class="line">root</span><br><span class="line"> |-- adgroupId: integer (nullable = true)</span><br><span class="line"> |-- cateId: integer (nullable = true)</span><br><span class="line"> |-- campaignId: integer (nullable = true)</span><br><span class="line"> |-- customerId: integer (nullable = true)</span><br><span class="line"> |-- brandId: integer (nullable = true)</span><br><span class="line"> |-- price: float (nullable = true)</span><br><span class="line"></span><br><span class="line">+---------+------+----------+----------+-------+-----+</span><br><span class="line">|adgroupId|cateId|campaignId|customerId|brandId|price|</span><br><span class="line">+---------+------+----------+----------+-------+-----+</span><br><span class="line">|    63133|  6406|     83237|         1|  95471|170.0|</span><br><span class="line">|   313401|  6406|     83237|         1|  87331|199.0|</span><br><span class="line">|   248909|   392|     83237|         1|  32233| 38.0|</span><br><span class="line">|   208458|   392|     83237|         1| 174374|139.0|</span><br><span class="line">|   110847|  7211|    135256|         2| 145952|32.99|</span><br><span class="line">|   607788|  6261|    387991|         6| 207800|199.0|</span><br><span class="line">|   375706|  4520|    387991|         6|     -1| 99.0|</span><br><span class="line">|    11115|  7213|    139747|         9| 186847| 33.0|</span><br><span class="line">|    24484|  7207|    139744|         9| 186847| 19.0|</span><br><span class="line">|    28589|  5953|    395195|        13|     -1|428.0|</span><br><span class="line">|    23236|  5953|    395195|        13|     -1|368.0|</span><br><span class="line">|   300556|  5953|    395195|        13|     -1|639.0|</span><br><span class="line">|    92560|  5953|    395195|        13|     -1|368.0|</span><br><span class="line">|   590965|  4284|     28145|        14| 454237|249.0|</span><br><span class="line">|   529913|  4284|     70206|        14|     -1|249.0|</span><br><span class="line">|   546930|  4284|     28145|        14|     -1|249.0|</span><br><span class="line">|   639794|  6261|     70206|        14|  37004| 89.9|</span><br><span class="line">|   335413|  4284|     28145|        14|     -1|249.0|</span><br><span class="line">|   794890|  4284|     70206|        14| 454237|249.0|</span><br><span class="line">|   684020|  6261|     70206|        14|  37004| 99.0|</span><br><span class="line">+---------+------+----------+----------+-------+-----+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<ul>
+<li>查看各项数据的特征</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&quot;总广告条数：&quot;</span>,df.count())   <span class="comment"># 数据条数</span></span><br><span class="line">_1 = ad_feature_df.groupBy(<span class="string">&quot;cateId&quot;</span>).count().count()</span><br><span class="line">print(<span class="string">&quot;cateId数值个数：&quot;</span>, _1)</span><br><span class="line">_2 = ad_feature_df.groupBy(<span class="string">&quot;campaignId&quot;</span>).count().count()</span><br><span class="line">print(<span class="string">&quot;campaignId数值个数：&quot;</span>, _2)</span><br><span class="line">_3 = ad_feature_df.groupBy(<span class="string">&quot;customerId&quot;</span>).count().count()</span><br><span class="line">print(<span class="string">&quot;customerId数值个数：&quot;</span>, _3)</span><br><span class="line">_4 = ad_feature_df.groupBy(<span class="string">&quot;brandId&quot;</span>).count().count()</span><br><span class="line">print(<span class="string">&quot;brandId数值个数：&quot;</span>, _4)</span><br><span class="line">ad_feature_df.sort(<span class="string">&quot;price&quot;</span>).show()</span><br><span class="line">ad_feature_df.sort(<span class="string">&quot;price&quot;</span>, ascending=<span class="literal">False</span>).show()</span><br><span class="line">print(<span class="string">&quot;价格高于1w的条目个数：&quot;</span>, ad_feature_df.select(<span class="string">&quot;price&quot;</span>).<span class="built_in">filter</span>(<span class="string">&quot;price&gt;10000&quot;</span>).count())</span><br><span class="line">print(<span class="string">&quot;价格低于1的条目个数&quot;</span>, ad_feature_df.select(<span class="string">&quot;price&quot;</span>).<span class="built_in">filter</span>(<span class="string">&quot;price&lt;1&quot;</span>).count())</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">总广告条数： 846811</span><br><span class="line">cateId数值个数： 6769</span><br><span class="line">campaignId数值个数： 423436</span><br><span class="line">customerId数值个数： 255875</span><br><span class="line">brandId数值个数： 99815</span><br><span class="line">+---------+------+----------+----------+-------+-----+</span><br><span class="line">|adgroupId|cateId|campaignId|customerId|brandId|price|</span><br><span class="line">+---------+------+----------+----------+-------+-----+</span><br><span class="line">|   485749|  9970|    352666|    140520|     -1| 0.01|</span><br><span class="line">|    88975|  9996|    198424|    182415|     -1| 0.01|</span><br><span class="line">|   109704| 10539|     59774|     90351| 202710| 0.01|</span><br><span class="line">|    49911|  7032|    129079|    172334|     -1| 0.01|</span><br><span class="line">|   339334|  9994|    310408|    211292| 383023| 0.01|</span><br><span class="line">|     6636|  6703|    392038|     46239| 406713| 0.01|</span><br><span class="line">|    92241|  6130|     72781|    149714|     -1| 0.01|</span><br><span class="line">|    20397| 10539|    410958|     65726|  79971| 0.01|</span><br><span class="line">|   345870|  9995|    179595|    191036|  79971| 0.01|</span><br><span class="line">|    77797|  9086|    218276|     31183|     -1| 0.01|</span><br><span class="line">|    14435|  1136|    135610|     17788|     -1| 0.01|</span><br><span class="line">|    42055|  9994|     43866|    113068| 123242| 0.01|</span><br><span class="line">|    41925|  7032|     85373|    114532|     -1| 0.01|</span><br><span class="line">|    67558|  9995|     90141|     83948|     -1| 0.01|</span><br><span class="line">|   149570|  7043|    126746|    176076|     -1| 0.01|</span><br><span class="line">|   518883|  7185|    403318|     58013|     -1| 0.01|</span><br><span class="line">|     2246|  9996|    413653|     60214| 182966| 0.01|</span><br><span class="line">|   290675|  4824|    315371|    240984|     -1| 0.01|</span><br><span class="line">|   552638| 10305|    403318|     58013|     -1| 0.01|</span><br><span class="line">|    89831| 10539|     90141|     83948| 211816| 0.01|</span><br><span class="line">+---------+------+----------+----------+-------+-----+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br><span class="line">+---------+------+----------+----------+-------+-----------+</span><br><span class="line">|adgroupId|cateId|campaignId|customerId|brandId|      price|</span><br><span class="line">+---------+------+----------+----------+-------+-----------+</span><br><span class="line">|   658722|  1093|    218101|    207754|     -1|      1.0E8|</span><br><span class="line">|   468220|  1093|    270719|    207754|     -1|      1.0E8|</span><br><span class="line">|   179746|  1093|    270027|    102509| 405447|      1.0E8|</span><br><span class="line">|   443295|  1093|     44251|    102509| 300681|      1.0E8|</span><br><span class="line">|    31899|   685|    218918|     31239| 278301|      1.0E8|</span><br><span class="line">|   243384|   685|    218918|     31239| 278301|      1.0E8|</span><br><span class="line">|   554311|  1093|    266086|    207754|     -1|      1.0E8|</span><br><span class="line">|   513942|   745|      8401|     86243|     -1|8.8888888E7|</span><br><span class="line">|   201060|   745|      8401|     86243|     -1|5.5555556E7|</span><br><span class="line">|   289563|   685|     37665|    120847| 278301|      1.5E7|</span><br><span class="line">|    35156|   527|    417722|     72273| 278301|      1.0E7|</span><br><span class="line">|    33756|   527|    416333|     70894|     -1|  9900000.0|</span><br><span class="line">|   335495|   739|    170121|    148946| 326126|  9600000.0|</span><br><span class="line">|   218306|   206|    162394|      4339| 221720|  8888888.0|</span><br><span class="line">|   213567|  7213|    239302|    205612| 406125|  5888888.0|</span><br><span class="line">|   375920|   527|    217512|    148946| 326126|  4760000.0|</span><br><span class="line">|   262215|   527|    132721|     11947| 417898|  3980000.0|</span><br><span class="line">|   154623|   739|    170121|    148946| 326126|  3900000.0|</span><br><span class="line">|   152414|   739|    170121|    148946| 326126|  3900000.0|</span><br><span class="line">|   448651|   527|    422260|     41289| 209959|  3800000.0|</span><br><span class="line">+---------+------+----------+----------+-------+-----------+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br><span class="line">价格高于1w的条目个数： 6527</span><br><span class="line">价格低于1的条目个数 5762</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>特征选择</p>
+<ul>
+<li>品牌有些缺失，我们并没有建立用户和品牌的关系（召回时，我只算了类目）。不考虑</li>
+<li>类别：在召回时已经考虑了，虽说会影响点击结果，但是我们仍不考虑。</li>
+<li>淘客无法从数据体现区别，所以用 price来作为具体特征。</li>
+<li>cateId：脱敏过的商品类目ID；</li>
+</ul>
+</li>
+<li><p>campaignId：脱敏过的广告计划ID；</p>
+<ul>
+<li>customerId:脱敏过的广告主ID；</li>
+</ul>
+</li>
+<li><p>brandId：脱敏过的品牌ID；</p>
+<p>以上四个特征均属于分类特征，但由于分类值个数均过于庞大，如果去做热独编码处理，会导致数据过于稀疏 且当前我们缺少对这些特征更加具体的信息，（如商品类目具体信息、品牌具体信息等），从而无法对这些特征的数据做聚类、降维处理 因此这里不选取它们作为特征</p>
+<p>而只选取price作为特征数据，因为价格本身是一个统计类型连续数值型数据，且能很好的体现广告的价值属性特征，通常也不需要做其他处理(离散化、归一化、标准化等)，所以这里直接将当做特征数据来使用</p>
+</li>
+</ul>
+<h3 id="4-分析并预处理user-profile数据集"><a href="#4-分析并预处理user-profile数据集" class="headerlink" title="4. 分析并预处理user_profile数据集"></a>4. 分析并预处理user_profile数据集</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从HDFS加载用户基本信息数据</span></span><br><span class="line">df = spark.read.csv(<span class="string">&quot;hdfs://localhost:8020/csv/user_profile.csv&quot;</span>, header=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># 发现pvalue_level和new_user_class_level存在空值：（注意此处的null表示空值，而如果是NULL，则往往表示是一个字符串）</span></span><br><span class="line"><span class="comment"># 因此直接利用schema就可以加载进该数据，无需替换null值</span></span><br><span class="line">df.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+---------------------+</span><br><span class="line">|userid|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level |</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+---------------------+</span><br><span class="line">|   234|        0|           5|                2|        5|        null|             3|         0|                    3|</span><br><span class="line">|   523|        5|           2|                2|        2|           1|             3|         1|                    2|</span><br><span class="line">|   612|        0|           8|                1|        2|           2|             3|         0|                 null|</span><br><span class="line">|  1670|        0|           4|                2|        4|        null|             1|         0|                 null|</span><br><span class="line">|  2545|        0|          10|                1|        4|        null|             3|         0|                 null|</span><br><span class="line">|  3644|       49|           6|                2|        6|           2|             3|         0|                    2|</span><br><span class="line">|  5777|       44|           5|                2|        5|           2|             3|         0|                    2|</span><br><span class="line">|  6211|        0|           9|                1|        3|        null|             3|         0|                    2|</span><br><span class="line">|  6355|        2|           1|                2|        1|           1|             3|         0|                    4|</span><br><span class="line">|  6823|       43|           5|                2|        5|           2|             3|         0|                    1|</span><br><span class="line">|  6972|        5|           2|                2|        2|           2|             3|         1|                    2|</span><br><span class="line">|  9293|        0|           5|                2|        5|        null|             3|         0|                    4|</span><br><span class="line">|  9510|       55|           8|                1|        2|           2|             2|         0|                    2|</span><br><span class="line">| 10122|       33|           4|                2|        4|           2|             3|         0|                    2|</span><br><span class="line">| 10549|        0|           4|                2|        4|           2|             3|         0|                 null|</span><br><span class="line">| 10812|        0|           4|                2|        4|        null|             2|         0|                 null|</span><br><span class="line">| 10912|        0|           4|                2|        4|           2|             3|         0|                 null|</span><br><span class="line">| 10996|        0|           5|                2|        5|        null|             3|         0|                    4|</span><br><span class="line">| 11256|        8|           2|                2|        2|           1|             3|         0|                    3|</span><br><span class="line">| 11310|       31|           4|                2|        4|           1|             3|         0|                    4|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+---------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意：这里的null会直接被pyspark识别为None数据，也就是na数据，所以这里可以直接利用schema导入数据</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StructType, StructField, StringType, IntegerType, LongType, FloatType</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建表结构schema对象</span></span><br><span class="line">schema = StructType([</span><br><span class="line">    StructField(<span class="string">&quot;userId&quot;</span>, IntegerType()),  </span><br><span class="line">    StructField(<span class="string">&quot;cms_segid&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;cms_group_id&quot;</span>, IntegerType()),</span><br><span class="line">    StructField(<span class="string">&quot;final_gender_code&quot;</span>, IntegerType()),  <span class="comment"># 性别</span></span><br><span class="line">    StructField(<span class="string">&quot;age_level&quot;</span>, IntegerType()),          <span class="comment"># 年龄范围 </span></span><br><span class="line">    StructField(<span class="string">&quot;pvalue_level&quot;</span>, IntegerType()),       <span class="comment"># 消费档次</span></span><br><span class="line">    StructField(<span class="string">&quot;shopping_level&quot;</span>, IntegerType()),     <span class="comment"># 购物频繁程度</span></span><br><span class="line">    StructField(<span class="string">&quot;occupation&quot;</span>, IntegerType()),         <span class="comment"># 是否是大学生</span></span><br><span class="line">    StructField(<span class="string">&quot;new_user_class_level&quot;</span>, IntegerType()) <span class="comment"># 居住城市水平</span></span><br><span class="line">])</span><br><span class="line"><span class="comment"># 利用schema从hdfs加载</span></span><br><span class="line">user_profile_df = spark.read.csv(<span class="string">&quot;hdfs://localhost:8020/csv/user_profile.csv&quot;</span>, header=<span class="literal">True</span>, schema=schema)</span><br><span class="line">user_profile_df.printSchema()</span><br><span class="line">user_profile_df.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">root</span><br><span class="line"> |-- userId: integer (nullable = true)</span><br><span class="line"> |-- cms_segid: integer (nullable = true)</span><br><span class="line"> |-- cms_group_id: integer (nullable = true)</span><br><span class="line"> |-- final_gender_code: integer (nullable = true)</span><br><span class="line"> |-- age_level: integer (nullable = true)</span><br><span class="line"> |-- pvalue_level: integer (nullable = true)</span><br><span class="line"> |-- shopping_level: integer (nullable = true)</span><br><span class="line"> |-- occupation: integer (nullable = true)</span><br><span class="line"> |-- new_user_class_level: integer (nullable = true)</span><br><span class="line"></span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|userId|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|   234|        0|           5|                2|        5|        null|             3|         0|                   3|</span><br><span class="line">|   523|        5|           2|                2|        2|           1|             3|         1|                   2|</span><br><span class="line">|   612|        0|           8|                1|        2|           2|             3|         0|                null|</span><br><span class="line">|  1670|        0|           4|                2|        4|        null|             1|         0|                null|</span><br><span class="line">|  2545|        0|          10|                1|        4|        null|             3|         0|                null|</span><br><span class="line">|  3644|       49|           6|                2|        6|           2|             3|         0|                   2|</span><br><span class="line">|  5777|       44|           5|                2|        5|           2|             3|         0|                   2|</span><br><span class="line">|  6211|        0|           9|                1|        3|        null|             3|         0|                   2|</span><br><span class="line">|  6355|        2|           1|                2|        1|           1|             3|         0|                   4|</span><br><span class="line">|  6823|       43|           5|                2|        5|           2|             3|         0|                   1|</span><br><span class="line">|  6972|        5|           2|                2|        2|           2|             3|         1|                   2|</span><br><span class="line">|  9293|        0|           5|                2|        5|        null|             3|         0|                   4|</span><br><span class="line">|  9510|       55|           8|                1|        2|           2|             2|         0|                   2|</span><br><span class="line">| 10122|       33|           4|                2|        4|           2|             3|         0|                   2|</span><br><span class="line">| 10549|        0|           4|                2|        4|           2|             3|         0|                null|</span><br><span class="line">| 10812|        0|           4|                2|        4|        null|             2|         0|                null|</span><br><span class="line">| 10912|        0|           4|                2|        4|           2|             3|         0|                null|</span><br><span class="line">| 10996|        0|           5|                2|        5|        null|             3|         0|                   4|</span><br><span class="line">| 11256|        8|           2|                2|        2|           1|             3|         0|                   3|</span><br><span class="line">| 11310|       31|           4|                2|        4|           1|             3|         0|                   4|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<ul>
+<li>显示特征情况</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&quot;分类特征值个数情况: &quot;</span>)</span><br><span class="line">print(<span class="string">&quot;cms_segid: &quot;</span>, user_profile_df.groupBy(<span class="string">&quot;cms_segid&quot;</span>).count().count())</span><br><span class="line">print(<span class="string">&quot;cms_group_id: &quot;</span>, user_profile_df.groupBy(<span class="string">&quot;cms_group_id&quot;</span>).count().count())</span><br><span class="line">print(<span class="string">&quot;final_gender_code: &quot;</span>, user_profile_df.groupBy(<span class="string">&quot;final_gender_code&quot;</span>).count().count())</span><br><span class="line">print(<span class="string">&quot;age_level: &quot;</span>, user_profile_df.groupBy(<span class="string">&quot;age_level&quot;</span>).count().count())</span><br><span class="line">print(<span class="string">&quot;shopping_level: &quot;</span>, user_profile_df.groupBy(<span class="string">&quot;shopping_level&quot;</span>).count().count())</span><br><span class="line">print(<span class="string">&quot;occupation: &quot;</span>, user_profile_df.groupBy(<span class="string">&quot;occupation&quot;</span>).count().count())</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;含缺失值的特征情况: &quot;</span>)</span><br><span class="line">user_profile_df.groupBy(<span class="string">&quot;pvalue_level&quot;</span>).count().show()</span><br><span class="line">user_profile_df.groupBy(<span class="string">&quot;new_user_class_level&quot;</span>).count().show()</span><br><span class="line"></span><br><span class="line">t_count = user_profile_df.count()</span><br><span class="line">pl_na_count = t_count - user_profile_df.dropna(subset=[<span class="string">&quot;pvalue_level&quot;</span>]).count()</span><br><span class="line">print(<span class="string">&quot;pvalue_level的空值情况：&quot;</span>, pl_na_count, <span class="string">&quot;空值占比：%0.2f%%&quot;</span>%(pl_na_count/t_count*<span class="number">100</span>))</span><br><span class="line">nul_na_count = t_count - user_profile_df.dropna(subset=[<span class="string">&quot;new_user_class_level&quot;</span>]).count()</span><br><span class="line">print(<span class="string">&quot;new_user_class_level的空值情况：&quot;</span>, nul_na_count, <span class="string">&quot;空值占比：%0.2f%%&quot;</span>%(nul_na_count/t_count*<span class="number">100</span>))</span><br></pre></td></tr></table></figure>
+<p>显示内容:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">分类特征值个数情况: </span><br><span class="line">cms_segid:  97</span><br><span class="line">cms_group_id:  13</span><br><span class="line">final_gender_code:  2</span><br><span class="line">age_level:  7</span><br><span class="line">shopping_level:  3</span><br><span class="line">occupation:  2</span><br><span class="line">含缺失值的特征情况: </span><br><span class="line">+------------+------+</span><br><span class="line">|pvalue_level| count|</span><br><span class="line">+------------+------+</span><br><span class="line">|        null|575917|</span><br><span class="line">|           1|154436|</span><br><span class="line">|           3| 37759|</span><br><span class="line">|           2|293656|</span><br><span class="line">+------------+------+</span><br><span class="line"></span><br><span class="line">+--------------------+------+</span><br><span class="line">|new_user_class_level| count|</span><br><span class="line">+--------------------+------+</span><br><span class="line">|                null|344920|</span><br><span class="line">|                   1| 80548|</span><br><span class="line">|                   3|173047|</span><br><span class="line">|                   4|138833|</span><br><span class="line">|                   2|324420|</span><br><span class="line">+--------------------+------+</span><br><span class="line"></span><br><span class="line">pvalue_level的空值情况： 575917 空值占比：54.24%</span><br><span class="line">new_user_class_level的空值情况： 344920 空值占比：32.49%</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>缺失值处理</p>
+<ul>
+<li><p>注意，一般情况下：</p>
+<ul>
+<li>缺失率低于10%：可直接进行相应的填充，如默认值、均值、算法拟合等等；</li>
+<li>高于10%：往往会考虑舍弃该特征</li>
+<li>特征处理，如1维转多维</li>
+</ul>
+<p>但根据我们的经验，我们的广告推荐其实和用户的消费水平、用户所在城市等级都有比较大的关联，因此在这里pvalue_level、new_user_class_level都是比较重要的特征，我们不考虑舍弃</p>
+</li>
+</ul>
+</li>
+<li><p>缺失值处理方案：</p>
+<ul>
+<li>填充方案：结合用户的其他特征值，利用随机森林算法进行预测；但产生了大量人为构建的数据，一定程度上增加了数据的噪音</li>
+<li>把变量映射到高维空间：如pvalue_level的1维数据，转换成是否1、是否2、是否3、是否缺失的4维数据；这样保证了所有原始数据不变，同时能提高精确度，但这样会导致数据变得比较稀疏，如果样本量很小，反而会导致样本效果较差，因此也不能滥用</li>
+</ul>
+</li>
+<li><p>填充方案</p>
+<ul>
+<li>利用随机森林对pvalue_level的缺失值进行预测</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.mllib.regression <span class="keyword">import</span> LabeledPoint</span><br><span class="line"></span><br><span class="line"><span class="comment"># pyspark.mllib是基于RDD的，需要将数据先转化为RDD,转化时需要有特定的格式.</span></span><br><span class="line"><span class="comment"># 剔除掉缺失值数据，将余下的数据作为训练数据</span></span><br><span class="line"><span class="comment"># user_profile_df.dropna(subset=[&quot;pvalue_level&quot;])： 将pvalue_level中的空值所在行数据剔除后的数据，作为训练样本</span></span><br><span class="line">train_data = user_profile_df.dropna(subset=[<span class="string">&quot;pvalue_level&quot;</span>]).rdd.<span class="built_in">map</span>(</span><br><span class="line">    <span class="keyword">lambda</span> r:LabeledPoint(r.pvalue_level-<span class="number">1</span>, [r.cms_segid, r.cms_group_id, r.final_gender_code, r.age_level, r.shopping_level, r.occupation]) <span class="comment"># 目标值是从1开始。要求是从零开始，所以减一。</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意随机森林输入数据时，由于label的分类数是从0开始的，但pvalue_level的目前只分别是1，2，3，所以需要对应分别-1来作为目标值</span></span><br><span class="line"><span class="comment"># 自然那么最终得出预测值后，需要对应+1才能还原回来</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们使用cms_segid, cms_group_id, final_gender_code, age_level, shopping_level, occupation作为特征值，pvalue_level作为目标值</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>Labeled point</li>
+</ul>
+<p>A labeled point is a local vector, either dense or sparse, associated with a label/response. In MLlib, labeled points are used in supervised learning algorithms. We use a double to store a label, so we can use labeled points in both regression and classification. For binary classification, a label should be either 0 (negative) or 1 (positive). For multiclass classification, labels should be class indices starting from zero: 0, 1, 2, ….<br>标记点是与标签/响应相关联的密集或稀疏的局部矢量。在MLlib中，标记点用于监督学习算法。我们使用double来存储标签，因此我们可以在回归和分类中使用标记点。对于二分类，标签应为0（负）或1（正）。对于多类分类，标签应该是从零开始的类索引：0, 1, 2, …。</p>
+<p><strong>Python</strong><br>A labeled point is represented by LabeledPoint.<br>标记点表示为 LabeledPoint。<br>Refer to the LabeledPoint Python docs for more details on the API.<br>有关API的更多详细信息，请参阅LabeledPointPython文档。</p>
+<p><strong>如何创建LabeledPoint的数据格式呢？这里给个例子！</strong></p>
+<p>每个样本都可以准备一个LabeledPoint，把一堆LabeledPoint交给模型进行处理。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.mllib.linalg <span class="keyword">import</span> SparseVector</span><br><span class="line"><span class="keyword">from</span> pyspark.mllib.regression <span class="keyword">import</span> LabeledPoint</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create a labeled point with a positive label and a dense feature vector.</span></span><br><span class="line">pos = LabeledPoint(<span class="number">1.0</span>, [<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">3.0</span>]) <span class="comment"># 前一个1.0为目标值，后边的列表为特征——此处为稠密表示</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Create a labeled point with a negative label and a sparse feature vector.</span></span><br><span class="line">neg = LabeledPoint(<span class="number">0.0</span>, SparseVector(<span class="number">3</span>, [<span class="number">0</span>, <span class="number">2</span>], [<span class="number">1.0</span>, <span class="number">3.0</span>]))  <span class="comment"># 此处为稀疏的表示</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>随机森林：<a target="_blank" rel="noopener" href="https://spark.apache.org/docs/latest/api/python/pyspark.mllib.html?highlight=randomforest#pyspark.mllib.tree.RandomForest">pyspark.mllib.tree.RandomForest</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.mllib.tree <span class="keyword">import</span> RandomForest</span><br><span class="line"><span class="comment"># 训练分类模型</span></span><br><span class="line"><span class="comment"># 参数1 训练的数据</span></span><br><span class="line"><span class="comment"># 参数2 目标值的分类个数 0,1,2</span></span><br><span class="line"><span class="comment"># 参数3 特征中是否包含分类的特征 &#123;2:2,3:7&#125; &#123;2:2&#125; 表示 在特征中 第三个特征是分类的: 有两个分类</span></span><br><span class="line"><span class="comment"># 参数4 随机森林中 树的棵数</span></span><br><span class="line">model = RandomForest.trainClassifier(train_data, <span class="number">3</span>, &#123;&#125;, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>随机森林模型：<a target="_blank" rel="noopener" href="https://spark.apache.org/docs/latest/api/python/pyspark.mllib.html?highlight=randomforest#pyspark.mllib.tree.RandomForestModel">pyspark.mllib.tree.RandomForestModel</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 预测单个数据</span></span><br><span class="line"><span class="comment"># 注意用法：https://spark.apache.org/docs/latest/api/python/pyspark.mllib.html?highlight=tree%20random#pyspark.mllib.tree.RandomForestModel.predict</span></span><br><span class="line">model.predict([<span class="number">0.0</span>, <span class="number">4.0</span> ,<span class="number">2.0</span> , <span class="number">4.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>])</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.0</span><br></pre></td></tr></table></figure>
+<p>接下来进行有缺失值的预测。</p>
+<ul>
+<li>筛选出缺失值条目</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">pl_na_df = user_profile_df.na.fill(-<span class="number">1</span>).where(<span class="string">&quot;pvalue_level=-1&quot;</span>)</span><br><span class="line">pl_na_df.show(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">row</span>(<span class="params">r</span>):</span></span><br><span class="line">    <span class="keyword">return</span> r.cms_segid, r.cms_group_id, r.final_gender_code, r.age_level, r.shopping_level, r.occupation</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为普通的rdd类型 MLlib都是基于 RDD 的、</span></span><br><span class="line">rdd = pl_na_df.rdd.<span class="built_in">map</span>(row)</span><br><span class="line"><span class="comment"># 预测全部的pvalue_level值:</span></span><br><span class="line">predicts = model.predict(rdd)</span><br><span class="line"><span class="comment"># 查看前20条</span></span><br><span class="line">print(predicts.take(<span class="number">20</span>))</span><br><span class="line">print(<span class="string">&quot;预测值总数&quot;</span>, predicts.count())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里注意predict参数，如果是预测多个，那么参数必须是直接由列表构成的rdd参数，而不能是dataframe.rdd类型</span></span><br><span class="line"><span class="comment"># 因此这里经过map函数处理，将每一行数据转换为普通的列表数据</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|userId|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|   234|        0|           5|                2|        5|          -1|             3|         0|                   3|</span><br><span class="line">|  1670|        0|           4|                2|        4|          -1|             1|         0|                  -1|</span><br><span class="line">|  2545|        0|          10|                1|        4|          -1|             3|         0|                  -1|</span><br><span class="line">|  6211|        0|           9|                1|        3|          -1|             3|         0|                   2|</span><br><span class="line">|  9293|        0|           5|                2|        5|          -1|             3|         0|                   4|</span><br><span class="line">| 10812|        0|           4|                2|        4|          -1|             2|         0|                  -1|</span><br><span class="line">| 10996|        0|           5|                2|        5|          -1|             3|         0|                   4|</span><br><span class="line">| 11602|        0|           5|                2|        5|          -1|             3|         0|                   2|</span><br><span class="line">| 11727|        0|           3|                2|        3|          -1|             3|         0|                   1|</span><br><span class="line">| 12195|        0|          10|                1|        4|          -1|             3|         0|                   2|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">only showing top 10 rows</span><br><span class="line"></span><br><span class="line">[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0]</span><br><span class="line">预测值总数 575917</span><br></pre></td></tr></table></figure>
+<ul>
+<li>转换为pandas dataframe</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这里数据量比较小，直接转换为pandas dataframe来处理，因为方便，但注意如果数据量较大不推荐，因为这样会把全部数据加载到内存中</span></span><br><span class="line">temp = predicts.<span class="built_in">map</span>(<span class="keyword">lambda</span> x:<span class="built_in">int</span>(x)).collect()</span><br><span class="line">pdf = pl_na_df.toPandas()</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"> <span class="comment"># 在pandas df的基础上直接替换掉列数据</span></span><br><span class="line">pdf[<span class="string">&quot;pvalue_level&quot;</span>] = np.array(temp) + <span class="number">1</span>  <span class="comment"># 注意+1 还原预测值（前面减1了。）</span></span><br><span class="line">pdf</span><br></pre></td></tr></table></figure>
+<ul>
+<li>与非缺失数据进行拼接，完成pvalue_level的缺失值预测</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">new_user_profile_df = user_profile_df.dropna(subset=[<span class="string">&quot;pvalue_level&quot;</span>]).unionAll(spark.createDataFrame(pdf, schema=schema))</span><br><span class="line">new_user_profile_df.show()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意：unionAll的使用，两个df的表结构必须完全一样</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|userId|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|   523|        5|           2|                2|        2|           1|             3|         1|                   2|</span><br><span class="line">|   612|        0|           8|                1|        2|           2|             3|         0|                null|</span><br><span class="line">|  3644|       49|           6|                2|        6|           2|             3|         0|                   2|</span><br><span class="line">|  5777|       44|           5|                2|        5|           2|             3|         0|                   2|</span><br><span class="line">|  6355|        2|           1|                2|        1|           1|             3|         0|                   4|</span><br><span class="line">|  6823|       43|           5|                2|        5|           2|             3|         0|                   1|</span><br><span class="line">|  6972|        5|           2|                2|        2|           2|             3|         1|                   2|</span><br><span class="line">|  9510|       55|           8|                1|        2|           2|             2|         0|                   2|</span><br><span class="line">| 10122|       33|           4|                2|        4|           2|             3|         0|                   2|</span><br><span class="line">| 10549|        0|           4|                2|        4|           2|             3|         0|                null|</span><br><span class="line">| 10912|        0|           4|                2|        4|           2|             3|         0|                null|</span><br><span class="line">| 11256|        8|           2|                2|        2|           1|             3|         0|                   3|</span><br><span class="line">| 11310|       31|           4|                2|        4|           1|             3|         0|                   4|</span><br><span class="line">| 11739|       20|           3|                2|        3|           2|             3|         0|                   4|</span><br><span class="line">| 12549|       33|           4|                2|        4|           2|             3|         0|                   2|</span><br><span class="line">| 15155|       36|           5|                2|        5|           2|             1|         0|                null|</span><br><span class="line">| 15347|       20|           3|                2|        3|           2|             3|         0|                   3|</span><br><span class="line">| 15455|        8|           2|                2|        2|           2|             3|         0|                   3|</span><br><span class="line">| 15783|        0|           4|                2|        4|           2|             3|         0|                null|</span><br><span class="line">| 16749|        5|           2|                2|        2|           1|             3|         1|                   4|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<ul>
+<li>利用随机森林对new_user_class_level的缺失值进行预测</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.mllib.regression <span class="keyword">import</span> LabeledPoint</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选出new_user_class_level全部的</span></span><br><span class="line">train_data2 = user_profile_df.dropna(subset=[<span class="string">&quot;new_user_class_level&quot;</span>]).rdd.<span class="built_in">map</span>(</span><br><span class="line">    <span class="keyword">lambda</span> r:LabeledPoint(r.new_user_class_level - <span class="number">1</span>, [r.cms_segid, r.cms_group_id, r.final_gender_code, r.age_level, r.shopping_level, r.occupation])</span><br><span class="line">)</span><br><span class="line"><span class="keyword">from</span> pyspark.mllib.tree <span class="keyword">import</span> RandomForest</span><br><span class="line">model2 = RandomForest.trainClassifier(train_data2, <span class="number">4</span>, &#123;&#125;, <span class="number">5</span>)</span><br><span class="line">model2.predict([<span class="number">0.0</span>, <span class="number">4.0</span> ,<span class="number">2.0</span> , <span class="number">4.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>])</span><br><span class="line"><span class="comment"># 预测值实际应该为2</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.0</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">nul_na_df = user_profile_df.na.fill(-<span class="number">1</span>).where(<span class="string">&quot;new_user_class_level=-1&quot;</span>)</span><br><span class="line">nul_na_df.show(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">row</span>(<span class="params">r</span>):</span></span><br><span class="line">    <span class="keyword">return</span> r.cms_segid, r.cms_group_id, r.final_gender_code, r.age_level, r.shopping_level, r.occupation</span><br><span class="line"></span><br><span class="line">rdd2 = nul_na_df.rdd.<span class="built_in">map</span>(row)</span><br><span class="line">predicts2 = model.predict(rdd2)</span><br><span class="line">predicts2.take(<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>显示结果:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|userId|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|   612|        0|           8|                1|        2|           2|             3|         0|                  -1|</span><br><span class="line">|  1670|        0|           4|                2|        4|          -1|             1|         0|                  -1|</span><br><span class="line">|  2545|        0|          10|                1|        4|          -1|             3|         0|                  -1|</span><br><span class="line">| 10549|        0|           4|                2|        4|           2|             3|         0|                  -1|</span><br><span class="line">| 10812|        0|           4|                2|        4|          -1|             2|         0|                  -1|</span><br><span class="line">| 10912|        0|           4|                2|        4|           2|             3|         0|                  -1|</span><br><span class="line">| 12620|        0|           4|                2|        4|          -1|             2|         0|                  -1|</span><br><span class="line">| 14437|        0|           5|                2|        5|          -1|             3|         0|                  -1|</span><br><span class="line">| 14574|        0|           1|                2|        1|          -1|             2|         0|                  -1|</span><br><span class="line">| 14985|        0|          11|                1|        5|          -1|             2|         0|                  -1|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">only showing top 10 rows</span><br><span class="line"></span><br><span class="line">[1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 0.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 0.0,</span><br><span class="line"> 1.0,</span><br><span class="line"> 0.0,</span><br><span class="line"> 0.0,</span><br><span class="line"> 1.0]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>总结：可以发现由于这两个字段的缺失过多，所以预测出来的值已经大大失真，但如果缺失率在10%以下，这种方法是比较有效的一种</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">user_profile_df = user_profile_df.na.fill(-<span class="number">1</span>)</span><br><span class="line">user_profile_df.show()</span><br><span class="line"><span class="comment"># new_df = new_df.withColumn(&quot;pvalue_level&quot;, new_df.pvalue_level.cast(StringType()))\</span></span><br><span class="line"><span class="comment">#     .withColumn(&quot;new_user_class_level&quot;, new_df.new_user_class_level.cast(StringType()))</span></span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|userId|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|   234|        0|           5|                2|        5|          -1|             3|         0|                   3|</span><br><span class="line">|   523|        5|           2|                2|        2|           1|             3|         1|                   2|</span><br><span class="line">|   612|        0|           8|                1|        2|           2|             3|         0|                  -1|</span><br><span class="line">|  1670|        0|           4|                2|        4|          -1|             1|         0|                  -1|</span><br><span class="line">|  2545|        0|          10|                1|        4|          -1|             3|         0|                  -1|</span><br><span class="line">|  3644|       49|           6|                2|        6|           2|             3|         0|                   2|</span><br><span class="line">|  5777|       44|           5|                2|        5|           2|             3|         0|                   2|</span><br><span class="line">|  6211|        0|           9|                1|        3|          -1|             3|         0|                   2|</span><br><span class="line">|  6355|        2|           1|                2|        1|           1|             3|         0|                   4|</span><br><span class="line">|  6823|       43|           5|                2|        5|           2|             3|         0|                   1|</span><br><span class="line">|  6972|        5|           2|                2|        2|           2|             3|         1|                   2|</span><br><span class="line">|  9293|        0|           5|                2|        5|          -1|             3|         0|                   4|</span><br><span class="line">|  9510|       55|           8|                1|        2|           2|             2|         0|                   2|</span><br><span class="line">| 10122|       33|           4|                2|        4|           2|             3|         0|                   2|</span><br><span class="line">| 10549|        0|           4|                2|        4|           2|             3|         0|                  -1|</span><br><span class="line">| 10812|        0|           4|                2|        4|          -1|             2|         0|                  -1|</span><br><span class="line">| 10912|        0|           4|                2|        4|           2|             3|         0|                  -1|</span><br><span class="line">| 10996|        0|           5|                2|        5|          -1|             3|         0|                   4|</span><br><span class="line">| 11256|        8|           2|                2|        2|           1|             3|         0|                   3|</span><br><span class="line">| 11310|       31|           4|                2|        4|           1|             3|         0|                   4|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<ul>
+<li>低维转高维方式<ul>
+<li>我们接下来采用将变量映射到高维空间的方法来处理数据，即将缺失项也当做一个单独的特征来对待，保证数据的原始性<br>由于该思想正好和热独编码实现方法一样，因此这里直接使用热独编码方式处理数据</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.ml.feature <span class="keyword">import</span> OneHotEncoder</span><br><span class="line"><span class="keyword">from</span> pyspark.ml.feature <span class="keyword">import</span> StringIndexer</span><br><span class="line"><span class="keyword">from</span> pyspark.ml <span class="keyword">import</span> Pipeline</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用热独编码转换pvalue_level的一维数据为多维，其中缺失值单独作为一个特征值</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 需要先将缺失值全部替换为数值，与原有特征一起处理</span></span><br><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> StringType</span><br><span class="line">user_profile_df = user_profile_df.na.fill(-<span class="number">1</span>)</span><br><span class="line">user_profile_df.show()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 热独编码时，必须先将待处理字段转为字符串类型才可处理</span></span><br><span class="line">user_profile_df = user_profile_df.withColumn(<span class="string">&quot;pvalue_level&quot;</span>, user_profile_df.pvalue_level.cast(StringType()))\</span><br><span class="line">    .withColumn(<span class="string">&quot;new_user_class_level&quot;</span>, user_profile_df.new_user_class_level.cast(StringType()))</span><br><span class="line">user_profile_df.printSchema()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对pvalue_level进行热独编码，求值</span></span><br><span class="line">stringindexer = StringIndexer(inputCol=<span class="string">&#x27;pvalue_level&#x27;</span>, outputCol=<span class="string">&#x27;pl_onehot_feature&#x27;</span>)</span><br><span class="line">encoder = OneHotEncoder(dropLast=<span class="literal">False</span>, inputCol=<span class="string">&#x27;pl_onehot_feature&#x27;</span>, outputCol=<span class="string">&#x27;pl_onehot_value&#x27;</span>)</span><br><span class="line">pipeline = Pipeline(stages=[stringindexer, encoder])</span><br><span class="line">pipeline_fit = pipeline.fit(user_profile_df)</span><br><span class="line">user_profile_df2 = pipeline_fit.transform(user_profile_df)</span><br><span class="line"><span class="comment"># pl_onehot_value列的值为稀疏向量，存储热独编码的结果</span></span><br><span class="line">user_profile_df2.printSchema()</span><br><span class="line">user_profile_df2.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|userId|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">|   234|        0|           5|                2|        5|          -1|             3|         0|                   3|</span><br><span class="line">|   523|        5|           2|                2|        2|           1|             3|         1|                   2|</span><br><span class="line">|   612|        0|           8|                1|        2|           2|             3|         0|                  -1|</span><br><span class="line">|  1670|        0|           4|                2|        4|          -1|             1|         0|                  -1|</span><br><span class="line">|  2545|        0|          10|                1|        4|          -1|             3|         0|                  -1|</span><br><span class="line">|  3644|       49|           6|                2|        6|           2|             3|         0|                   2|</span><br><span class="line">|  5777|       44|           5|                2|        5|           2|             3|         0|                   2|</span><br><span class="line">|  6211|        0|           9|                1|        3|          -1|             3|         0|                   2|</span><br><span class="line">|  6355|        2|           1|                2|        1|           1|             3|         0|                   4|</span><br><span class="line">|  6823|       43|           5|                2|        5|           2|             3|         0|                   1|</span><br><span class="line">|  6972|        5|           2|                2|        2|           2|             3|         1|                   2|</span><br><span class="line">|  9293|        0|           5|                2|        5|          -1|             3|         0|                   4|</span><br><span class="line">|  9510|       55|           8|                1|        2|           2|             2|         0|                   2|</span><br><span class="line">| 10122|       33|           4|                2|        4|           2|             3|         0|                   2|</span><br><span class="line">| 10549|        0|           4|                2|        4|           2|             3|         0|                  -1|</span><br><span class="line">| 10812|        0|           4|                2|        4|          -1|             2|         0|                  -1|</span><br><span class="line">| 10912|        0|           4|                2|        4|           2|             3|         0|                  -1|</span><br><span class="line">| 10996|        0|           5|                2|        5|          -1|             3|         0|                   4|</span><br><span class="line">| 11256|        8|           2|                2|        2|           1|             3|         0|                   3|</span><br><span class="line">| 11310|       31|           4|                2|        4|           1|             3|         0|                   4|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br><span class="line">root</span><br><span class="line"> |-- userId: integer (nullable = true)</span><br><span class="line"> |-- cms_segid: integer (nullable = true)</span><br><span class="line"> |-- cms_group_id: integer (nullable = true)</span><br><span class="line"> |-- final_gender_code: integer (nullable = true)</span><br><span class="line"> |-- age_level: integer (nullable = true)</span><br><span class="line"> |-- pvalue_level: string (nullable = true)</span><br><span class="line"> |-- shopping_level: integer (nullable = true)</span><br><span class="line"> |-- occupation: integer (nullable = true)</span><br><span class="line"> |-- new_user_class_level: string (nullable = true)</span><br><span class="line"></span><br><span class="line">root</span><br><span class="line"> |-- userId: integer (nullable = true)</span><br><span class="line"> |-- cms_segid: integer (nullable = true)</span><br><span class="line"> |-- cms_group_id: integer (nullable = true)</span><br><span class="line"> |-- final_gender_code: integer (nullable = true)</span><br><span class="line"> |-- age_level: integer (nullable = true)</span><br><span class="line"> |-- pvalue_level: string (nullable = true)</span><br><span class="line"> |-- shopping_level: integer (nullable = true)</span><br><span class="line"> |-- occupation: integer (nullable = true)</span><br><span class="line"> |-- new_user_class_level: string (nullable = true)</span><br><span class="line"> |-- pl_onehot_feature: double (nullable = false)</span><br><span class="line"> |-- pl_onehot_value: vector (nullable = true)</span><br><span class="line"></span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+-----------------+---------------+</span><br><span class="line">|userId|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level|pl_onehot_feature|pl_onehot_value|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+-----------------+---------------+</span><br><span class="line">|   234|        0|           5|                2|        5|          -1|             3|         0|                   3|              0.0|  (4,[0],[1.0])|</span><br><span class="line">|   523|        5|           2|                2|        2|           1|             3|         1|                   2|              2.0|  (4,[2],[1.0])|</span><br><span class="line">|   612|        0|           8|                1|        2|           2|             3|         0|                  -1|              1.0|  (4,[1],[1.0])|</span><br><span class="line">|  1670|        0|           4|                2|        4|          -1|             1|         0|                  -1|              0.0|  (4,[0],[1.0])|</span><br><span class="line">|  2545|        0|          10|                1|        4|          -1|             3|         0|                  -1|              0.0|  (4,[0],[1.0])|</span><br><span class="line">|  3644|       49|           6|                2|        6|           2|             3|         0|                   2|              1.0|  (4,[1],[1.0])|</span><br><span class="line">|  5777|       44|           5|                2|        5|           2|             3|         0|                   2|              1.0|  (4,[1],[1.0])|</span><br><span class="line">|  6211|        0|           9|                1|        3|          -1|             3|         0|                   2|              0.0|  (4,[0],[1.0])|</span><br><span class="line">|  6355|        2|           1|                2|        1|           1|             3|         0|                   4|              2.0|  (4,[2],[1.0])|</span><br><span class="line">|  6823|       43|           5|                2|        5|           2|             3|         0|                   1|              1.0|  (4,[1],[1.0])|</span><br><span class="line">|  6972|        5|           2|                2|        2|           2|             3|         1|                   2|              1.0|  (4,[1],[1.0])|</span><br><span class="line">|  9293|        0|           5|                2|        5|          -1|             3|         0|                   4|              0.0|  (4,[0],[1.0])|</span><br><span class="line">|  9510|       55|           8|                1|        2|           2|             2|         0|                   2|              1.0|  (4,[1],[1.0])|</span><br><span class="line">| 10122|       33|           4|                2|        4|           2|             3|         0|                   2|              1.0|  (4,[1],[1.0])|</span><br><span class="line">| 10549|        0|           4|                2|        4|           2|             3|         0|                  -1|              1.0|  (4,[1],[1.0])|</span><br><span class="line">| 10812|        0|           4|                2|        4|          -1|             2|         0|                  -1|              0.0|  (4,[0],[1.0])|</span><br><span class="line">| 10912|        0|           4|                2|        4|           2|             3|         0|                  -1|              1.0|  (4,[1],[1.0])|</span><br><span class="line">| 10996|        0|           5|                2|        5|          -1|             3|         0|                   4|              0.0|  (4,[0],[1.0])|</span><br><span class="line">| 11256|        8|           2|                2|        2|           1|             3|         0|                   3|              2.0|  (4,[2],[1.0])|</span><br><span class="line">| 11310|       31|           4|                2|        4|           1|             3|         0|                   4|              2.0|  (4,[2],[1.0])|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+-----------------+---------------+</span><br><span class="line">only showing top 20 rows</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用热编码转换new_user_class_level的一维数据为多维</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">stringindexer = StringIndexer(inputCol=<span class="string">&#x27;new_user_class_level&#x27;</span>, outputCol=<span class="string">&#x27;nucl_onehot_feature&#x27;</span>)</span><br><span class="line">encoder = OneHotEncoder(dropLast=<span class="literal">False</span>, inputCol=<span class="string">&#x27;nucl_onehot_feature&#x27;</span>, outputCol=<span class="string">&#x27;nucl_onehot_value&#x27;</span>)</span><br><span class="line">pipeline = Pipeline(stages=[stringindexer, encoder])</span><br><span class="line">pipeline_fit = pipeline.fit(user_profile_df2)</span><br><span class="line">user_profile_df3 = pipeline_fit.transform(user_profile_df2)</span><br><span class="line">user_profile_df3.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+-----------------+---------------+-------------------+-----------------+</span><br><span class="line">|userId|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level|pl_onehot_feature|pl_onehot_value|nucl_onehot_feature|nucl_onehot_value|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+-----------------+---------------+-------------------+-----------------+</span><br><span class="line">|   234|        0|           5|                2|        5|          -1|             3|         0|                   3|              0.0|  (4,[0],[1.0])|                2.0|    (5,[2],[1.0])|</span><br><span class="line">|   523|        5|           2|                2|        2|           1|             3|         1|                   2|              2.0|  (4,[2],[1.0])|                1.0|    (5,[1],[1.0])|</span><br><span class="line">|   612|        0|           8|                1|        2|           2|             3|         0|                  -1|              1.0|  (4,[1],[1.0])|                0.0|    (5,[0],[1.0])|</span><br><span class="line">|  1670|        0|           4|                2|        4|          -1|             1|         0|                  -1|              0.0|  (4,[0],[1.0])|                0.0|    (5,[0],[1.0])|</span><br><span class="line">|  2545|        0|          10|                1|        4|          -1|             3|         0|                  -1|              0.0|  (4,[0],[1.0])|                0.0|    (5,[0],[1.0])|</span><br><span class="line">|  3644|       49|           6|                2|        6|           2|             3|         0|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|</span><br><span class="line">|  5777|       44|           5|                2|        5|           2|             3|         0|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|</span><br><span class="line">|  6211|        0|           9|                1|        3|          -1|             3|         0|                   2|              0.0|  (4,[0],[1.0])|                1.0|    (5,[1],[1.0])|</span><br><span class="line">|  6355|        2|           1|                2|        1|           1|             3|         0|                   4|              2.0|  (4,[2],[1.0])|                3.0|    (5,[3],[1.0])|</span><br><span class="line">|  6823|       43|           5|                2|        5|           2|             3|         0|                   1|              1.0|  (4,[1],[1.0])|                4.0|    (5,[4],[1.0])|</span><br><span class="line">|  6972|        5|           2|                2|        2|           2|             3|         1|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|</span><br><span class="line">|  9293|        0|           5|                2|        5|          -1|             3|         0|                   4|              0.0|  (4,[0],[1.0])|                3.0|    (5,[3],[1.0])|</span><br><span class="line">|  9510|       55|           8|                1|        2|           2|             2|         0|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|</span><br><span class="line">| 10122|       33|           4|                2|        4|           2|             3|         0|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|</span><br><span class="line">| 10549|        0|           4|                2|        4|           2|             3|         0|                  -1|              1.0|  (4,[1],[1.0])|                0.0|    (5,[0],[1.0])|</span><br><span class="line">| 10812|        0|           4|                2|        4|          -1|             2|         0|                  -1|              0.0|  (4,[0],[1.0])|                0.0|    (5,[0],[1.0])|</span><br><span class="line">| 10912|        0|           4|                2|        4|           2|             3|         0|                  -1|              1.0|  (4,[1],[1.0])|                0.0|    (5,[0],[1.0])|</span><br><span class="line">| 10996|        0|           5|                2|        5|          -1|             3|         0|                   4|              0.0|  (4,[0],[1.0])|                3.0|    (5,[3],[1.0])|</span><br><span class="line">| 11256|        8|           2|                2|        2|           1|             3|         0|                   3|              2.0|  (4,[2],[1.0])|                2.0|    (5,[2],[1.0])|</span><br><span class="line">| 11310|       31|           4|                2|        4|           1|             3|         0|                   4|              2.0|  (4,[2],[1.0])|                3.0|    (5,[3],[1.0])|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+-----------------+---------------+-------------------+-----------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<ul>
+<li>用户特征合并<ul>
+<li>LR回归用的是 <code>pyspark.ml</code>它要求所有的特征放在一个向量里面。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.ml.feature <span class="keyword">import</span> VectorAssembler</span><br><span class="line">feature_df = VectorAssembler().setInputCols([<span class="string">&quot;age_level&quot;</span>, <span class="string">&quot;pl_onehot_value&quot;</span>, <span class="string">&quot;nucl_onehot_value&quot;</span>]).setOutputCol(<span class="string">&quot;features&quot;</span>).transform(user_profile_df3)</span><br><span class="line">feature_df.show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+-----------------+---------------+-------------------+-----------------+--------------------+</span><br><span class="line">|userId|cms_segid|cms_group_id|final_gender_code|age_level|pvalue_level|shopping_level|occupation|new_user_class_level|pl_onehot_feature|pl_onehot_value|nucl_onehot_feature|nucl_onehot_value|            features|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+-----------------+---------------+-------------------+-----------------+--------------------+</span><br><span class="line">|   234|        0|           5|                2|        5|          -1|             3|         0|                   3|              0.0|  (4,[0],[1.0])|                2.0|    (5,[2],[1.0])|(10,[0,1,7],[5.0,...|</span><br><span class="line">|   523|        5|           2|                2|        2|           1|             3|         1|                   2|              2.0|  (4,[2],[1.0])|                1.0|    (5,[1],[1.0])|(10,[0,3,6],[2.0,...|</span><br><span class="line">|   612|        0|           8|                1|        2|           2|             3|         0|                  -1|              1.0|  (4,[1],[1.0])|                0.0|    (5,[0],[1.0])|(10,[0,2,5],[2.0,...|</span><br><span class="line">|  1670|        0|           4|                2|        4|          -1|             1|         0|                  -1|              0.0|  (4,[0],[1.0])|                0.0|    (5,[0],[1.0])|(10,[0,1,5],[4.0,...|</span><br><span class="line">|  2545|        0|          10|                1|        4|          -1|             3|         0|                  -1|              0.0|  (4,[0],[1.0])|                0.0|    (5,[0],[1.0])|(10,[0,1,5],[4.0,...|</span><br><span class="line">|  3644|       49|           6|                2|        6|           2|             3|         0|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|(10,[0,2,6],[6.0,...|</span><br><span class="line">|  5777|       44|           5|                2|        5|           2|             3|         0|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|(10,[0,2,6],[5.0,...|</span><br><span class="line">|  6211|        0|           9|                1|        3|          -1|             3|         0|                   2|              0.0|  (4,[0],[1.0])|                1.0|    (5,[1],[1.0])|(10,[0,1,6],[3.0,...|</span><br><span class="line">|  6355|        2|           1|                2|        1|           1|             3|         0|                   4|              2.0|  (4,[2],[1.0])|                3.0|    (5,[3],[1.0])|(10,[0,3,8],[1.0,...|</span><br><span class="line">|  6823|       43|           5|                2|        5|           2|             3|         0|                   1|              1.0|  (4,[1],[1.0])|                4.0|    (5,[4],[1.0])|(10,[0,2,9],[5.0,...|</span><br><span class="line">|  6972|        5|           2|                2|        2|           2|             3|         1|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|(10,[0,2,6],[2.0,...|</span><br><span class="line">|  9293|        0|           5|                2|        5|          -1|             3|         0|                   4|              0.0|  (4,[0],[1.0])|                3.0|    (5,[3],[1.0])|(10,[0,1,8],[5.0,...|</span><br><span class="line">|  9510|       55|           8|                1|        2|           2|             2|         0|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|(10,[0,2,6],[2.0,...|</span><br><span class="line">| 10122|       33|           4|                2|        4|           2|             3|         0|                   2|              1.0|  (4,[1],[1.0])|                1.0|    (5,[1],[1.0])|(10,[0,2,6],[4.0,...|</span><br><span class="line">| 10549|        0|           4|                2|        4|           2|             3|         0|                  -1|              1.0|  (4,[1],[1.0])|                0.0|    (5,[0],[1.0])|(10,[0,2,5],[4.0,...|</span><br><span class="line">| 10812|        0|           4|                2|        4|          -1|             2|         0|                  -1|              0.0|  (4,[0],[1.0])|                0.0|    (5,[0],[1.0])|(10,[0,1,5],[4.0,...|</span><br><span class="line">| 10912|        0|           4|                2|        4|           2|             3|         0|                  -1|              1.0|  (4,[1],[1.0])|                0.0|    (5,[0],[1.0])|(10,[0,2,5],[4.0,...|</span><br><span class="line">| 10996|        0|           5|                2|        5|          -1|             3|         0|                   4|              0.0|  (4,[0],[1.0])|                3.0|    (5,[3],[1.0])|(10,[0,1,8],[5.0,...|</span><br><span class="line">| 11256|        8|           2|                2|        2|           1|             3|         0|                   3|              2.0|  (4,[2],[1.0])|                2.0|    (5,[2],[1.0])|(10,[0,3,7],[2.0,...|</span><br><span class="line">| 11310|       31|           4|                2|        4|           1|             3|         0|                   4|              2.0|  (4,[2],[1.0])|                3.0|    (5,[3],[1.0])|(10,[0,3,8],[4.0,...|</span><br><span class="line">+------+---------+------------+-----------------+---------+------------+--------------+----------+--------------------+-----------------+---------------+-------------------+-----------------+--------------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">feature_df.select(<span class="string">&quot;features&quot;</span>).show()</span><br></pre></td></tr></table></figure>
+<p>显示结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">+--------------------+</span><br><span class="line">|            features|</span><br><span class="line">+--------------------+</span><br><span class="line">|(10,[0,1,7],[5.0,...|</span><br><span class="line">|(10,[0,3,6],[2.0,...|</span><br><span class="line">|(10,[0,2,5],[2.0,...|</span><br><span class="line">|(10,[0,1,5],[4.0,...|</span><br><span class="line">|(10,[0,1,5],[4.0,...|</span><br><span class="line">|(10,[0,2,6],[6.0,...|</span><br><span class="line">|(10,[0,2,6],[5.0,...|</span><br><span class="line">|(10,[0,1,6],[3.0,...|</span><br><span class="line">|(10,[0,3,8],[1.0,...|</span><br><span class="line">|(10,[0,2,9],[5.0,...|</span><br><span class="line">|(10,[0,2,6],[2.0,...|</span><br><span class="line">|(10,[0,1,8],[5.0,...|</span><br><span class="line">|(10,[0,2,6],[2.0,...|</span><br><span class="line">|(10,[0,2,6],[4.0,...|</span><br><span class="line">|(10,[0,2,5],[4.0,...|</span><br><span class="line">|(10,[0,1,5],[4.0,...|</span><br><span class="line">|(10,[0,2,5],[4.0,...|</span><br><span class="line">|(10,[0,1,8],[5.0,...|</span><br><span class="line">|(10,[0,3,7],[2.0,...|</span><br><span class="line">|(10,[0,3,8],[4.0,...|</span><br><span class="line">+--------------------+</span><br><span class="line">only showing top 20 rows</span><br></pre></td></tr></table></figure>
+<ul>
+<li>特征选取</li>
+</ul>
+<p>除了前面处理的pvalue_level和new_user_class_level需要作为特征以外，(能体现出用户的购买力特征)，还有：</p>
+<p>前面分析的以下几个分类特征值个数情况:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- cms_segid:  97</span><br><span class="line">- cms_group_id:  13</span><br><span class="line">- final_gender_code:  2</span><br><span class="line">- age_level:  7</span><br><span class="line">- shopping_level:  3</span><br><span class="line">- occupation:  2</span><br><span class="line">-pvalue_level</span><br><span class="line">-new_user_class_level</span><br><span class="line">-price</span><br></pre></td></tr></table></figure>
+<p>根据经验，以上几个分类特征都一定程度能体现用户在购物方面的特征，且类别都较少，都可以用来作为用户特征</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="缺失值处理"><a href="#缺失值处理" class="headerlink" title="缺失值处理"></a>缺失值处理</h3><ul>
+<li>连续的特征<ul>
+<li>缺失比例比较严重 可以考虑舍弃</li>
+<li>可以考虑使用平均值 中位数 分位数填充</li>
+<li>算法预测 （利用样本中的其它特征作为 特征值，有缺失的特征作为目标值）</li>
+</ul>
+</li>
+<li>分类的特征<ul>
+<li>缺失比例比较严重 可以考虑舍弃</li>
+<li>把缺失作为单独的分类， 如果之前的数据只有两个分类，那么把缺失考虑进来就变成3个分类</li>
+<li>算法预测</li>
+</ul>
+</li>
+<li>利用算法预测缺失值<ul>
+<li>其它特征和要预测的特征之间是否有联系</li>
+<li>样本数据是否足够</li>
+<li>利用算法预测缺失值会引入噪声</li>
+</ul>
+</li>
+</ul>
+<h3 id="利用随机森林预测缺失值"><a href="#利用随机森林预测缺失值" class="headerlink" title="利用随机森林预测缺失值"></a>利用随机森林预测缺失值</h3><ul>
+<li>pyspark MLlib<ul>
+<li>基于RDD的</li>
+<li>监督学习的样本数据要创建成LabeledPoint对象，MLlib通过LabeledPoint来训练模型</li>
+<li>pos = LabeledPoint(目标, [特征list])<ul>
+<li>目标值是分类情况 分类值从0开始连续增加</li>
+<li>所有特征是double类型</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+<!--  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://xxren8218.github.io/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" title="34-CTR预估数据准备" target="_blank" rel="external">https://xxren8218.github.io/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul> -->
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://xxren888.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://xxren888.gitee.io" target="_blank"><span class="text-dark">任晓雄</span><small class="ml-1x">机器学习 &amp; 人工智能</small></a></h3>
+        <div>西安交通大学19级研究生一枚，研究计算机纯属兴趣。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/20210710/35-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-LR-%E5%AE%9E%E7%8E%B0CTR%E9%A2%84%E4%BC%B0.html" title="35-逻辑回归(LR)实现CTR预估"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/20210709/12-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB.html" title="12-二叉树的路径问题汇总"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xxren8218/xxren8218.github.io" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/u/5824042330" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/xxren8218" target="_blank"> xxren </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'q31vlhOeBIWHbSnIN669vDYF-gzGzoHsz',
+    appKey: 'r0sWX8dHj6ThrIus2L589jr9',
+    placeholder: '说点什么吧...',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+<div id="go-top"></div>
+
+<style type="text/css">
+#go-top {
+ width:40px;height:36px;
+ background-color:#DDA0DD;
+ position:relative;
+ border-radius:2px;
+ position:fixed;right:10px;bottom:60px;
+ cursor:pointer;display:none;
+}
+#go-top:after {
+ content:" ";
+ position:absolute;left:14px;top:14px;
+ border-top:2px solid #fff;border-right:2px solid #fff;
+ width:12px;height:12px;
+ transform:rotate(-45deg);
+}
+#go-top:hover {
+ background-color:#8A2BE2;
+}
+</style>
+<script>
+$(function () {
+  var top=$("#go-top");
+  $(window).scroll(function () {
+    ($(window).scrollTop() > 300) ? top.show(300) : top.hide(200);
+    $("#go-top").click(function () {
+      $('body,html').animate({scrollTop:0});
+      return false();
+    })
+  });
+});
+</script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+        .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  
+  <script>
+    addLoadEvent(()=>{
+      $('.highlight').each(function (i, e) {
+        var $wrap = $('<div>').addClass('highlight-wrap')
+        $(e).after($wrap)
+        $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+          var code = $(this).parent().find(".code")[0].innerText
+          
+          var ta = document.createElement('textarea')
+          document.body.appendChild(ta)
+          ta.style.position = 'absolute'
+          ta.style.top = '0px'
+          ta.style.left = '0px'
+          ta.value = code
+          ta.select()
+          ta.focus()
+          var result = document.execCommand('copy')
+          document.body.removeChild(ta)
+          
+            if(result)$(this).text('复制成功')
+            else $(this).text('复制失败')
+          
+          $(this).blur()
+        })).on('mouseleave', function (e) {
+          var $b = $(this).find('.copy-btn')
+          setTimeout(function () {
+            $b.text('复制')
+          }, 300)
+        }).append(e)
+      })
+    })
+  </script>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+</body>
+</html>
