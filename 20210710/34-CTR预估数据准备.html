@@ -17,16 +17,16 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>34-CTR预估数据准备 | X.X.Ren的个人博客</title>
+  <title>03-CTR预估数据准备 | X.X.Ren的个人博客</title>
   <meta name="description" content="CTR预估数据准备1. 分析并预处理raw_sample数据集1234# 从HDFS中加载样本数据信息df &#x3D; spark.read.csv(&quot;hdfs:&#x2F;&#x2F;localhost:9000&#x2F;datasets&#x2F;raw_sample.csv&quot;, header&#x3D;True)df.show()    # 展示数据，默认前20条df.printSchema() 显示结果: 123456789">
 <meta property="og:type" content="article">
-<meta property="og:title" content="34-CTR预估数据准备">
+<meta property="og:title" content="03-CTR预估数据准备">
 <meta property="og:url" content="https://xxren8218.github.io/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html">
 <meta property="og:site_name" content="X.X.Ren">
 <meta property="og:description" content="CTR预估数据准备1. 分析并预处理raw_sample数据集1234# 从HDFS中加载样本数据信息df &#x3D; spark.read.csv(&quot;hdfs:&#x2F;&#x2F;localhost:9000&#x2F;datasets&#x2F;raw_sample.csv&quot;, header&#x3D;True)df.show()    # 展示数据，默认前20条df.printSchema() 显示结果: 123456789">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-07-10T14:47:02.000Z">
-<meta property="article:modified_time" content="2021-07-10T14:48:51.257Z">
+<meta property="article:modified_time" content="2021-07-19T09:40:27.646Z">
 <meta property="article:author" content="任晓雄">
 <meta property="article:tag" content="推荐系统基础">
 <meta name="twitter:card" content="summary">
@@ -201,7 +201,7 @@
   <div class="widget">
     <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-folder-open"></i>分类</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">38</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%9B%9E%E6%BA%AF%E6%B3%95/">回溯法</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">53</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a><span class="category-list-count">22</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/">传统算法</a><span class="category-list-count">38</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%9B%9E%E6%BA%AF%E6%B3%95/">回溯法</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">53</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a><span class="category-list-count">22</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98/">推荐系统实战</a><span class="category-list-count">5</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">机器学习基础实战</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -230,7 +230,7 @@
   <div class="widget">
     <h3 class="widget-title"><i style="color:#9400D3" class="icon icon-archives-fill"></i>归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">51</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">51</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">18</span></li></ul>
     </div>
   </div>
 
@@ -242,6 +242,81 @@
     <div class="widget-body">
       <ul class="recent-post-list list-unstyled ">
         
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210719/08-%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="08-分割回文串" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%9B%9E%E6%BA%AF%E6%B3%95/">回溯法</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210719/08-%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html" class="title">08-分割回文串</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-19T09:36:53.000Z" itemprop="datePublished">2021-07-19 17:36:53</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210719/20-%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="20-搜索树中的插入操作" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210719/20-%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C.html" class="title">20-搜索树中的插入操作</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-19T09:35:24.000Z" itemprop="datePublished">2021-07-19 17:35:24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/20210719/19-%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88%E9%97%AE%E9%A2%98.html" class="thumb">
+    
+    
+        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="19-搜索树的公共祖先问题" class="thumb-image"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+              </p>
+              <p class="item-title">
+                <a href="/20210719/19-%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88%E9%97%AE%E9%A2%98.html" class="title">19-搜索树的公共祖先问题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-19T09:33:30.000Z" itemprop="datePublished">2021-07-19 17:33:30</time>
+              </p>
+            </div>
+          </li>
+          
           <li>
             
             <div class="item-thumb">
@@ -292,81 +367,6 @@
             </div>
           </li>
           
-          <li>
-            
-            <div class="item-thumb">
-              <a href="/20210716/18-%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88%E9%97%AE%E9%A2%98.html" class="thumb">
-    
-    
-        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="18-最近公共祖先问题" class="thumb-image"></span>
-    
-</a>
-
-            </div>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
-              </p>
-              <p class="item-title">
-                <a href="/20210716/18-%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88%E9%97%AE%E9%A2%98.html" class="title">18-最近公共祖先问题</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2021-07-16T14:20:27.000Z" itemprop="datePublished">2021-07-16 22:20:27</time>
-              </p>
-            </div>
-          </li>
-          
-          <li>
-            
-            <div class="item-thumb">
-              <a href="/20210715/05-%E7%94%B5%E8%AF%9D%E5%8F%B7%E7%A0%81%E7%9A%84%E5%AD%97%E6%AF%8D%E7%BB%84%E5%90%88.html" class="thumb">
-    
-    
-        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="05-电话号码的字母组合" class="thumb-image"></span>
-    
-</a>
-
-            </div>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                <a class="category-link" href="/categories/%E5%9B%9E%E6%BA%AF%E6%B3%95/">回溯法</a>
-              </p>
-              <p class="item-title">
-                <a href="/20210715/05-%E7%94%B5%E8%AF%9D%E5%8F%B7%E7%A0%81%E7%9A%84%E5%AD%97%E6%AF%8D%E7%BB%84%E5%90%88.html" class="title">05-电话号码的字母组合</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2021-07-15T13:57:48.000Z" itemprop="datePublished">2021-07-15 21:57:48</time>
-              </p>
-            </div>
-          </li>
-          
-          <li>
-            
-            <div class="item-thumb">
-              <a href="/20210715/17-%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A0%E6%A0%91%E7%9A%84%E4%BC%97%E6%95%B0.html" class="thumb">
-    
-    
-        <span style="background-image:url(https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210302194723.jpeg)" alt="17-二叉搜素树的众数" class="thumb-image"></span>
-    
-</a>
-
-            </div>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                <a class="category-link" href="/categories/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
-              </p>
-              <p class="item-title">
-                <a href="/20210715/17-%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A0%E6%A0%91%E7%9A%84%E4%BC%97%E6%95%B0.html" class="title">17-二叉搜素树的众数</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2021-07-15T13:56:03.000Z" itemprop="datePublished">2021-07-15 21:56:03</time>
-              </p>
-            </div>
-          </li>
-          
       </ul>
     </div>
   </div>
@@ -396,7 +396,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      34-CTR预估数据准备
+      03-CTR预估数据准备
     </h1>
   
 
@@ -415,8 +415,8 @@
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
     <a href="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="article-date">
-        更新于<time datetime="2021-07-10T14:48:51.257Z" itemprop="dateUpdated">
-            2021-07-10 22:48:51
+        更新于<time datetime="2021-07-19T09:40:27.646Z" itemprop="dateUpdated">
+            2021-07-19 17:40:27
         </time>
     </a>
 </span>
@@ -425,7 +425,7 @@
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>
+    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/">大数据的lambda架构</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%9A%84lambda%E6%9E%B6%E6%9E%84/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98/">推荐系统实战</a>
   </span>
 
         
@@ -439,7 +439,7 @@
 
 	<span class="article-read hidden-xs">
     	<i class="icon icon-eye-fill" aria-hidden="true"></i>
-    	<span id="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="leancloud_visitors"  data-flag-title="34-CTR预估数据准备">0</span>
+    	<span id="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" class="leancloud_visitors"  data-flag-title="03-CTR预估数据准备">0</span>
     </span>
 
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html#comments" class="article-comment-link">评论</a></span>
@@ -732,7 +732,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://xxren8218.github.io/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" title="34-CTR预估数据准备" target="_blank" rel="external">https://xxren8218.github.io/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html</a>
+      <a href="https://xxren8218.github.io/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html" title="03-CTR预估数据准备" target="_blank" rel="external">https://xxren8218.github.io/20210710/34-CTR%E9%A2%84%E4%BC%B0%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -779,7 +779,7 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/20210710/35-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-LR-%E5%AE%9E%E7%8E%B0CTR%E9%A2%84%E4%BC%B0.html" title="35-逻辑回归(LR)实现CTR预估"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="/20210710/35-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-LR-%E5%AE%9E%E7%8E%B0CTR%E9%A2%84%E4%BC%B0.html" title="04-逻辑回归(LR)实现CTR预估"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
