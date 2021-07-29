@@ -17,35 +17,23 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>EM算法应用——GMM聚类 | X.X.Ren的个人博客</title>
-  <meta name="description" content="GMM实例 桥东西两个地方摆放了共享单车。统计使用共享单车的数量。  123import pandas as pddata &#x3D; pd.read_csv (&amp;#x27;Fremont.csv&amp;#x27;, index_col&#x3D;&amp;#x27;Date&amp;#x27;, parse_dates&#x3D;True)data.head()       .dataframe thead tr:only-child th {">
+  <title>09-加油站 | X.X.Ren的个人博客</title>
+  <meta name="description" content="加油站 思路一、暴力解法暴力的方法很明显就是O(n^2)的，遍历每一个加油站为起点的情况，模拟一圈。 如果跑了一圈，中途没有断油，而且最后油量大于等于0，说明这个起点是ok的。 暴力的方法思路比较简单，但代码写起来也不是很容易，关键是要模拟跑一圈的过程。 「for循环适合模拟从头到尾的遍历，而while循环适合模拟环形遍历，要善于使用while！」 代码如下： 123456789101112131">
 <meta property="og:type" content="article">
-<meta property="og:title" content="EM算法应用——GMM聚类">
-<meta property="og:url" content="https://xxren8218.github.io/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html">
+<meta property="og:title" content="09-加油站">
+<meta property="og:url" content="https://xxren8218.github.io/20210729/09-%E5%8A%A0%E6%B2%B9%E7%AB%99.html">
 <meta property="og:site_name" content="X.X.Ren">
-<meta property="og:description" content="GMM实例 桥东西两个地方摆放了共享单车。统计使用共享单车的数量。  123import pandas as pddata &#x3D; pd.read_csv (&amp;#x27;Fremont.csv&amp;#x27;, index_col&#x3D;&amp;#x27;Date&amp;#x27;, parse_dates&#x3D;True)data.head()       .dataframe thead tr:only-child th {">
+<meta property="og:description" content="加油站 思路一、暴力解法暴力的方法很明显就是O(n^2)的，遍历每一个加油站为起点的情况，模拟一圈。 如果跑了一圈，中途没有断油，而且最后油量大于等于0，说明这个起点是ok的。 暴力的方法思路比较简单，但代码写起来也不是很容易，关键是要模拟跑一圈的过程。 「for循环适合模拟从头到尾的遍历，而while循环适合模拟环形遍历，要善于使用while！」 代码如下： 123456789101112131">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010149.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010134.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010117.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010104.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010042.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010015.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005957.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005941.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005926.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005911.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005856.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005837.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005822.png">
-<meta property="article:published_time" content="2021-05-18T16:55:06.000Z">
-<meta property="article:modified_time" content="2021-05-18T17:02:03.180Z">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210729191220.PNG">
+<meta property="article:published_time" content="2021-07-29T11:11:43.000Z">
+<meta property="article:modified_time" content="2021-07-29T11:12:41.319Z">
 <meta property="article:author" content="任晓雄">
-<meta property="article:tag" content="机器学习基础">
+<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010149.png">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210729191220.PNG">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://xxren8218.github.io/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html">
+  <link rel="canonical" href="https://xxren8218.github.io/20210729/09-%E5%8A%A0%E6%B2%B9%E7%AB%99.html">
   
     <link rel="alternate" href="/atom.xml" title="X.X.Ren" type="application/atom+xml">
   
@@ -396,21 +384,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GMM%E5%AE%9E%E4%BE%8B"><span class="toc-text">GMM实例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Visualizing-the-Dataset"><span class="toc-text">Visualizing the Dataset</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E4%BB%A5%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%95%B0%E6%8D%AE%E5%86%85%E9%83%A8%E6%9C%89%E5%A4%9A%E4%B8%AA%E7%B1%BB%E5%88%AB%EF%BC%8C%E4%B8%94%E6%9C%8D%E4%BB%8E%E4%B8%8D%E5%90%8C%E7%9A%84%E5%88%86%E5%B8%83%EF%BC%8C%E7%94%A8GMM%E6%AF%94KMEANS%E5%A5%BD"><span class="toc-text">所以，如果数据内部有多个类别，且服从不同的分布，用GMM比KMEANS好</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E6%B2%B9%E7%AB%99"><span class="toc-text">加油站</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF"><span class="toc-text">思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%9A%B4%E5%8A%9B%E8%A7%A3%E6%B3%95"><span class="toc-text">一、暴力解法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95"><span class="toc-text">贪心算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-EM算法应用——GMM聚类" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-09-加油站" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      EM算法应用——GMM聚类
+      09-加油站
     </h1>
   
 
@@ -419,18 +407,18 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar"></i>
-    <a href="/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html" class="article-date">
-        发布于<time datetime="2021-05-18T16:55:06.000Z" itemprop="datePublished">
-            2021-05-19 00:55:06
+    <a href="/20210729/09-%E5%8A%A0%E6%B2%B9%E7%AB%99.html" class="article-date">
+        发布于<time datetime="2021-07-29T11:11:43.000Z" itemprop="datePublished">
+            2021-07-29 19:11:43
         </time>
     </a>
 </span>
 
 <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-    <a href="/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html" class="article-date">
-        更新于<time datetime="2021-05-18T17:02:03.180Z" itemprop="dateUpdated">
-            2021-05-19 01:02:03
+    <a href="/20210729/09-%E5%8A%A0%E6%B2%B9%E7%AB%99.html" class="article-date">
+        更新于<time datetime="2021-07-29T11:12:41.319Z" itemprop="dateUpdated">
+            2021-07-29 19:12:41
         </time>
     </a>
 </span>
@@ -439,24 +427,19 @@
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+    <a class="article-category-link" href="/categories/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/">贪心算法</a>
   </span>
 
         
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag">机器学习基础</a>
-  </span>
-
 
         
 
 	<span class="article-read hidden-xs">
     	<i class="icon icon-eye-fill" aria-hidden="true"></i>
-    	<span id="/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html" class="leancloud_visitors"  data-flag-title="EM算法应用——GMM聚类">0</span>
+    	<span id="/20210729/09-%E5%8A%A0%E6%B2%B9%E7%AB%99.html" class="leancloud_visitors"  data-flag-title="09-加油站">0</span>
     </span>
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/20210729/09-%E5%8A%A0%E6%B2%B9%E7%AB%99.html#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -465,219 +448,29 @@
 	</div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="GMM实例"><a href="#GMM实例" class="headerlink" title="GMM实例"></a>GMM实例</h1><ul>
-<li>桥东西两个地方摆放了共享单车。统计使用共享单车的数量。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">data = pd.read_csv (<span class="string">&#x27;Fremont.csv&#x27;</span>, index_col=<span class="string">&#x27;Date&#x27;</span>, parse_dates=<span class="literal">True</span>)</span><br><span class="line">data.head()</span><br></pre></td></tr></table></figure>
-<div style="overflow: scroll;">
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Fremont Bridge West Sidewalk</th>
-      <th>Fremont Bridge East Sidewalk</th>
-    </tr>
-    <tr>
-      <th>Date</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2012-10-03 00:00:00</th>
-      <td>4.0</td>
-      <td>9.0</td>
-    </tr>
-    <tr>
-      <th>2012-10-03 01:00:00</th>
-      <td>4.0</td>
-      <td>6.0</td>
-    </tr>
-    <tr>
-      <th>2012-10-03 02:00:00</th>
-      <td>1.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>2012-10-03 03:00:00</th>
-      <td>2.0</td>
-      <td>3.0</td>
-    </tr>
-    <tr>
-      <th>2012-10-03 04:00:00</th>
-      <td>6.0</td>
-      <td>1.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-<h2 id="Visualizing-the-Dataset"><a href="#Visualizing-the-Dataset" class="headerlink" title="Visualizing the Dataset"></a>Visualizing the Dataset</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line">data.plot();</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010149.png" alt=""></p>
-<p>可以看到数据太密集，因为是以小时为单位创建的，</p>
+        <h2 id="加油站"><a href="#加油站" class="headerlink" title="加油站"></a>加油站</h2><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210729191220.PNG" alt=""></p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><h3 id="一、暴力解法"><a href="#一、暴力解法" class="headerlink" title="一、暴力解法"></a>一、暴力解法</h3><p>暴力的方法很明显就是O(n^2)的，遍历每一个加油站为起点的情况，模拟一圈。</p>
+<p>如果跑了一圈，中途没有断油，而且最后油量大于等于0，说明这个起点是ok的。</p>
+<p>暴力的方法思路比较简单，但代码写起来也不是很容易，关键是要模拟跑一圈的过程。</p>
+<p><strong>「for循环适合模拟从头到尾的遍历，而while循环适合模拟环形遍历，要善于使用while！」</strong></p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">canCompleteCircuit</span>(<span class="params">self, gas, cost</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type gas: List[int]</span></span><br><span class="line"><span class="string">        :type cost: List[int]</span></span><br><span class="line"><span class="string">        :rtype: int</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(cost)):</span><br><span class="line">            rest = gas[i] - cost[i]         <span class="comment"># 记录剩余油量</span></span><br><span class="line">            index = (i + <span class="number">1</span>) % <span class="built_in">len</span>(cost)     </span><br><span class="line">            <span class="keyword">while</span> rest &gt; <span class="number">0</span> <span class="keyword">and</span> index != i:  <span class="comment"># 模拟以i为起点行驶一圈</span></span><br><span class="line">                rest += gas[index] - cost[index]</span><br><span class="line">                index = (index + <span class="number">1</span>) % <span class="built_in">len</span>(cost)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> rest &gt;= <span class="number">0</span> <span class="keyword">and</span> index == i: <span class="keyword">return</span> i  <span class="comment"># 如果以i为起点跑一圈，剩余油量&gt;=0，返回该起始位置</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span></span><br></pre></td></tr></table></figure>
 <ul>
-<li>数据重采样，按周进行计算</li>
+<li>时间复杂度O(n^2)</li>
+<li>空间复杂度O(n)</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line">data.resample(<span class="string">&#x27;w&#x27;</span>).<span class="built_in">sum</span>().plot(); <span class="comment"># 时间序列化</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010134.png" alt=""></p>
-<p>可以看到东西边差别不大。<br>采用滑动窗口进行可视化——当前365天数据的总和</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data.resample(<span class="string">&#x27;D&#x27;</span>).<span class="built_in">sum</span>().rolling(<span class="number">365</span>).<span class="built_in">sum</span>().plot();</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010117.png" alt=""></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">data.groupby(data.index.time).mean().plot();</span><br><span class="line">plt.xticks(rotation=<span class="number">45</span>)</span><br></pre></td></tr></table></figure>
-<pre><code>(array([     0.,  10000.,  20000.,  30000.,  40000.,  50000.,  60000.,
-         70000.,  80000.,  90000.]), &lt;a list of 10 Text xticklabel objects&gt;)
-</code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010104.png" alt=""></p>
+<p>暴力解法在leetcode上提交也可以过。2000多ms</p>
+<h3 id="贪心算法"><a href="#贪心算法" class="headerlink" title="贪心算法"></a>贪心算法</h3><p>直接从全局进行贪心选择，情况如下：</p>
 <ul>
-<li>蓝线和绿线满足不同分布规则。</li>
-<li>隐变量有两个。桥东和桥西。</li>
+<li>情况一：如果gas的总和小于cost总和，那么无论从哪里出发，一定是跑不了一圈的</li>
+<li>情况二：rest[i] = gas[i]-cost[i]为一天剩下的油，i从0开始计算累加到最后一站，如果累加没有出现负数，说明从0出发，油就没有断过，那么0就是起点。</li>
+<li>情况三：如果累加的最小值是负数，汽车就要从非0节点出发，从后向前，看哪个节点能这个负数填平，能把这个负数填平的节点就是出发节点。</li>
 </ul>
-<p>做GMM模型</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pivot table</span></span><br><span class="line">data.columns =[<span class="string">&#x27;West&#x27;</span>, <span class="string">&#x27;East&#x27;</span>]</span><br><span class="line">data [<span class="string">&#x27;Total&#x27;</span>] =data[<span class="string">&#x27;West&#x27;</span>]+data[<span class="string">&#x27;East&#x27;</span>]</span><br><span class="line">pivoted = data.pivot_table(<span class="string">&#x27;Total&#x27;</span>, index=data.index.time, columns=data.index.date) <span class="comment"># 做一个透视表</span></span><br><span class="line">pivoted.iloc[:<span class="number">5</span>,:<span class="number">5</span>]</span><br></pre></td></tr></table></figure>
-<div style="overflow: scroll;">
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">canCompleteCircuit</span>(<span class="params">self, gas, cost</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type gas: List[int]</span></span><br><span class="line"><span class="string">        :type cost: List[int]</span></span><br><span class="line"><span class="string">        :rtype: int</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        curSum = <span class="number">0</span></span><br><span class="line">        <span class="built_in">min</span> = <span class="built_in">float</span>(<span class="string">&quot;INF&quot;</span>) <span class="comment"># 油箱里面油量的最小值</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(gas)):</span><br><span class="line">            rest = gas[i] - cost[i]</span><br><span class="line">            curSum += rest</span><br><span class="line">            <span class="keyword">if</span> curSum &lt; <span class="built_in">min</span>:</span><br><span class="line">                <span class="built_in">min</span> = curSum</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> curSum &lt; <span class="number">0</span>: <span class="keyword">return</span> -<span class="number">1</span> <span class="comment"># 情况1</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">min</span> &gt; <span class="number">0</span>: <span class="keyword">return</span> <span class="number">0</span>     <span class="comment"># 情况2</span></span><br><span class="line">                                 <span class="comment"># 情况3</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(gas) - <span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">            rest = gas[i] - cost[i]</span><br><span class="line">            <span class="built_in">min</span> += rest</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">min</span> &gt;= <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">return</span> i</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>对于本题首先给出了暴力解法，暴力解法模拟跑一圈的过程其实比较考验代码技巧的，要对while使用的很熟练。</p>
+<p>然后给出了贪心算法，对于贪心方法，其实我认为就是一种直接从全局选取最优的模拟操作，思路还是好巧妙的，值得学习一下。</p>
+<p>对于第二种贪心方法，才真正体现出贪心的精髓，用局部最优可以推出全局最优，进而求得起始位置。</p>
 
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>2012-10-03</th>
-      <th>2012-10-04</th>
-      <th>2012-10-05</th>
-      <th>2012-10-06</th>
-      <th>2012-10-07</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>00:00:00</th>
-      <td>13.0</td>
-      <td>18.0</td>
-      <td>11.0</td>
-      <td>15.0</td>
-      <td>11.0</td>
-    </tr>
-    <tr>
-      <th>01:00:00</th>
-      <td>10.0</td>
-      <td>3.0</td>
-      <td>8.0</td>
-      <td>15.0</td>
-      <td>17.0</td>
-    </tr>
-    <tr>
-      <th>02:00:00</th>
-      <td>2.0</td>
-      <td>9.0</td>
-      <td>7.0</td>
-      <td>9.0</td>
-      <td>3.0</td>
-    </tr>
-    <tr>
-      <th>03:00:00</th>
-      <td>5.0</td>
-      <td>3.0</td>
-      <td>4.0</td>
-      <td>3.0</td>
-      <td>6.0</td>
-    </tr>
-    <tr>
-      <th>04:00:00</th>
-      <td>7.0</td>
-      <td>8.0</td>
-      <td>9.0</td>
-      <td>5.0</td>
-      <td>3.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pivoted.plot(legend=<span class="literal">False</span>, alpha =<span class="number">0.01</span>);</span><br><span class="line">plt.xticks(rotation=<span class="number">45</span>)</span><br></pre></td></tr></table></figure>
-<pre><code>(array([     0.,  10000.,  20000.,  30000.,  40000.,  50000.,  60000.,
-         70000.,  80000.,  90000.]), &lt;a list of 10 Text xticklabel objects&gt;)
-</code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010042.png" alt=""></p>
-<p><strong>可以看到有两种分布，能否用GMM进行聚类任务，然后分开呢？</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pivoted.shape</span><br></pre></td></tr></table></figure>
-<pre><code>(24, 1763)
-</code></pre><p><strong>样本数24，特征数1763不合适</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X = pivoted.fillna(<span class="number">0</span>).T.values</span><br><span class="line">X.shape</span><br></pre></td></tr></table></figure>
-<pre><code>(1763, 24)
-</code></pre><p><strong>然后拿它GMM进行聚类的任务</strong></p>
-<ul>
-<li>拿到了1763个数据，以及它每天24小时的数据，我们想做个聚类，看他是东还是西。</li>
-</ul>
-<p>为了方便演示，将图像画在2D空间——进行PCA的降维</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span>  sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line">X2 = PCA(<span class="number">2</span>).fit_transform(X)</span><br><span class="line">X2.shape</span><br></pre></td></tr></table></figure>
-<pre><code>(1763, 2)
-</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.scatter(X2[:,<span class="number">0</span>],X2[:,<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
-<pre><code>&lt;matplotlib.collections.PathCollection at 0x1b92c86a630&gt;
-</code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519010015.png" alt=""></p>
-<p><strong>PCA降维以后数据特征不存在具体物理意义、但是空间意义还在</strong></p>
-<p>然后进行聚类分析：</p>
-<ul>
-<li>GMM聚类与KMEANS有些类似，因为kmeans需要知道K点个数。而此处需要知道隐变量的个数。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.mixture <span class="keyword">import</span> GaussianMixture</span><br><span class="line">gmm =GaussianMixture(<span class="number">2</span>)</span><br><span class="line">gmm.fit(X)</span><br><span class="line">labels = gmm.predict_proba(X) <span class="comment"># 得到的是概率值，即每一个样本属于（第一个类别【分布】的可能性，第二个类别【分布】的可能性）</span></span><br><span class="line">labels</span><br></pre></td></tr></table></figure>
-<pre><code>array([[  1.00000000e+000,   4.27200703e-157],
-       [  1.00000000e+000,   2.97606604e-125],
-       [  1.00000000e+000,   1.00461289e-101],
-       ..., 
-       [  2.50152395e-030,   1.00000000e+000],
-       [  2.49747986e-025,   1.00000000e+000],
-       [  1.00000000e+000,   1.79108465e-301]])
-</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">labels = gmm.predict(X) <span class="comment"># 得到的是概类别的标签</span></span><br><span class="line">labels</span><br></pre></td></tr></table></figure>
-<pre><code>array([0, 0, 0, ..., 1, 1, 0], dtype=int64)
-</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plt.scatter(X2[:,<span class="number">0</span>],X2[:,<span class="number">1</span>], c=labels, cmap=<span class="string">&#x27;rainbow&#x27;</span>) </span><br><span class="line"><span class="comment">#plt.colorbar()</span></span><br></pre></td></tr></table></figure>
-<pre><code>&lt;matplotlib.collections.PathCollection at 0x1b92cdd0f98&gt;
-</code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005957.png" alt=""></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">fig, ax = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, figsize =(<span class="number">14</span>, <span class="number">6</span>))</span><br><span class="line">                      </span><br><span class="line">pivoted.T[labels == <span class="number">0</span>].T.plot(legend =<span class="literal">False</span>, alpha =<span class="number">0.1</span>, ax=ax[<span class="number">0</span>])  <span class="comment"># 进行数据的还原，显示数据的样子</span></span><br><span class="line">pivoted.T[labels == <span class="number">1</span>].T.plot(legend =<span class="literal">False</span>, alpha =<span class="number">0.1</span>, ax=ax[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">ax[<span class="number">0</span>].set_title (<span class="string">&#x27;Purple Cluster&#x27;</span>)</span><br><span class="line">ax[<span class="number">1</span>].set_title (<span class="string">&#x27;Red Cluster&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<pre><code>&lt;matplotlib.text.Text at 0x1b932208b38&gt;
-</code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005941.png" alt=""></p>
-<p><strong>来看看GMM和KMEANS的差异吧！</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.datasets.samples_generator <span class="keyword">import</span> make_blobs</span><br><span class="line">X, y_true = make_blobs(n_samples=<span class="number">800</span>, centers=<span class="number">4</span>, random_state=<span class="number">11</span>)</span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>]);</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005926.png" alt=""></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans</span><br><span class="line">kmeans = KMeans(n_clusters=<span class="number">4</span>)</span><br><span class="line">kmeans.fit(X)</span><br><span class="line">y_kmeans = kmeans.predict(X)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y_kmeans, s=<span class="number">50</span>, cmap=<span class="string">&#x27;viridis&#x27;</span>)</span><br><span class="line">centers = kmeans.cluster_centers_</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005911.png" alt=""></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.mixture <span class="keyword">import</span> GaussianMixture</span><br><span class="line">gmm = GaussianMixture(n_components=<span class="number">4</span>).fit(X)</span><br><span class="line">labels = gmm.predict(X)</span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=labels, s=<span class="number">40</span>, cmap=<span class="string">&#x27;viridis&#x27;</span>);</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005856.png" alt=""></p>
-<p><strong>GMM和KMEANS在规则数据上基本一样！</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">rng = np.random.RandomState(<span class="number">13</span>)</span><br><span class="line">X_stretched = np.dot(X, rng.randn(<span class="number">2</span>, <span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">kmeans = KMeans(n_clusters=<span class="number">4</span>, random_state=<span class="number">1</span>)</span><br><span class="line">kmeans.fit(X_stretched)</span><br><span class="line">y_kmeans = kmeans.predict(X_stretched)</span><br><span class="line">plt.scatter(X_stretched[:, <span class="number">0</span>], X_stretched[:, <span class="number">1</span>], c=y_kmeans, s=<span class="number">50</span>, cmap=<span class="string">&#x27;viridis&#x27;</span>)</span><br><span class="line">centers = kmeans.cluster_centers_</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005837.png" alt=""></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gmm = GaussianMixture(n_components=<span class="number">4</span>)        </span><br><span class="line">gmm.fit(X_stretched)</span><br><span class="line">y_gmm = gmm.predict(X_stretched)</span><br><span class="line">plt.scatter(X_stretched[:, <span class="number">0</span>], X_stretched[:, <span class="number">1</span>], c=y_gmm, s=<span class="number">50</span>, cmap=<span class="string">&#x27;viridis&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<pre><code>&lt;matplotlib.collections.PathCollection at 0x1b932008208&gt;
-</code></pre><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210519005822.png" alt=""></p>
-<p><strong> GMM比KMEANS好！ </strong></p>
-<h2 id="所以，如果数据内部有多个类别，且服从不同的分布，用GMM比KMEANS好"><a href="#所以，如果数据内部有多个类别，且服从不同的分布，用GMM比KMEANS好" class="headerlink" title="所以，如果数据内部有多个类别，且服从不同的分布，用GMM比KMEANS好"></a>所以，如果数据内部有多个类别，且服从不同的分布，用GMM比KMEANS好</h2>
       
     </div>
     <div class="article-footer">
@@ -686,7 +479,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://xxren8218.github.io/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html" title="EM算法应用——GMM聚类" target="_blank" rel="external">https://xxren8218.github.io/20210519/EM%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E2%80%94%E2%80%94GMM%E8%81%9A%E7%B1%BB.html</a>
+      <a href="https://xxren8218.github.io/20210729/09-%E5%8A%A0%E6%B2%B9%E7%AB%99.html" title="09-加油站" target="_blank" rel="external">https://xxren8218.github.io/20210729/09-%E5%8A%A0%E6%B2%B9%E7%AB%99.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -732,13 +525,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/20210520/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E8%BF%87%E6%BB%A4-%E9%9A%90%E8%AF%AD%E4%B9%89%E6%A8%A1%E5%9E%8B.html" title="推荐系统——协同过滤&amp;隐语义模型"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/20210518/%E5%8A%9B%E6%89%A3%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html" title="力扣（一）：两数之和"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/20210727/08-K%E6%AC%A1%E5%8F%96%E5%8F%8D%E5%90%8E%E6%9C%80%E5%A4%A7%E7%9A%84%E6%95%B0%E7%BB%84%E5%92%8C.html" title="08-K次取反后最大的数组和"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
