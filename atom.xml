@@ -6,7 +6,7 @@
   <link href="https://xxren8218.github.io/atom.xml" rel="self"/>
   
   <link href="https://xxren8218.github.io/"/>
-  <updated>2021-08-16T16:26:23.913Z</updated>
+  <updated>2021-08-26T16:40:55.187Z</updated>
   <id>https://xxren8218.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>初识5G</title>
+    <link href="https://xxren8218.github.io/20210827/%E5%88%9D%E8%AF%86.html"/>
+    <id>https://xxren8218.github.io/20210827/%E5%88%9D%E8%AF%86.html</id>
+    <published>2021-08-26T16:34:02.000Z</published>
+    <updated>2021-08-26T16:40:55.187Z</updated>
+    
+    <content type="html"><![CDATA[<p>今天看了一下5G的知识，总结了所了解的一些框架，希望以后能帮助到刚学习的同学。</p><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210827004032.png" alt=""></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;今天看了一下5G的知识，总结了所了解的一些框架，希望以后能帮助到刚学习的同学。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210827004032.png&quot; alt=&quot;&quot;&gt;</summary>
+      
+    
+    
+    
+    <category term="科技杂谈" scheme="https://xxren8218.github.io/categories/%E7%A7%91%E6%8A%80%E6%9D%82%E8%B0%88/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>06-两数之和</title>
@@ -425,29 +448,6 @@
       
       
     <summary type="html">&lt;h2 id=&quot;二分查找&quot;&gt;&lt;a href=&quot;#二分查找&quot; class=&quot;headerlink&quot; title=&quot;二分查找&quot;&gt;&lt;/a&gt;二分查找&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img</summary>
-      
-    
-    
-    
-    <category term="数组" scheme="https://xxren8218.github.io/categories/%E6%95%B0%E7%BB%84/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>01-数组基础</title>
-    <link href="https://xxren8218.github.io/20210807/01-%E6%95%B0%E7%BB%84%E5%9F%BA%E7%A1%80.html"/>
-    <id>https://xxren8218.github.io/20210807/01-%E6%95%B0%E7%BB%84%E5%9F%BA%E7%A1%80.html</id>
-    <published>2021-08-07T15:56:43.000Z</published>
-    <updated>2021-08-07T15:58:06.904Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="数组基础"><a href="#数组基础" class="headerlink" title="数组基础"></a>数组基础</h2><p>数组是非常基础的数据结构，在面试中，考察数组的题目一般在思维上都不难，主要是考察对代码的掌控能力</p><p>也就是说，想法很简单，但实现起来 可能就不是那么回事了。</p><p>首先要知道数组在内存中的存储方式，这样才能真正理解数组相关的面试题</p><p><strong>数组是存放在连续内存空间上的相同类型数据的集合。</strong></p><p>数组可以方便的通过下标索引的方式获取到下标下对应的数据。</p><p>举一个字符数组的例子，如图所示：</p><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210807235716.PNG" alt=""></p><p>需要两点注意的是</p><ul><li><strong>数组下标都是从0开始的。</strong></li><li><strong>数组内存空间的地址是连续的</strong></li></ul><p>正是<strong>因为数组的在内存空间的地址是连续的，所以我们在删除或者增添元素的时候，就难免要移动其他元素的地址。</strong></p><p>例如删除下标为3的元素，需要对下标为3的元素后面的所有元素都要做移动操作，如图所示：</p><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210807235734.PNG" alt=""></p><p>那么二维数组直接上图，大家应该就知道怎么回事了</p><p><img src="https://cdn.jsdelivr.net/gh/xxren8218/blogimages/img/20210807235755.PNG" alt=""></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;数组基础&quot;&gt;&lt;a href=&quot;#数组基础&quot; class=&quot;headerlink&quot; title=&quot;数组基础&quot;&gt;&lt;/a&gt;数组基础&lt;/h2&gt;&lt;p&gt;数组是非常基础的数据结构，在面试中，考察数组的题目一般在思维上都不难，主要是考察对代码的掌控能力&lt;/p&gt;
-&lt;p&gt;也就是说，想</summary>
       
     
     
